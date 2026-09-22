@@ -1,0 +1,59 @@
+{
+  "roles": [
+    {
+      "id": "admin",
+      "name": "Administrador",
+      "permissions": {
+        "dashboard": true,
+        "projetos-menu": true,
+        "resources": true,
+        "calendar": true,
+        "ferries": true,
+        "administration": true,
+        "can_save": true
+      }
+    },
+    {
+      "id": "gestor",
+      "name": "Gestor",
+      "permissions": {
+        "dashboard": true,
+        "projetos-menu": true,
+        "resources": true,
+        "calendar": true,
+        "ferries": true,
+        "administration": false,
+        "can_save": true
+      }
+    },
+    {
+      "id": "colaborador",
+      "name": "Colaborador",
+      "permissions": {
+        "dashboard": true,
+        "projetos-menu": true,
+        "resources": false,
+        "calendar": true,
+        "ferries": false,
+        "administration": false,
+        "can_save": false
+      }
+    },
+    {
+      "id": "visualizador",
+      "name": "Visualizador",
+      "permissions": {
+        "dashboard": true,
+        "projetos-menu": true,
+        "resources": false,
+        "calendar": true,
+        "ferries": false,
+        "administration": false,
+        "can_save": false
+      }
+    }
+  ],
+  "userRoles": {
+    "cvieira": "admin"
+  }
+}

@@ -1,0 +1,57 @@
+# M3A Team — Collaboration Template: Feature Development
+# Optimized for: new feature implementation from an approved story
+# Auto-selected when: COMPLEX + feature/implement/create keywords
+# Version: 1.0.0
+
+template: feature-development
+description: "New feature development from approved story"
+version: "1.0.0"
+token_budget:
+  per_agent: 2000
+  total: 14000
+
+pipeline:
+  - step: 1
+    agent: architect
+    role: "Define technical approach and constraints"
+    receives:
+      - artifact_summary   # ~200 tokens — NOT full story
+      - project_context    # tech stack + architecture decisions
+    delivers: "handoff/01-architect-output.md"
+    max_tokens: 500
+    gate: soft  # warning if skipped
+
+  - step: 2
+    agents: [developer, qa]
+    parallel: true
+    role: "Implement + define test strategy in parallel"
+    receives:
+      - artifact_summary
+      - "handoff/01-architect-output.md"
+    delivers:
+      - "handoff/02-developer-output.md"
+      - "handoff/02-qa-output.md"
+    max_tokens: 500
+    depends_on: [architect]
+
+  - step: 3
+    agents: [security, docs]
+    parallel: true
+    role: "Security review + documentation"
+    receives:
+      - artifact_summary
+      - "handoff/02-developer-output.md"
+    delivers:
+      - "handoff/03-security-output.md"
+      - "handoff/03-docs-output.md"
+    max_tokens: 500
+    depends_on: [developer]
+
+verdict_format:
+  max_tokens: 150
+  required_fields: [status, justification, unblocking_condition]
+
+completion:
+  all_approved: "Instruct Deming: story = done"
+  warnings_only: "Report to human, await confirmation"
+  any_blocked: "STORY BLOCKED — report veto + condition"

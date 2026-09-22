@@ -1,0 +1,377 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 327 61% 24%;
+    /* #64183f as HSL format */
+
+    --card: 0 0% 100%;
+    --card-foreground: 327 61% 24%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 327 61% 24%;
+
+    --primary: 327 61% 24%;
+    /* #64183f as primary */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 33% 39%;
+    /* Rich Azure */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 189 53% 50%;
+    /* Soft Teal */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 327 61% 24%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 327 61% 15%;
+    --foreground: 210 40% 98%;
+
+    --card: 327 61% 12%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 327 61% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 187 78% 67%;
+    /* Light Teal */
+    --primary-foreground: 327 61% 24%;
+
+    --secondary: 189 53% 50%;
+    /* Soft Teal */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 327 40% 20%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217 33% 39%;
+    /* Rich Azure */
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 327 40% 20%;
+    --input: 327 40% 20%;
+    --ring: 187 78% 67%;
+    /* Light Teal */
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: #64183f;
+    @apply min-h-screen overflow-x-hidden;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6, .portal-heading {
+    color: #64183f !important;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-surface border border-slate-100 shadow-card rounded-[1.8rem];
+  }
+
+  .glass-button {
+    @apply relative overflow-hidden transition-all duration-300 bg-white border border-slate-200 text-primary rounded-xl px-4 py-2 hover:border-primary/50 hover:bg-slate-50 font-semibold shadow-sm hover:shadow-glow;
+  }
+
+  .nav-item {
+    @apply flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-[#d1cbf5] hover:bg-white/10 hover:text-white cursor-pointer;
+  }
+
+  .nav-item.active {
+    @apply bg-white text-primary shadow-glow font-bold;
+  }
+
+  .glass-sidebar {
+    @apply bg-white/40 backdrop-blur-2xl border-r border-white/40 shadow-[10px_0_30px_-15px_rgba(0, 0, 0, 0.1)];
+  }
+
+  /* Curved Active Tab Effect */
+  .curved-active-tab {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    color: #881337;
+    border-top-left-radius: 1.25rem;
+    border-bottom-left-radius: 1.25rem;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 4px 18px rgba(244, 114, 182, 0.18);
+    border: 1px solid rgba(254, 205, 211, 0.6);
+    border-right: none;
+  }
+
+  .nav-item-active {
+    @apply bg-white text-slate-800 font-extrabold shadow-sm relative transition-all;
+  }
+
+  /* Indicador vertical roxo na esquerda para o item ativo */
+  .nav-item-active::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background-color: #8b5cf6;
+    /* Cor roxa */
+    border-radius: 4px;
+  }
+
+  .glass-filter-panel {
+    @apply bg-[rgba(250, 249, 246, 0.85)] backdrop-blur-2xl border border-white/40 shadow-xl rounded-[2rem] relative overflow-hidden;
+  }
+
+  /* Gradiente decorativo para o painel de filtros (Imagem 1) */
+  .glass-filter-panel::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+    --tw-gradient-from: #8b5cf633;
+    --tw-gradient-to: transparent;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    border-radius: 50%;
+    filter: blur(40px);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .glass-filter-panel>* {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Glassmorphism Resource Card (matching image style) */
+  .glass-resource-card {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(100, 24, 63, 0.08),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-resource-card:hover {
+    background: rgba(255, 255, 255, 0.6);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px 0 rgba(100, 24, 63, 0.15),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  }
+
+  /* Glow ring around avatar */
+  .avatar-glow-ring {
+    background: linear-gradient(135deg, #64183f 0%, #1a1f44 100%);
+    box-shadow: 0 0 15px rgba(100, 24, 63, 0.4),
+      0 0 30px rgba(26, 31, 68, 0.2);
+    position: relative;
+  }
+
+  .avatar-glow-ring::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #64183f, #1a1f44);
+    z-index: -1;
+    opacity: 0.75;
+    filter: blur(4px);
+  }
+}
+
+/* Custom Scrollbar for a matching look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 3D Card Flip Animation */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+@keyframes spin-y-180 {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+.animate-flip-3d {
+  animation: spin-y-180 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Wizard Stepper Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-fast {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Stepper connector line base */
+.stepper-connector {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+.stepper-connector::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #8b5cf6, #6358dc);
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stepper-connector.done::after {
+  width: 100%;
+}
+
+.stepper-connector.active::after {
+  width: 50%;
+  animation: progressFill 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes spin360 {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.15);
+  }
+
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.animate-spin-360 {
+  animation: spin360 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}

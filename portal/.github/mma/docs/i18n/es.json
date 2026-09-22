@@ -1,0 +1,488 @@
+{
+  "lang": "es",
+  "nav": {
+    "about": "Sobre",
+    "agents": "Agentes",
+    "features": "Funcionalidades",
+    "skills": "Skills",
+    "workflows": "Workflows",
+    "laws": "Leyes",
+    "commands": "Comandos",
+    "install": "Instalar"
+  },
+  "hero": {
+    "title": "M3A Team",
+    "subtitle": "Framework Multi-Agente de IA Minsait — agentes especializados orquestados dentro de VS Code, con GitHub Copilot",
+    "cta": "Empezar Ahora",
+    "version": "v1.1.0",
+    "stat_agents": "Agentes Especializados",
+    "stat_gates": "Quality Gates",
+    "stat_commands": "Comandos",
+    "stat_skills": "Skills",
+    "stat_workflows": "Workflows",
+    "stat_laws": "Leyes"
+  },
+  "about": {
+    "heading": "¿Qué es M3A Team?",
+    "p1": "M3A Team (Multi-Agent AI Architecture) es un ecosistema multi-agente de IA empresarial y reutilizable, diseñado para cualquier proyecto Minsait — nuevo o existente, cualquier stack, cualquier dominio.",
+    "p2": "Proporciona un equipo de 12 agentes de IA especializados, cada uno con una persona distinta inspirada en figuras históricas e intelectuales. Los agentes colaboran en quality gates, aplican decisiones arquitectónicas y producen documentación de nivel ejecutivo — todo dentro de VS Code usando el modo Agente de GitHub Copilot.",
+    "p3": "Sin servicios externos, sin suscripciones cloud más allá de Copilot. Instala con un comando, activa con /m3a-init, y todo tu equipo obtiene una fuerza de trabajo de IA estructurada gobernada por 13 leyes inmutables.",
+    "highlight1_title": "Funciona Dentro de VS Code",
+    "highlight1_desc": "Sin herramientas o plataformas externas. Los agentes operan como modos de agente de Copilot directamente en tu editor.",
+    "highlight2_title": "Cero Dependencias Cloud",
+    "highlight2_desc": "Todo vive en tu repositorio en .github/ — completamente versionado y revisable vía PR.",
+    "highlight3_title": "13 Leyes Inmutables",
+    "highlight3_desc": "Gobernanza integrada en cada agente: conocimiento primero, sin silencio en revisiones, consenso obligatorio, honestidad operacional."
+  },
+  "agents": {
+    "heading": "El Equipo de Agentes",
+    "description": "12 agentes especializados, cada uno con persona distinta y área de expertise. Haz clic en cualquier tarjeta para ver todas las capacidades.",
+    "orchestrator": {
+      "icon": "⚡",
+      "role": "Orquestador",
+      "persona": "Marcus Aurelius",
+      "motto": "Gobierna sin ejecutar — decisiones bajo presión con racionalidad y visión a largo plazo.",
+      "capabilities": [
+        "Enruta solicitudes al agente especializado correcto",
+        "Coordina sesiones de revisión multi-agente",
+        "Aplica las 13 leyes inmutables de gobernanza",
+        "Gestiona el flujo de creación y aprobación de épicos",
+        "Consolida veredictos de revisión de todos los agentes",
+        "Registra todas las decisiones del proyecto en la base de conocimiento"
+      ]
+    },
+    "analyst": {
+      "icon": "📊",
+      "role": "Analista",
+      "persona": "Descartes",
+      "motto": "Descomponer cada problema en partes hasta que nada quede sin explicar.",
+      "capabilities": [
+        "Análisis AS-IS y descomposición de módulos",
+        "Auditoría de CVEs e inventario de dependencias",
+        "Análisis de componentes: superficial, intermedio y profundo",
+        "Evaluación de compatibilidad e impacto técnico",
+        "Verificación de EOL y mapeo de ciclo de vida tecnológico",
+        "Construcción de la base de conocimiento desde escaneo del código"
+      ]
+    },
+    "architect": {
+      "icon": "🏗️",
+      "role": "Arquitecto",
+      "persona": "Vitruvius",
+      "motto": "Firmitas, Utilitas, Venustas — la buena arquitectura sirve al propósito, es robusta y sobrevive al tiempo.",
+      "capabilities": [
+        "Diseño de arquitectura TO-BE y planificación de migración",
+        "Creación de Architecture Decision Records (ADR)",
+        "Diagramas C4 (Contexto, Contenedor, Componente)",
+        "Análisis de viabilidad técnica para épicos",
+        "Análisis de brechas en migración de stack (AS-IS → TO-BE)",
+        "Evaluación de riesgo de épicos con poder de veto elevado"
+      ]
+    },
+    "pm": {
+      "icon": "📋",
+      "role": "Product Manager",
+      "persona": "Drucker",
+      "motto": "La eficacia es hacer las cosas correctas. Lo que no genera valor no existe.",
+      "capabilities": [
+        "Creación de épicos con proceso estructurado de brainstorm",
+        "Verificación anti-duplicados en el backlog",
+        "Priorización del backlog y planificación del roadmap",
+        "Creación de PRD (Product Requirements Document)",
+        "Definición y refinamiento de criterios de aceptación",
+        "Roadmap de modernización para proyectos legados"
+      ]
+    },
+    "sm": {
+      "icon": "🏃",
+      "role": "Scrum Master",
+      "persona": "Deming",
+      "motto": "Los buenos resultados vienen de buenos sistemas, no de héroes.",
+      "capabilities": [
+        "Planificación de sprint (nunca más allá del Sprint N+1)",
+        "Creación y descomposición de stories desde épicos",
+        "Seguimiento y gestión del estado del sprint",
+        "Reviews, retrospectivas y seguimiento de velocidad",
+        "Aplicación de Definition of Ready / Definition of Done",
+        "Cadencia de equipo y mejora continua de procesos"
+      ]
+    },
+    "dev": {
+      "icon": "💻",
+      "role": "Desarrollador",
+      "persona": "Knuth",
+      "motto": "La optimización prematura es la raíz de todo mal. El código debe sobrevivir décadas.",
+      "capabilities": [
+        "Implementación de stories con Red-Green-Refactor",
+        "Code review y refactorización estructurada",
+        "Soporte multi-stack (Java, .NET, Python, Node, etc.)",
+        "Propuestas de especificación técnica",
+        "Análisis a nivel de módulo para planificación de implementación",
+        "Generación de DevContainer para ambientes reproducibles"
+      ]
+    },
+    "qa": {
+      "icon": "🔍",
+      "role": "QA Engineer",
+      "persona": "Popper",
+      "motto": "Solo lo que puede ser falsificado puede ser validado.",
+      "capabilities": [
+        "Estrategia y planificación de pruebas por story/épico",
+        "Validación de criterios de aceptación y revisión de testabilidad",
+        "Aplicación de Definition of Done en los quality gates",
+        "Estrategia de cobertura de pruebas y análisis de brechas",
+        "Participación en gates de story-done y epic-done",
+        "Seguimiento de métricas de calidad y reportes"
+      ]
+    },
+    "security": {
+      "icon": "🔒",
+      "role": "Ingeniero de Seguridad",
+      "persona": "Hobbes",
+      "motto": "Sin seguridad adecuada, los sistemas son solitarios, pobres, desagradables, brutales y efímeros.",
+      "capabilities": [
+        "Auditoría OWASP Top 10 y verificación de conformidad",
+        "Escaneo de CVEs en dependencias y planes de remediación",
+        "Recomendaciones de hardening del sistema",
+        "Análisis de superficie de ataque y modelado de amenazas",
+        "Poder de VETO — bloquea cualquier épico o story insegura",
+        "Baseline de seguridad y checklists de hardening"
+      ]
+    },
+    "devops": {
+      "icon": "☁️",
+      "role": "Ingeniero DevOps",
+      "persona": "Atlas",
+      "motto": "Sin infraestructura confiable, el software no existe en producción.",
+      "capabilities": [
+        "Setup de Docker y containerización",
+        "Manifiestos Kubernetes y orquestación",
+        "Diseño y automatización de pipelines CI/CD",
+        "Generación de DevContainer para onboarding del equipo",
+        "Automatización de despliegue y gestión de ambientes",
+        "Estándares de observabilidad (logging, métricas, tracing)"
+      ]
+    },
+    "docs": {
+      "icon": "📄",
+      "role": "Technical Writer",
+      "persona": "Borges",
+      "motto": "El desafío no es crear — es estructurar para que pueda ser encontrado.",
+      "capabilities": [
+        "Portales HTML de documentación con marca Minsait",
+        "Reportes de nivel ejecutivo para stakeholders",
+        "Curación y mantenimiento de la base de conocimiento",
+        "Generación de portales con trackers de rollout",
+        "Documentación de agentes y gestión de changelog"
+      ]
+    },
+    "ux": {
+      "icon": "🎨",
+      "role": "Diseñador UX/UI",
+      "persona": "Norman",
+      "motto": "El buen diseño hace comprensibles las cosas complejas.",
+      "capabilities": [
+        "Análisis de usabilidad y evaluación heurística",
+        "Revisión de diseño de interfaz y recomendaciones",
+        "Auditoría de accesibilidad WCAG y conformidad",
+        "Revisión de design system y verificación de consistencia",
+        "Mapeo de journey del usuario y optimización de flujo",
+        "Análisis de componentes UI y propuestas de mejora"
+      ]
+    },
+    "dba": {
+      "icon": "🗄️",
+      "role": "Arquitecto de Base de Datos",
+      "persona": "Codd",
+      "motto": "Los datos deben ser accedidos por su contenido, no por su ubicación.",
+      "capabilities": [
+        "Diseño, análisis y optimización de schemas",
+        "Scripts de migración de base de datos reversibles",
+        "Tuning de rendimiento de queries y estrategia de indexación",
+        "Evaluación de impacto en base de datos para épicos",
+        "Orientación en patrones DAO/Repository",
+        "Evaluación de ORM y revisión de la capa de acceso a datos"
+      ]
+    }
+  },
+  "features": {
+    "heading": "Funcionalidades Principales",
+    "description": "Un workflow de ingeniería completo con IA — de la idea a producción.",
+    "bootstrap": {
+      "title": "Bootstrap de Nuevo Producto",
+      "description": "Ve de una idea de producto a tu primer sprint en un proceso estructurado, guiado por agentes.",
+      "steps": [
+        "Drucker crea el PRD y define la visión del producto",
+        "Vitruvius diseña la arquitectura TO-BE con diagramas C4",
+        "Atlas genera DevContainers y scaffolding de CI/CD",
+        "Descartes escanea el panorama y construye la base de conocimiento",
+        "Deming planifica el Sprint 1 con stories y criterios de aceptación"
+      ],
+      "agents_involved": "Drucker → Vitruvius → Atlas → Descartes → Deming"
+    },
+    "quality_gates": {
+      "title": "Quality Gates",
+      "story_title": "Gate de Story Completada",
+      "story_desc": "5 agentes realizan una revisión quirúrgica de cada story completada. QA, Seguridad y Desarrollador tienen poder de veto — un rechazo bloquea la story.",
+      "story_agents": "QA · Seguridad · Desarrollador · Arquitecto · Docs",
+      "epic_title": "Gate de Épico Completado",
+      "epic_desc": "Hasta 9 agentes realizan una revisión sistémica de todo el épico. Arquitecto y DBA obtienen poder de veto elevado. Ningún agente puede permanecer en silencio.",
+      "epic_agents": "QA · Seguridad · Desarrollador · Arquitecto · Docs · PM + DBA · DevOps · UX",
+      "veto_label": "Poder de Veto",
+      "warning_label": "Rol Consultivo"
+    },
+    "platform_title": "Funcionalidades de la Plataforma",
+    "knowledge": {
+      "title": "Orientado por Conocimiento",
+      "description": "Cada decisión, convención y elección arquitectónica se registra en una base de conocimiento estructurada que crece con tu proyecto.",
+      "points": [
+        "Descartes construye la base de conocimiento desde escaneos profundos",
+        "Marcus Aurelius registra todas las decisiones en el log de decisiones",
+        "Borges curación y estructura la documentación para facilitar búsqueda",
+        "Todos los agentes leen el conocimiento antes de actuar — Ley 1: Conocimiento Primero"
+      ]
+    },
+    "multistack": {
+      "title": "Soporte Multi-Stack",
+      "description": "Funciona con cualquier stack tecnológico. MMA detecta automáticamente lenguajes, frameworks y herramientas del proyecto — y adapta los 12 agentes.",
+      "stacks": "Java · .NET · Python · Node.js · Go · Angular · React · Vue · y más"
+    },
+    "executive_docs": {
+      "title": "Documentación Ejecutiva",
+      "description": "Borges traduce análisis técnicos en reportes de nivel ejecutivo con identidad visual Minsait.",
+      "points": [
+        "Portales HTML con marca Minsait y tipografía ForFutureSans",
+        "Traducción automática Capa 1 → Capa 2 (técnico → ejecutivo)",
+        "Reportes de sprint, resúmenes de épicos, registros de riesgo",
+        "Trackers de rollout y release notes"
+      ]
+    },
+    "security_first": {
+      "title": "Seguridad Primero",
+      "description": "Hobbes tiene poder de VETO absoluto — ningún épico o story insegura pasa la revisión. La seguridad no es un detalle, se impone en cada gate.",
+      "points": [
+        "Auditoría OWASP Top 10 en cada revisión",
+        "Escaneo de CVEs en dependencias con planes de remediación",
+        "Hardening del sistema y análisis de superficie de ataque",
+        "Enforcement de baseline de seguridad en todos los stacks"
+      ]
+    },
+    "existing_project": {
+      "title": "Proyectos Existentes & Modernización",
+      "description": "Comienza desde un código legado, monolito o proyecto en refactorización. MMA mapea el estado AS-IS, identifica deuda técnica y construye un roadmap de modernización estructurado.",
+      "steps": [
+        "Descartes realiza análisis AS-IS: escaneo de stack, CVEs, descomposición de módulos",
+        "Base de conocimiento construida desde el código, docs y artefactos de arquitectura",
+        "Vitruvius diseña la arquitectura TO-BE con análisis de brechas de la migración",
+        "Hobbes audita la postura de seguridad y exposición de CVEs",
+        "Drucker crea el roadmap de modernización con épicos priorizados"
+      ],
+      "agents_involved": "Descartes → Vitruvius → Hobbes → Drucker → Deming"
+    }
+  },
+  "commands": {
+    "heading": "Comandos Disponibles",
+    "description": "Todos los comandos /m3a-* disponibles tras la instalación. Ejecútalos en Copilot Chat de VS Code.",
+    "col_command": "Comando",
+    "col_description": "Descripción",
+    "cat_init": "Inicialización",
+    "cat_arch": "Evaluación & Arquitectura",
+    "cat_quality": "Calidad & Gobernanza",
+    "cat_docs": "Documentación",
+    "cat_ops": "Operaciones",
+    "cat_utils": "Utilidades",
+    "cmd_init": "Empieza aquí — asistente de onboarding, personaliza la configuración",
+    "cmd_upgrade": "Upgrade del setup de agentes (minimal → full) sin reconfiguración",
+    "cmd_init_new": "Scaffold de proyecto greenfield (PRD → C4 → DevContainer)",
+    "cmd_init_existing": "Escaneo de proyecto existente/legado (AS-IS → base de conocimiento)",
+    "cmd_init_knowledge": "Escaneo profundo + bootstrap de la base de conocimiento",
+    "cmd_init_docs": "Scaffold de portal de documentación",
+    "cmd_init_epic": "Estructura de backlog + tracker de épicos/stories",
+    "cmd_assessment": "Diagnóstico técnico completo (inventario, deuda, CVEs, riesgos)",
+    "cmd_c4": "Generar diagramas C4 (Contexto, Contenedor, Componente)",
+    "cmd_adr": "Generar Architecture Decision Record",
+    "cmd_migration": "Plan de migración de stack (análisis de brechas AS-IS → TO-BE)",
+    "cmd_quality_gates": "Checklists de Definition of Done por tipo de entrega",
+    "cmd_risk_gates": "Evaluación Go/No-Go (requiere aprobación humana)",
+    "cmd_dep_audit": "Escaneo de CVEs, calendario EOL, recomendaciones de actualización",
+    "cmd_sec_baseline": "Baseline OWASP, checklist de hardening",
+    "cmd_story_done": "Quality gate de conclusión de story — revisión paralela de 5 agentes",
+    "cmd_epic_done": "Gate sistémico de conclusión de épico — revisión de hasta 9 agentes",
+    "cmd_doc_portal": "Generar portal HTML de documentación con marca Minsait",
+    "cmd_runbook": "Generar runbook operacional",
+    "cmd_release_notes": "Generar release notes desde el alcance de versión",
+    "cmd_troubleshooting": "Diagnóstico estructurado: síntomas → causas → correcciones",
+    "cmd_observability": "Estándares de logging, métricas, tracing",
+    "cmd_incident": "War room de incidentes (activación solo humana)",
+    "cmd_plan_issues": "Crear issues estandarizadas en GitHub/GitLab",
+    "cmd_refactor": "Análisis war room → plan → épicos (nunca reescribe automáticamente)",
+    "cmd_create_agent": "Crear scaffold de nuevo agente personalizado",
+    "cmd_create_devcontainer": "Generar .devcontainer/ para tu stack",
+    "cmd_data_class": "Política de clasificación de datos, inventario PII",
+    "cmd_doctor": "Validar instalación y configuración de M3A Team",
+    "cmd_prompt_enricher": "Enriquecer prompts débiles antes del enrutamiento"
+  },
+  "skills": {
+    "heading": "Skills",
+    "description": "25 skills especializadas de prompts — rutinas de automatización para operaciones complejas y multi-paso."
+  },
+  "workflows": {
+    "heading": "Workflows",
+    "description": "11 procesos multi-agente estructurados — protocolos de coordinación del bootstrap a los quality gates."
+  },
+  "laws": {
+    "heading": "13 Leyes Inmutables",
+    "description": "Gobernanza integrada en cada agente. Absolutas, inviolables, aplicadas en cada interacción.",
+    "items": [
+      {
+        "n": "01",
+        "name": "Conocimiento Primero",
+        "desc": "Todo agente lee la base de conocimiento antes de cualquier acción. El nuevo conocimiento actualiza físicamente los archivos — nunca queda solo en el chat."
+      },
+      {
+        "n": "02",
+        "name": "Chat Mínimo",
+        "desc": "Solo formatos de estado en el chat: ✅ archivo, ⚠️ aviso, ❌ bloqueado. Sin narración, sin razonamiento, sin duplicación de contenido."
+      },
+      {
+        "n": "03",
+        "name": "Anti-Duplicados",
+        "desc": "Antes de crear cualquier cosa, verificar en el backlog épicos, stories y análisis similares ya existentes."
+      },
+      {
+        "n": "04",
+        "name": "Aprendizaje Continuo",
+        "desc": "Todo nuevo conocimiento relevante sobre el proyecto actualiza físicamente la base de conocimiento — nunca se pierde."
+      },
+      {
+        "n": "05",
+        "name": "War Room = Solo Humano",
+        "desc": "Ningún agente activa un War Room automáticamente. Los agentes solo pueden sugerirlo al humano con justificación clara."
+      },
+      {
+        "n": "06",
+        "name": "Sin Silencio en Revisiones",
+        "desc": "Todo agente evalúa todo épico desde su lente especializada. El silencio requiere justificación documentada explícita."
+      },
+      {
+        "n": "07",
+        "name": "Consenso Obligatorio",
+        "desc": "Los desacuerdos entre agentes deben resolverse con intercambio de evidencias. Sin resolución en 2 rondas → escalar al humano."
+      },
+      {
+        "n": "08",
+        "name": "Sprint a Sprint",
+        "desc": "Nunca detallar más allá del Sprint N+1. Cada sprint se refina basándose en los resultados reales del sprint anterior."
+      },
+      {
+        "n": "09",
+        "name": "Aprobación Multi-Agente",
+        "desc": "Ningún épico avanza de borrador a aprobado con ningún agente bloqueado (❌). Los 12 agentes deben revisar y responder."
+      },
+      {
+        "n": "10",
+        "name": "Dos Capas de Output",
+        "desc": "Capa 1: operacional/técnica (interna). Capa 2: ejecutiva (para gestión). El agente Docs traduce entre ellas."
+      },
+      {
+        "n": "11",
+        "name": "Versionado de Agentes",
+        "desc": "Toda actualización de agente incrementa la versión semántica y añade una entrada al changelog. La trazabilidad total es obligatoria."
+      },
+      {
+        "n": "12",
+        "name": "Build Siempre Pasa",
+        "desc": "Ninguna story está terminada sin evidencia de un build exitoso. Build roto = story vuelve a en-progreso."
+      },
+      {
+        "n": "13",
+        "name": "Honestidad Operacional",
+        "desc": "Un agente que saltó un paso obligatorio debe declararlo activamente. El silencio sobre una desviación equivale a una declaración falsa."
+      }
+    ]
+  },
+  "install": {
+    "heading": "Instalar M3A Team",
+    "description": "Un comando instala los 12 agentes en cualquier proyecto VS Code con GitHub Copilot.",
+    "prerequisites": "Requisitos Previos",
+    "prereq_heading": "⚠️ Requisitos Previos — Obligatorios antes de instalar",
+    "prereq_desc": "Asegúrate de tener los tres antes de ejecutar el script de instalación.",
+    "prereq_vscode": "VS Code con extensión GitHub Copilot",
+    "prereq_cli": "GitHub CLI (gh) — instalado y autenticado",
+    "prereq_copilot": "Suscripción GitHub Copilot (Chat + modo Agente)",
+    "step1_title": "Ejecuta el script de instalación",
+    "step1_desc": "Ejecuta desde la raíz de tu proyecto (donde está el .git/)",
+    "step2_title": "Activa con /m3a-init",
+    "step2_desc": "Personaliza la configuración y activa los 12 agentes para tu proyecto",
+    "step2_callout": "Obligatorio antes de cualquier otro comando. /m3a-init configura los agentes con el stack, equipo y contexto de tu proyecto. Sin él, los agentes operan sin conocimiento del proyecto.",
+    "mandatory_label": "⚡ Obligatorio — Ejecuta Primero",
+    "step3_title": "Inicializar base de conocimiento",
+    "step3_desc": "Recomendado para proyectos existentes — escaneo profundo del código que alimenta todo el análisis de los agentes",
+    "step4_title": "Empieza a usar los comandos",
+    "step4_desc": "Todos los comandos /m3a-* están disponibles en Copilot Chat",
+    "windows_label": "Windows PowerShell",
+    "linux_label": "Linux / macOS"
+  },
+  "footer": {
+    "tagline": "Tecnología para el impacto",
+    "copyright": "© 2026 Minsait (An Indra Company) — Todos los derechos reservados",
+    "github": "Ver en GitHub"
+  },
+  "workflow_cards": {
+    "new_project": {
+      "name": "Nuevo Proyecto",
+      "desc": "Bootstrap greenfield: PRD → arquitectura C4 → DevContainer → planificación del Sprint 1",
+      "agents": "Drucker · Vitruvius · Atlas · Descartes · Deming"
+    },
+    "existing": {
+      "name": "Proyecto Existente",
+      "desc": "Onboarding legado: análisis AS-IS → base de conocimiento → análisis de brechas → roadmap de modernización",
+      "agents": "Descartes · Vitruvius · Hobbes · Deming"
+    },
+    "epic_planning": {
+      "name": "Planificación de Épico",
+      "desc": "Creación de épico → verificación anti-duplicados → revisión multi-agente → aprobación → sprint",
+      "agents": "Todos los 12 agentes"
+    },
+    "story_done": {
+      "name": "Gate de Story Completada",
+      "desc": "5 agentes revisan quirúrgicamente cada story. QA, Seguridad y Desarrollador tienen poder de veto.",
+      "agents": "Popper · Hobbes · Knuth · Vitruvius · Borges"
+    },
+    "epic_done": {
+      "name": "Gate de Épico Completado",
+      "desc": "9 agentes revisan sistémicamente el épico completo. Arquitecto y DBA con veto elevado.",
+      "agents": "9 agentes revisores"
+    },
+    "docs_portal": {
+      "name": "Portal de Docs",
+      "desc": "Genera el portal HTML con marca Minsait con trackers de rollout y reportes de sprint",
+      "agents": "Borges"
+    },
+    "knowledge": {
+      "name": "Bootstrap de Conocimiento",
+      "desc": "Inicialización completa de la base de conocimiento desde escaneo, docs y ADRs",
+      "agents": "Descartes · Borges"
+    },
+    "migration": {
+      "name": "Plan de Migración",
+      "desc": "Planificación de migración multi-agente: baseline AS-IS → TO-BE → análisis de brechas → roadmap por fases",
+      "agents": "Vitruvius · Descartes · Hobbes · Atlas · Codd"
+    },
+    "dep_audit": {
+      "name": "Auditoría de Dependencias",
+      "desc": "Inventario completo, escaneo de CVEs, calendario EOL y recomendaciones de actualización",
+      "agents": "Hobbes · Descartes · Codd"
+    },
+    "release": {
+      "name": "Ciclo de Release",
+      "desc": "Gobernanza de release end-to-end: ADRs → runbooks → release notes → aprobación de gate de riesgo",
+      "agents": "Vitruvius · Atlas · Borges · Drucker"
+    },
+    "incident": {
+      "name": "Incidente & Troubleshooting",
+      "desc": "Protocolo War Room: análisis de causa raíz, mitigación, lecciones aprendidas (solo humano)",
+      "agents": "Todos los 12 agentes"
+    }
+  }
+}

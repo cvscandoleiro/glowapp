@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<!--
+    M3A Team — Rollout Tracker Template
+    Version: 1.0.0
+
+    HOW TO USE:
+    1. Edit ONLY the "PROJECT DATA" config block in the <script> section below.
+    2. Fill in PROJETO, SPRINT_ATUAL, EPICS, STORIES, BURNDOWN_REAL and BLOCKERS.
+    3. Save. Open in browser — no build step required.
+    4. To persist inline edits: click "💾 Save", select this file, confirm overwrite.
+
+    ASSETS PATH:
+    Canonical generated output keeps `../portal/assets/` relative to this file.
+    When this template is opened directly inside the M3A framework repository,
+    a closed fallback list also allows `../../../assets/`.
+    If neither approved location exists, stop and restore the official M3A asset set;
+    do not replace it with text or arbitrary images.
+
+    © Minsait (An Indra Company) — Tech for impact
+-->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Rollout Tracker | Minsait</title>
+    <link rel="icon" type="image/png" href="../portal/assets/AF_MINSAIT_SIM_POS.png" id="favicon">
+    <!-- Chart.js 4.4.0 via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        /* Approved branding assets resolve from a closed candidate list only.
+           Canonical generated path: ../portal/assets/
+           Framework-repo fallback: ../../../assets/
+           If both fail, keep canonical markup and restore the official asset bundle. */
+        window.__M3A_BRANDING_READY__ = (function () {
+            const assetBases = Object.freeze([
+                '../portal/assets/',
+                '../../../assets/',
+            ]);
+            const approvedFilenames = Object.freeze([
+                'AF_MINSAIT_SIM_POS.png',
+                'AF_MINSAIT_SIM_NEG.png',
+                'AF_MINSAIT_LOG_POS.png',
+                'AF_MINSAIT_LOG_NEG.png',
+            ]);
+            const approvedFonts = Object.freeze([
+                { weight: 300, file: 'ForFutureSans-Light.woff2' },
+                { weight: 400, file: 'ForFutureSans-Regular.woff2' },
+                { weight: 500, file: 'ForFutureSans-Medium.woff2' },
+                { weight: 700, file: 'ForFutureSans-Bold.woff2' },
+                { weight: 800, file: 'ForFutureSans-Black.woff2' },
+            ]);
+
+            function buildAssetUrl(basePath, relativePath) {
+                return `${basePath}${relativePath}`;
+            }
+
+            function approvedFilenameFromPath(path, fallbackFilename) {
+                const filename = (path || '').split('/').pop() || fallbackFilename;
+                return approvedFilenames.includes(filename) ? filename : fallbackFilename;
+            }
+
+            function probeImage(assetUrl) {
+                return new Promise((resolve) => {
+                    const image = new Image();
+                    image.onload = () => resolve(true);
+                    image.onerror = () => resolve(false);
+                    image.src = assetUrl;
+                });
+            }
+
+            function injectFonts(basePath) {
+                if (document.getElementById('mma-branding-fonts')) {
+                    return;
+                }
+
+                const style = document.createElement('style');
+                style.id = 'mma-branding-fonts';
+                style.textContent = approvedFonts.map(({ weight, file }) => `
+@font-face { font-family:'ForFutureSans'; src:url('${buildAssetUrl(basePath, `fonts/Web Fonts/WOFF2/${file}`)}') format('woff2'); font-weight:${weight}; font-style:normal; font-display:swap; }`).join('\n');
+                document.head.appendChild(style);
+            }
+
+            function applyResolvedAssets(basePath) {
+                const favicon = document.getElementById('favicon');
+                if (favicon) {
+                    favicon.href = buildAssetUrl(basePath, 'AF_MINSAIT_SIM_POS.png');
+                }
+
+                injectFonts(basePath);
+
+                return {
+                    basePath,
+                    resolveApprovedPath(path, fallbackFilename) {
+                        return buildAssetUrl(basePath, approvedFilenameFromPath(path, fallbackFilename));
+                    },
+                };
+            }
+
+            return (async function resolveBrandingAssets() {
+                for (const basePath of assetBases) {
+                    const exists = await probeImage(buildAssetUrl(basePath, 'AF_MINSAIT_SIM_POS.png'));
+                    if (exists) {
+                        return applyResolvedAssets(basePath);
+                    }
+                }
+
+                console.warn('Approved M3A branding assets not found in ../portal/assets/ or ../../../assets/. Restore the official asset set; do not replace branding with arbitrary files.');
+                return {
+                    basePath: assetBases[0],
+                    resolveApprovedPath(path, fallbackFilename) {
+                        return buildAssetUrl(assetBases[0], approvedFilenameFromPath(path, fallbackFilename));
+                    },
+                };
+            })();
+        })();
+    </script>
+    <style>
+        /* ── ForFutureSans ──
+           Injected dynamically after approved asset-base resolution. */
+
+        *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+
+        /* ══════════════════════════════════════════════
+           Minsait Color Variables — DO NOT CHANGE
+           ══════════════════════════════════════════════ */
+        :root {
+            --minsait-pruno:          rgb(72, 14, 42);
+            --minsait-fucsia:         rgb(255, 0, 84);
+            --minsait-pruno-oscuro:   rgb(38, 7, 23);
+            --minsait-gris-ceramica:  rgb(227, 226, 218);
+            --minsait-blanco:         rgb(255, 255, 255);
+            --success:  #00B894;
+            --warning:  #FDCB6E;
+            --danger:   #D63031;
+            --sidebar-width:  280px;
+            --header-height:  60px;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'ForFutureSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #F4F5F7;
+            color: #1A1A1A;
+            line-height: 1.6;
+        }
+
+        /* ── HEADER ── */
+        .top-header {
+            position:fixed; top:0; left:0; right:0;
+            height:var(--header-height);
+            background:linear-gradient(90deg, var(--minsait-pruno-oscuro) 0%, var(--minsait-pruno) 100%);
+            display:flex; align-items:center; justify-content:space-between;
+            padding:0 1.5rem; z-index:2000;
+            box-shadow:0 2px 8px rgba(0,0,0,.18);
+        }
+        .top-header .logo { height:28px; }
+        .top-header .header-right { display:flex; align-items:center; gap:1rem; }
+        .version-badge { background:var(--minsait-fucsia); color:#fff; padding:.3rem .8rem; border-radius:20px; font-size:.8rem; font-weight:700; letter-spacing:.5px; }
+        .btn-portal {
+            display:flex; align-items:center; gap:.4rem;
+            color:rgba(255,255,255,.85); text-decoration:none;
+            font-size:.85rem; font-weight:500;
+            border:1px solid rgba(255,255,255,.3);
+            border-radius:6px; padding:.35rem .8rem; transition:all .2s;
+        }
+        .btn-portal:hover { background:rgba(255,255,255,.1); color:#fff; }
+        .btn-toggle-sidebar { display:none; background:transparent; border:none; color:#fff; font-size:1.4rem; cursor:pointer; padding:.4rem; border-radius:4px; }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            position:fixed; top:var(--header-height); left:0; bottom:0;
+            width:var(--sidebar-width);
+            background:#F8F8F8; border-right:1px solid #E0E0E0;
+            overflow-y:auto; z-index:1000;
+            padding:1.5rem 0; transition:transform .3s ease;
+        }
+        .sidebar.collapsed { transform:translateX(calc(-1 * var(--sidebar-width))); }
+        .sidebar-header { padding:0 1.25rem 1.25rem; border-bottom:2px solid var(--minsait-fucsia); margin-bottom:.75rem; }
+        .sidebar-header h2 { font-size:1.05rem; font-weight:700; color:var(--minsait-pruno); }
+        .sidebar-header p  { font-size:.8rem; color:#888; margin-top:.25rem; }
+        .sidebar nav ul { list-style:none; }
+        .sidebar nav ul li a {
+            display:flex; align-items:center; gap:.6rem;
+            padding:.65rem 1.25rem; color:#444;
+            text-decoration:none; font-size:.9rem; font-weight:400;
+            border-left:3px solid transparent; transition:all .2s;
+        }
+        .sidebar nav ul li a:hover,
+        .sidebar nav ul li a.active {
+            background:rgba(255,0,84,.07); border-left-color:var(--minsait-fucsia);
+            color:var(--minsait-pruno); font-weight:500;
+        }
+        .sidebar-section-label { padding:.5rem 1.25rem .25rem; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:#aaa; }
+
+        /* ── MAIN ── */
+        .main-content { margin-left:var(--sidebar-width); margin-top:var(--header-height); padding:2rem 2.5rem; min-height:calc(100vh - var(--header-height)); transition:margin-left .3s ease; }
+        .main-content.expanded { margin-left:0; }
+
+        /* ── PAGE HERO ── */
+        .page-hero { background:#fff; border-radius:10px; border-top:4px solid var(--minsait-fucsia); box-shadow:0 4px 16px rgba(0,0,0,.07); padding:2rem 2.5rem; margin-bottom:1.75rem; }
+        .page-hero h1 { color:var(--minsait-pruno); font-size:1.9rem; font-weight:700; margin-bottom:.35rem; }
+        .page-hero .hero-sub { color:#555; font-size:1rem; margin-bottom:1rem; }
+        .hero-badges { display:flex; flex-wrap:wrap; gap:.6rem; }
+        .hero-badge { display:inline-flex; align-items:center; gap:.35rem; padding:.35rem .85rem; border-radius:20px; font-size:.78rem; font-weight:600; letter-spacing:.3px; }
+        .hb-planned   { background:#E3F2FD; color:#1565C0; }
+        .hb-gate      { background:#FFEBEE; color:#C62828; }
+        .hb-sprint    { background:#E8F5E9; color:#1B5E20; }
+
+        /* ── KPI CARDS ── */
+        .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:1rem; margin-bottom:1.75rem; }
+        .kpi-card { background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.07); padding:1.25rem 1rem; text-align:center; border-bottom:3px solid #E0E0E0; transition:transform .2s, box-shadow .2s; }
+        .kpi-card:hover { transform:translateY(-3px); box-shadow:0 6px 16px rgba(0,0,0,.1); }
+        .kpi-card.green  { border-bottom-color:var(--success); }
+        .kpi-card.yellow { border-bottom-color:var(--warning); }
+        .kpi-card.red    { border-bottom-color:var(--danger); }
+        .kpi-card.fucsia { border-bottom-color:var(--minsait-fucsia); }
+        .kpi-num { font-size:2.4rem; font-weight:800; color:var(--minsait-fucsia); line-height:1; }
+        .kpi-card.green  .kpi-num { color:var(--success); }
+        .kpi-card.yellow .kpi-num { color:#c9900a; }
+        .kpi-card.red    .kpi-num { color:var(--danger); }
+        .kpi-label { font-size:.78rem; color:#666; margin-top:.35rem; font-weight:500; }
+        .kpi-sub   { font-size:.72rem; color:#aaa; margin-top:.2rem; }
+
+        /* ── SECTIONS ── */
+        section { scroll-margin-top:76px; margin-bottom:2rem; }
+        .section-card { background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.07); overflow:hidden; margin-bottom:1.25rem; }
+        .section-title-bar { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; border-left:4px solid var(--minsait-fucsia); background:#fff; cursor:pointer; user-select:none; }
+        .section-title-bar h2 { font-size:1.1rem; font-weight:700; color:var(--minsait-pruno); display:flex; align-items:center; gap:.5rem; }
+        .toggle-arrow { transition:transform .3s; color:var(--minsait-fucsia); font-size:.9rem; }
+        .toggle-arrow.open { transform:rotate(90deg); }
+        .section-body { padding:1.5rem; }
+
+        /* ── CHARTS ── */
+        .charts-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:1.25rem; }
+        .chart-wrap { background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.07); padding:1.25rem; }
+        .chart-title { font-size:.9rem; font-weight:700; color:var(--minsait-pruno); margin-bottom:.75rem; padding-bottom:.5rem; border-bottom:2px solid var(--minsait-gris-ceramica); }
+        .chart-wrap canvas { max-height:260px; width:100% !important; }
+
+        /* ── EDIT WARNING ── */
+        .edit-warning { background:#FFF9E6; border:1px solid #F39C12; border-left:4px solid #F39C12; border-radius:6px; padding:.75rem 1rem; font-size:.82rem; color:#7D5E00; margin-bottom:1rem; display:flex; align-items:flex-start; gap:.5rem; }
+
+        /* ── FILTERS ── */
+        .filters-bar { display:flex; flex-wrap:wrap; gap:.75rem; align-items:center; margin-bottom:1rem; }
+        .filters-bar select, .filters-bar input { font-family:inherit; font-size:.85rem; border:1px solid #CCC; border-radius:6px; padding:.45rem .75rem; background:#fff; color:#333; cursor:pointer; transition:border-color .2s; }
+        .filters-bar select:focus, .filters-bar input:focus { outline:none; border-color:var(--minsait-fucsia); }
+        .btn-action { font-family:inherit; font-size:.82rem; font-weight:600; padding:.45rem 1rem; border-radius:6px; border:none; cursor:pointer; transition:all .2s; display:inline-flex; align-items:center; gap:.35rem; }
+        .btn-csv    { background:var(--minsait-pruno); color:#fff; }
+        .btn-csv:hover { background:var(--minsait-pruno-oscuro); }
+        .btn-print  { background:var(--minsait-gris-ceramica); color:var(--minsait-pruno); }
+        .btn-print:hover { background:#d0cfca; }
+        .btn-save   { background:var(--success); color:#fff; }
+        .btn-save:hover { background:#009d7b; }
+        .btn-save:disabled { opacity:.6; cursor:not-allowed; }
+        .filters-right { margin-left:auto; display:flex; gap:.6rem; flex-wrap:wrap; }
+
+        /* ── SAVE TOAST ── */
+        .save-toast { position:fixed; bottom:2rem; right:2rem; background:var(--success); color:#fff; padding:.85rem 1.4rem; border-radius:8px; font-weight:600; font-size:.9rem; box-shadow:0 4px 18px rgba(0,184,148,.45); z-index:9999; transform:translateY(80px); opacity:0; transition:transform .35s ease, opacity .35s ease; pointer-events:none; }
+        .save-toast.show  { transform:translateY(0); opacity:1; }
+        .save-toast.error { background:var(--danger); box-shadow:0 4px 18px rgba(214,48,49,.45); }
+
+        /* ── MODAL ── */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:8000; align-items:center; justify-content:center; }
+        .modal-overlay.open { display:flex; }
+        .modal-box { background:#fff; border-radius:10px; padding:2rem 2.25rem; width:min(520px,94vw); box-shadow:0 8px 40px rgba(0,0,0,.25); border-top:4px solid var(--minsait-fucsia); }
+        .modal-box h3 { font-size:1.25rem; font-weight:700; color:var(--minsait-pruno); margin-bottom:1.25rem; }
+        .modal-field { margin-bottom:1rem; }
+        .modal-field label { display:block; font-size:.82rem; font-weight:600; color:#555; margin-bottom:.35rem; }
+        .modal-field input, .modal-field select, .modal-field textarea { width:100%; padding:.5rem .75rem; border:1px solid #D0D0D0; border-radius:6px; font-family:inherit; font-size:.9rem; transition:border-color .2s; }
+        .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus { outline:none; border-color:var(--minsait-fucsia); }
+        .modal-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        .modal-actions { display:flex; justify-content:flex-end; gap:.75rem; margin-top:1.5rem; }
+        .btn-modal-cancel  { background:#f0f0f0; color:#333; border:none; padding:.55rem 1.25rem; border-radius:6px; cursor:pointer; font-weight:600; font-size:.88rem; }
+        .btn-modal-confirm { background:var(--minsait-fucsia); color:#fff; border:none; padding:.55rem 1.25rem; border-radius:6px; cursor:pointer; font-weight:700; font-size:.88rem; }
+        .btn-modal-confirm:hover { background:#cc0050; }
+
+        /* ── TABLE ── */
+        .table-scroll { overflow-x:auto; border-radius:6px; border:1px solid #E0E0E0; }
+        table.stories-table { width:100%; border-collapse:collapse; background:#fff; }
+        table.stories-table thead { background:var(--minsait-pruno); color:#fff; }
+        table.stories-table thead th { padding:.75rem 1rem; text-align:left; font-size:.78rem; font-weight:600; letter-spacing:.3px; white-space:nowrap; }
+        table.stories-table tbody tr { border-bottom:1px solid #EBEBEB; transition:background .15s; }
+        table.stories-table tbody tr:hover { background:#FAFAFA; }
+        table.stories-table tbody td { padding:.6rem .85rem; font-size:.83rem; color:#444; vertical-align:middle; }
+        table.stories-table tbody td.td-id { font-weight:600; color:var(--minsait-pruno); white-space:nowrap; }
+        .td-id a { color:var(--minsait-pruno); text-decoration:none; border-bottom:1px dashed var(--minsait-fucsia); transition:color .15s; }
+        .td-id a:hover { color:var(--minsait-fucsia); }
+        table.stories-table tbody td.td-title { min-width:220px; }
+        .dep-tag { display:inline-block; background:#EEE; color:#555; border-radius:4px; padding:.1rem .4rem; font-size:.7rem; margin-right:.2rem; }
+        .blocker-tag { display:inline-block; background:#FFEBEE; color:#C62828; border-radius:4px; padding:.1rem .4rem; font-size:.7rem; font-weight:700; }
+
+        /* ── PRIORITY BADGES ── */
+        .badge-prio { display:inline-block; border-radius:12px; padding:.2rem .65rem; font-size:.72rem; font-weight:700; white-space:nowrap; }
+        .prio-critical { background:#FFEBEE; color:#B71C1C; }
+        .prio-high     { background:#FFF3E0; color:#E65100; }
+        .prio-medium   { background:#FFF9C4; color:#827717; }
+        .prio-low      { background:#EEEEEE; color:#555; }
+
+        /* ── STATUS BADGES ── */
+        .badge-status { display:inline-block; border-radius:12px; padding:.25rem .7rem; font-size:.72rem; font-weight:700; cursor:pointer; white-space:nowrap; position:relative; transition:opacity .15s; }
+        .badge-status:hover { opacity:.8; }
+        .bs-todo       { background:#EEEEEE; color:#555; }
+        .bs-inprogress { background:rgba(255,0,84,.12); color:rgb(180,0,60); }
+        .bs-done       { background:#E8F5E9; color:#1B5E20; }
+        .bs-blocked    { background:#FFEBEE; color:#B71C1C; animation:pulse-badge 1.5s infinite; }
+        @keyframes pulse-badge { 0%,100% { box-shadow:0 0 0 0 rgba(214,48,49,.35); } 50% { box-shadow:0 0 0 5px rgba(214,48,49,0); } }
+
+        /* ── INLINE EDITABLE CELLS ── */
+        .editable { min-width:90px; padding:.2rem .4rem; border-radius:4px; border:1px solid transparent; background:transparent; font-family:inherit; font-size:.83rem; color:#444; cursor:text; transition:border-color .15s, background .15s; }
+        .editable:focus { outline:none; border-color:var(--minsait-fucsia); background:#fff; }
+        input[type="date"].editable { cursor:pointer; }
+
+        /* ── STATUS DROPDOWN ── */
+        .status-dropdown { position:absolute; left:0; top:100%; background:#fff; border:1px solid #DDD; border-radius:6px; box-shadow:0 4px 16px rgba(0,0,0,.14); z-index:500; min-width:130px; padding:.25rem 0; display:none; }
+        .status-dropdown.open { display:block; }
+        .status-dropdown li { list-style:none; padding:.5rem .85rem; font-size:.8rem; cursor:pointer; transition:background .15s; }
+        .status-dropdown li:hover { background:#F5F5F5; }
+
+        /* ── BLOCKER CARDS ── */
+        .blocker-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
+        .blocker-card { background:#FFEBEE; border:1px solid #FFCDD2; border-left:5px solid var(--danger); border-radius:8px; padding:1.25rem; }
+        .blocker-id    { font-size:.75rem; font-weight:800; color:#B71C1C; letter-spacing:.5px; margin-bottom:.35rem; }
+        .blocker-title { font-size:.95rem; font-weight:700; color:#7B1818; margin-bottom:.5rem; }
+        .blocker-meta  { font-size:.8rem; color:#C62828; }
+        .blocker-meta span { display:inline-block; margin-right:1rem; }
+
+        /* ── TIMELINE ── */
+        .timeline-wrap { overflow-x:auto; padding-bottom:.5rem; }
+        .timeline-grid { display:grid; min-width:750px; }
+        .tl-header { display:flex; margin-bottom:.35rem; padding-left:90px; }
+        .tl-day { flex:1; text-align:center; font-size:.7rem; font-weight:700; color:#888; padding:.2rem 0; }
+        .tl-day.gate-day { color:var(--danger); font-weight:800; }
+        .tl-row  { display:flex; align-items:center; margin-bottom:.35rem; }
+        .tl-label { width:90px; font-size:.78rem; font-weight:600; color:var(--minsait-pruno); white-space:nowrap; padding-right:.5rem; }
+        .tl-track { display:flex; flex:1; gap:2px; }
+        .tl-cell { flex:1; height:28px; border-radius:4px; background:#EEEEEE; opacity:.4; position:relative; overflow:visible; }
+        .tl-cell.has-story { opacity:1; display:flex; align-items:center; justify-content:center; }
+        .gate-label { font-size:.65rem; font-weight:800; color:var(--danger); text-align:center; margin-top:.2rem; letter-spacing:.3px; }
+
+        /* ── EPICS PANORAMA ── */
+        .epics-table { width:100%; border-collapse:collapse; }
+        .epics-table thead { background:var(--minsait-pruno); color:#fff; }
+        .epics-table thead th { padding:.65rem .85rem; font-size:.78rem; text-align:left; white-space:nowrap; }
+        .epics-table tbody tr { border-bottom:1px solid #EBEBEB; transition:background .15s; }
+        .epics-table tbody tr:hover { background:#FAF8FB; }
+        .epics-table tbody td { padding:.55rem .85rem; font-size:.82rem; color:#444; vertical-align:middle; }
+        .epic-id-cell { font-weight:700; color:var(--minsait-pruno); white-space:nowrap; }
+        .epic-id-cell a { color:var(--minsait-pruno); text-decoration:none; border-bottom:1px dashed var(--minsait-fucsia); }
+        .epic-id-cell a:hover { color:var(--minsait-fucsia); }
+        .epic-progress-bar-wrap { background:#EEE; border-radius:999px; height:8px; min-width:80px; overflow:hidden; }
+        .epic-progress-bar { height:8px; border-radius:999px; background:var(--minsait-fucsia); transition:width .4s; }
+        .epic-progress-bar.done    { background:var(--success); }
+        .epic-progress-bar.blocked { background:var(--danger); }
+
+        /* ── GATES ── */
+        .gates-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:1rem; }
+        .gate-card { border-radius:8px; padding:1.25rem; border:1px solid #E0E0E0; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+        .gate-card.gate-pending  { border-left:5px solid var(--warning); }
+        .gate-card.gate-ok       { border-left:5px solid var(--success); }
+        .gate-card.gate-fail     { border-left:5px solid var(--danger); }
+        .gate-card.gate-critical { border-left:5px solid var(--minsait-fucsia); }
+        .gate-num   { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#888; margin-bottom:.4rem; }
+        .gate-title { font-size:1rem; font-weight:700; color:var(--minsait-pruno); margin-bottom:.3rem; }
+        .gate-date  { font-size:.8rem; color:#888; margin-bottom:.6rem; }
+        .gate-status-badge { display:inline-block; border-radius:999px; padding:.2rem .65rem; font-size:.72rem; font-weight:700; }
+        .gate-status-badge.pending { background:#FFF3E0; color:#E65100; }
+        .gate-status-badge.ok      { background:#E8F5E9; color:#1B5E20; }
+        .gate-status-badge.fail    { background:#FFEBEE; color:#B71C1C; }
+        .gate-question { font-size:.82rem; color:#555; margin-top:.6rem; line-height:1.4; }
+
+        /* ── FOOTER ── */
+        footer { background:#FAFAFA; border-top:1px solid #E5E5E5; color:#666; text-align:center; padding:2.5rem 2rem; margin-top:3rem; margin-left:var(--sidebar-width); transition:margin-left .3s ease; }
+        footer.expanded { margin-left:0; }
+        footer p { margin:.4rem 0; font-size:.87rem; }
+        footer strong { color:#333; }
+        footer .minsait-tagline { color:var(--minsait-fucsia); font-weight:600; font-size:.95rem; margin-top:.75rem; letter-spacing:.05em; }
+        footer img { opacity:.7; filter:grayscale(100%); width:140px; height:auto; margin-bottom:1.25rem; display:block; margin-left:auto; margin-right:auto; }
+
+        /* ── PRINT ── */
+        @media print {
+            .sidebar,.top-header,.btn-action,.filters-right,.btn-toggle-sidebar { display:none !important; }
+            .main-content { margin-left:0 !important; margin-top:0 !important; padding:1rem !important; }
+            footer { margin-left:0 !important; }
+            .kpi-row { grid-template-columns:repeat(5,1fr) !important; }
+            .charts-grid { grid-template-columns:repeat(3,1fr) !important; }
+            .section-body { display:block !important; }
+            .section-card { page-break-inside:avoid; box-shadow:none; border:1px solid #CCC; margin-bottom:.75rem; }
+            @page { margin:1.5cm; }
+            canvas { max-height:200px !important; }
+            table.stories-table { font-size:.7rem; }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width:1024px) {
+            .btn-toggle-sidebar { display:block; }
+            .sidebar { transform:translateX(calc(-1 * var(--sidebar-width))); }
+            .sidebar.active { transform:translateX(0); }
+            .main-content { margin-left:0; }
+            footer { margin-left:0; }
+            .charts-grid { grid-template-columns:1fr; }
+        }
+        @media (max-width:768px) {
+            .main-content { padding:1rem 1.25rem; }
+            .page-hero { padding:1.25rem; }
+            .page-hero h1 { font-size:1.4rem; }
+            .kpi-row { grid-template-columns:repeat(2,1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     ██████████████████████████████████████████████████████████████
+     ██  M3A TEAM: PROJECT DATA                                   ██
+     ██  Edit ONLY this block. Do not modify the rest of the code.██
+     ██████████████████████████████████████████████████████████████
+     ══════════════════════════════════════════════════════════════════ -->
+<script>
+/* ===================================================================
+   M3A TEAM: PROJECT DATA — EDIT ONLY THIS BLOCK
+   ===================================================================
+   Instructions:
+   - Replace all {{PLACEHOLDER}} values with your actual data.
+   - Status valid values: "todo" | "in-progress" | "done" | "blocked"
+   - Priority valid values: "critical" | "high" | "medium" | "low"
+   - Dates: "YYYY-MM-DD" format.
+   =================================================================== */
+
+const PROJETO = {
+    nome:             "{{PROJECT_NAME}}",          // e.g. "My Platform — Migration v2.0"
+    versao:           "{{VERSION_TARGET}}",         // e.g. "2.0.0"
+    sigla:            "{{PROJECT_CODE}}",           // e.g. "MMP"
+    inicio:           "{{PROJECT_START_DATE}}",     // e.g. "2026-05-01"
+    fim:              "{{PROJECT_END_DATE}}",        // e.g. "2026-09-30"
+    totalEpics:       0,                            // {{TOTAL_EPICS}} — number of epics
+    totalStories:     0,                            // {{TOTAL_STORIES}} — total story count
+    storiesCompletas: 0,                            // {{STORIES_COMPLETED}} — completed story count
+    totalSprints:     0,                            // {{TOTAL_SPRINTS}} — number of sprints
+    portalUrl:        "{{PORTAL_HOME_URL}}",        // e.g. "../portal/index.html"
+    logoPath:         "../portal/assets/AF_MINSAIT_LOG_NEG.png",  // approved M3A logo for dark backgrounds; resolved from approved bases only
+    logoPathLight:    "../portal/assets/AF_MINSAIT_LOG_POS.png",  // approved M3A logo for light backgrounds; resolved from approved bases only
+    organizacao:      "{{ORG_NAME}}",               // e.g. "Minsait (An Indra Company)"
+    tagline:          "{{BRANDING_TAGLINE}}",       // e.g. "Tech for impact"
+    docYear:          "{{DOC_YEAR}}",               // e.g. "2026"
+};
+
+const SPRINT_ATUAL = {
+    numero:             0,                          // {{CURRENT_SPRINT_NUMBER}} — e.g. 1
+    nome:               "{{CURRENT_SPRINT_NAME}}", // e.g. "Sprint 1 — Foundation"
+    inicio:             "{{CURRENT_SPRINT_START}}",// e.g. "2026-05-01"
+    fim:                "{{CURRENT_SPRINT_END}}",  // e.g. "2026-05-14"
+    velocidade:         0,                         // {{SPRINT_VELOCITY}} — team velocity (story points or days)
+    pontos_comprometidos: 0,                       // {{SPRINT_POINTS_COMMITTED}}
+    pontos_completados:   0,                       // {{SPRINT_POINTS_COMPLETED}}
+    objetivo:           "{{SPRINT_GOAL}}",         // e.g. "Validate compatibility and set up build pipeline"
+    gate:               null,                      // e.g. "Gate 1 — 2026-05-14 — Go/No-Go Decision" or null
+};
+
+// ── EPICS ──
+// Add one object per epic.
+// Fields: id, codigo, titulo, descricao, sprint (start), sprintFim (end),
+//         responsavel, estimativaDias, status, prioridade, gate (string or null)
+const EPICS = [
+    // Example:
+    // { id: "EPIC-001", codigo: "EP-01", titulo: "Foundation Setup", descricao: "Set up build pipeline and validate tech stack.", sprint: "S01", sprintFim: "S01", responsavel: "Eng. A", estimativaDias: 8, status: "todo", prioridade: "critical", gate: "Gate 1 — {{DATE}}" },
+    // { id: "EPIC-002", codigo: "EP-02", titulo: "Database Migration", descricao: "Migrate database to new version.", sprint: "S02", sprintFim: "S03", responsavel: "Eng. B", estimativaDias: 12, status: "todo", prioridade: "critical", gate: null },
+];
+
+// ── STORIES ──
+// Add one object per user story.
+// Fields: id, epicId, titulo, responsavel, estimativa (days), status, prioridade,
+//         inicio, fim, observacoes, dependeDe (array of story IDs)
+const STORIES = [
+    // Example:
+    // { id: "US-001", epicId: "EPIC-001", titulo: "Set up CI pipeline", responsavel: "Eng. A", estimativa: 1, status: "todo", prioridade: "critical", inicio: "", fim: "", observacoes: "", dependeDe: [] },
+    // { id: "US-002", epicId: "EPIC-001", titulo: "Configure build tool", responsavel: "Eng. A", estimativa: 0.5, status: "todo", prioridade: "high", inicio: "", fim: "", observacoes: "", dependeDe: ["US-001"] },
+];
+
+// ── BURNDOWN ──
+// Update daily. N = cumulative completed stories up to that day.
+// Format: { data: "YYYY-MM-DD", concluidas: N }
+const BURNDOWN_REAL = [
+    // { data: "{{PROJECT_START_DATE}}", concluidas: 0 },
+    // { data: "2026-05-02", concluidas: 2 },
+];
+
+// ── BLOCKERS ──
+// Active blockers. bloqueia = array of story IDs affected.
+const BLOCKERS = [
+    // { id: "B1", titulo: "Blocker title", descricao: "Detailed description", bloqueia: ["US-001"], owner: "Eng. A", severidade: "CRITICAL" },
+];
+
+// ── STORY FILE LINKS ──
+// Map story ID → HTML file path (relative to this tracker file).
+// Only stories with a dedicated HTML file need an entry here.
+const STORY_FILES = {
+    // "US-001": "stories/US-001.html",
+};
+
+// ── EPIC FILE LINKS ──
+// Map epic ID → HTML file path.
+const EPIC_FILES = {
+    // "EPIC-001": "epics/EPIC-001.html",
+};
+
+// ── SPRINT CALENDAR ──
+// Define all sprints: id, label (short name for display), dates.
+// The burndown chart will span from SPRINT_CALENDAR[0].inicio to SPRINT_CALENDAR[last].fim.
+const SPRINT_CALENDAR = [
+    // { id: "S01", label: "S01", inicio: "{{PROJECT_START_DATE}}", fim: "{{SPRINT_1_END_DATE}}" },
+    // { id: "S02", label: "S02", inicio: "{{SPRINT_2_START_DATE}}", fim: "{{SPRINT_2_END_DATE}}" },
+    // Add all sprints here...
+];
+
+// ── GATES ──
+// Risk gates for the project.
+const GATES = [
+    // { num: "Gate 1", titulo: "Go/No-Go Decision", sprint: "Sprint 1 Review", data: "{{GATE_1_DATE}}", status: "pending", questao: "Is the tech stack viable? POC results determine the upgrade path.", tipo: "critical" },
+];
+
+// ── PUBLIC HOLIDAYS ──
+// ISO dates (YYYY-MM-DD) to exclude from burndown calculation.
+const FERIADOS = new Set([
+    // "{{HOLIDAY_DATE}}",
+]);
+
+/* ===================================================================
+   END OF PROJECT DATA — DO NOT EDIT BELOW THIS LINE
+   =================================================================== */
+</script>
+
+<!-- ── TOP HEADER ── -->
+<header class="top-header">
+    <img id="header-logo" src="../portal/assets/AF_MINSAIT_LOG_NEG.png" alt="Minsait" class="logo">
+    <div class="header-right">
+        <span class="version-badge" id="header-version-badge">vX.Y.Z</span>
+        <a id="btn-portal" href="../portal/index.html" class="btn-portal">← Portal</a>
+        <button class="btn-toggle-sidebar" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+    </div>
+</header>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h2>Rollout Tracker</h2>
+        <p id="sb-sprint-label">Sprint — loading...</p>
+    </div>
+    <nav>
+        <div class="sidebar-section-label">Dashboard</div>
+        <ul>
+            <li><a href="#kpis"   class="active">📊 Project KPIs</a></li>
+            <li><a href="#graficos">📈 Charts</a></li>
+            <li><a href="#sec-epics-panorama">📋 Epic Overview</a></li>
+            <li><a href="#stories">🗒️ Stories</a></li>
+        </ul>
+        <div class="sidebar-section-label" style="margin-top:.75rem;">Planning</div>
+        <ul>
+            <li><a href="#timeline">🗓️ Project Timeline</a></li>
+            <li><a href="#sec-gates">🚦 Risk Gates</a></li>
+            <li><a href="#sec-blockers">🚫 Blockers</a></li>
+        </ul>
+        <div class="sidebar-section-label" style="margin-top:.75rem;">Export</div>
+        <ul>
+            <li><a href="#" onclick="salvarArquivo();return false;">💾 Save to File</a></li>
+            <li><a href="#" onclick="exportCSV();return false;">⬇️ Export CSV</a></li>
+            <li><a href="#" onclick="window.print();return false;">🖨️ Print / PDF</a></li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- ── MAIN CONTENT ── -->
+<main class="main-content" id="mainContent">
+
+    <!-- PAGE HERO -->
+    <div class="page-hero">
+        <h1 id="hero-title">Rollout Tracker</h1>
+        <p class="hero-sub" id="hero-sub">Loading...</p>
+        <div class="hero-badges" id="hero-badges"></div>
+    </div>
+
+    <!-- ── KPIs ── -->
+    <section id="kpis">
+        <div class="kpi-row" id="kpi-row"></div>
+    </section>
+
+    <!-- ── CHARTS ── -->
+    <section id="graficos">
+        <div class="charts-grid">
+            <div class="chart-wrap">
+                <div class="chart-title">🍩 Story Status</div>
+                <canvas id="chartDonut"></canvas>
+            </div>
+            <div class="chart-wrap" style="grid-column:span 2;">
+                <div class="chart-title">📉 Project Burndown</div>
+                <canvas id="chartBurndown" style="max-height:280px;"></canvas>
+            </div>
+            <div class="chart-wrap" style="grid-column:span 3;">
+                <div class="chart-title">📊 Progress by Epic</div>
+                <canvas id="chartEpicBar" style="max-height:220px;"></canvas>
+            </div>
+            <div class="chart-wrap" style="grid-column:span 3;">
+                <div class="chart-title">👥 Progress by Assignee</div>
+                <canvas id="chartBar" style="max-height:220px;"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── EPIC OVERVIEW ── -->
+    <section id="sec-epics-panorama">
+        <div class="section-card">
+            <div class="section-title-bar" onclick="toggleSection('epics-panorama')">
+                <h2><span>📊</span> Epic Overview</h2>
+                <span class="toggle-arrow open" id="arr-epics-panorama">▶</span>
+            </div>
+            <div class="section-body" id="body-epics-panorama">
+                <div id="epics-panorama-table"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── STORIES TABLE ── -->
+    <section id="stories">
+        <div class="section-card">
+            <div class="section-title-bar" onclick="toggleSection('stories-body','arrow-stories')">
+                <h2><span>📋</span> Stories by Epic</h2>
+                <span class="toggle-arrow open" id="arrow-stories">▶</span>
+            </div>
+            <div class="section-body" id="stories-body">
+
+                <div class="edit-warning">
+                    <span>💡</span>
+                    <span>To persist inline edits: click <strong>💾 Save</strong>, select <strong>this file</strong> in the file picker, and confirm. The file is updated in place — then commit to your repository.</span>
+                </div>
+
+                <div class="filters-bar">
+                    <label style="font-size:.82rem;font-weight:600;color:#555;">Filters:</label>
+                    <select id="filter-status" onchange="applyFilters()">
+                        <option value="">All Statuses</option>
+                        <option value="todo">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="done">Done</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                    <select id="filter-resp" onchange="applyFilters()">
+                        <option value="">All Assignees</option>
+                    </select>
+                    <select id="filter-prio" onchange="applyFilters()">
+                        <option value="">All Priorities</option>
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <select id="filter-epic" onchange="applyFilters()">
+                        <option value="">All Epics</option>
+                        <!-- Options populated dynamically from EPICS array -->
+                    </select>
+                    <div class="filters-right">
+                        <button class="btn-action btn-save" id="btn-salvar" onclick="salvarArquivo()">💾 Save</button>
+                        <button class="btn-action btn-csv"   onclick="exportCSV()">⬇️ CSV</button>
+                        <button class="btn-action btn-print" onclick="window.print()">🖨️ Print</button>
+                    </div>
+                </div>
+
+                <div class="table-scroll">
+                    <table class="stories-table" id="stories-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Epic</th>
+                                <th>Title</th>
+                                <th>Assignee</th>
+                                <th>Est. (d)</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Notes</th>
+                                <th>Deps / Blocker</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stories-tbody"></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ── TIMELINE ── -->
+    <section id="timeline">
+        <div class="section-card">
+            <div class="section-title-bar" onclick="toggleSection('timeline-body','arrow-timeline')">
+                <h2><span>🗓️</span> Project Timeline</h2>
+                <span class="toggle-arrow open" id="arrow-timeline">▶</span>
+            </div>
+            <div class="section-body" id="timeline-body">
+                <p style="font-size:.82rem;color:#888;margin-bottom:.75rem;" id="timeline-description">
+                    Epic Gantt view across all sprints. Colored bars indicate progress.
+                    Risk gates marked in red.
+                </p>
+                <div class="timeline-wrap" id="timeline-container"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── RISK GATES ── -->
+    <section id="sec-gates">
+        <div class="section-card">
+            <div class="section-title-bar" onclick="toggleSection('gates')">
+                <h2><span>🚦</span> Risk Gates</h2>
+                <span class="toggle-arrow open" id="arr-gates">▶</span>
+            </div>
+            <div class="section-body" id="body-gates">
+                <div id="gates-cards"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── BLOCKERS ── -->
+    <section id="sec-blockers">
+        <div class="section-card">
+            <div class="section-title-bar" onclick="toggleSection('blockers')">
+                <h2><span>🚫</span> Active Blockers</h2>
+                <span class="toggle-arrow open" id="arr-blockers">▶</span>
+            </div>
+            <div class="section-body" id="body-blockers">
+                <div id="blockers-cards" class="blocker-cards"></div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer id="footer">
+    <img id="footer-logo" src="../portal/assets/AF_MINSAIT_LOG_POS.png" alt="Minsait - An Indra Company">
+    <p><strong id="footer-project-title">Rollout Tracker</strong></p>
+    <p id="footer-sprint-info"></p>
+    <p class="minsait-tagline" id="footer-tagline">Tech for impact</p>
+    <p id="footer-copyright" style="font-size:.75rem;margin-top:1.25rem;color:#999;"></p>
+</footer>
+
+<!-- ── STATUS DROPDOWN (singleton) ── -->
+<ul class="status-dropdown" id="status-dropdown">
+    <li onclick="setStatus('todo')"><span class="badge-status bs-todo">⬜ Pending</span></li>
+    <li onclick="setStatus('in-progress')"><span class="badge-status bs-inprogress">🔄 In Progress</span></li>
+    <li onclick="setStatus('done')"><span class="badge-status bs-done">✅ Done</span></li>
+    <li onclick="setStatus('blocked')"><span class="badge-status bs-blocked">🚫 Blocked</span></li>
+</ul>
+
+<!-- ── SAVE TOAST ── -->
+<div class="save-toast" id="save-toast"></div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     DASHBOARD ENGINE — DO NOT EDIT (unless performing maintenance)
+     ══════════════════════════════════════════════════════════════════ -->
+<script>
+/* ════════════════════════════════════════════════════════════
+   M3A Team Rollout Tracker — Dashboard Engine v1.0.0
+   Reads from project data constants defined above.
+   ════════════════════════════════════════════════════════════ */
+
+// ── Helpers ──
+function statusLabel(s) { return { todo:'Pending', 'in-progress':'In Progress', done:'Done', blocked:'Blocked' }[s] || s; }
+function statusClass(s)  { return { todo:'bs-todo', 'in-progress':'bs-inprogress', done:'bs-done', blocked:'bs-blocked' }[s] || 'bs-todo'; }
+function prioClass(p)    { return { critical:'prio-critical', high:'prio-high', medium:'prio-medium', low:'prio-low' }[p] || 'prio-low'; }
+function prioLabel(p)    { return { critical:'CRITICAL', high:'HIGH', medium:'MEDIUM', low:'LOW' }[p] || (p||'').toUpperCase(); }
+
+// In-memory copies for inline editing
+const workData  = STORIES.map(s => ({...s}));
+const workEpics = EPICS.map(e => ({...e}));
+
+// ── Bootstrap ──
+(function init() {
+    window.__M3A_BRANDING_READY__.then((branding) => {
+        document.getElementById('header-logo').src = branding.resolveApprovedPath(PROJETO.logoPath, 'AF_MINSAIT_LOG_NEG.png');
+        document.getElementById('footer-logo').src = branding.resolveApprovedPath(PROJETO.logoPathLight, 'AF_MINSAIT_LOG_POS.png');
+    });
+
+    // Apply version
+    document.getElementById('header-version-badge').textContent = 'v' + PROJETO.versao;
+    document.getElementById('btn-portal').href   = PROJETO.portalUrl;
+
+    // Page title
+    document.getElementById('page-title').textContent =
+        `Rollout Tracker — ${PROJETO.nome} | Minsait`;
+
+    // Hero
+    document.getElementById('hero-title').textContent =
+        `${PROJETO.sigla} — Rollout Tracker`;
+    document.getElementById('hero-sub').textContent =
+        `${PROJETO.nome} · ${PROJETO.versao} · ${PROJETO.inicio} → ${PROJETO.fim}`;
+
+    // Hero badges
+    const heroB = document.getElementById('hero-badges');
+    heroB.innerHTML = [
+        SPRINT_ATUAL.nome ? `<span class="hero-badge hb-sprint">🏃 ${SPRINT_ATUAL.nome}</span>` : '',
+        SPRINT_ATUAL.gate ? `<span class="hero-badge hb-gate">🚦 ${SPRINT_ATUAL.gate}</span>` : '',
+        PROJETO.totalSprints ? `<span class="hero-badge hb-planned">📅 ${PROJETO.totalSprints} Sprints Planned</span>` : '',
+    ].filter(Boolean).join('');
+
+    // Sidebar sprint label
+    document.getElementById('sb-sprint-label').textContent =
+        `Sprint ${SPRINT_ATUAL.numero || '?'} · ${PROJETO.sigla}`;
+
+    // Epic filter dropdown
+    const epicSel = document.getElementById('filter-epic');
+    EPICS.forEach(ep => {
+        const o = document.createElement('option');
+        o.value = ep.id; o.textContent = `${ep.codigo} — ${ep.titulo}`;
+        epicSel.appendChild(o);
+    });
+
+    // Footer
+    document.getElementById('footer-project-title').innerHTML =
+        `<strong>${PROJETO.nome} — Rollout Tracker v${PROJETO.versao}</strong>`;
+    document.getElementById('footer-sprint-info').textContent =
+        SPRINT_ATUAL.nome ? `Sprint ${SPRINT_ATUAL.numero} | ${SPRINT_ATUAL.nome}` : '';
+    document.getElementById('footer-tagline').textContent = PROJETO.tagline || 'Tech for impact';
+    document.getElementById('footer-copyright').textContent =
+        `© ${PROJETO.docYear || new Date().getFullYear()} ${PROJETO.organizacao} — All rights reserved`;
+
+    // Render dashboard
+    calcKPIs();
+    buildCharts();
+    buildTable(workData);
+    buildEpicsPanorama();
+    buildTimeline();
+    buildGatesCards();
+    buildBlockersCards();
+})();
+
+// ── KPIs ──
+function calcKPIs() {
+    const total    = workData.length;
+    const done     = workData.filter(s => s.status === 'done').length;
+    const inprog   = workData.filter(s => s.status === 'in-progress').length;
+    const blocked  = workData.filter(s => s.status === 'blocked').length;
+    const pctDone  = total ? Math.round(done / total * 100) : 0;
+
+    const today    = new Date();
+    const sprintEnd = SPRINT_ATUAL.fim ? new Date(SPRINT_ATUAL.fim) : null;
+    const daysLeft  = sprintEnd ? Math.max(0, Math.ceil((sprintEnd - today) / (1000*60*60*24))) : '—';
+
+    const totalEpicsCount = EPICS.length;
+    const totalDias = EPICS.reduce((acc, e) => acc + (e.estimativaDias || 0), 0);
+
+    const doneColor  = pctDone > 50 ? 'green' : pctDone > 20 ? 'yellow' : 'fucsia';
+    const blockColor = blocked === 0 ? 'green' : blocked <= 2 ? 'yellow' : 'red';
+    const daysColor  = (typeof daysLeft === 'number') ? (daysLeft > 5 ? 'green' : daysLeft > 2 ? 'yellow' : 'red') : 'yellow';
+
+    document.getElementById('kpi-row').innerHTML = `
+      <div class="kpi-card fucsia">
+        <div class="kpi-num">${total}</div>
+        <div class="kpi-label">Total Stories</div>
+        <div class="kpi-sub">${totalEpicsCount} epics</div>
+      </div>
+      <div class="kpi-card ${doneColor}">
+        <div class="kpi-num">${pctDone}%</div>
+        <div class="kpi-label">% Done</div>
+        <div class="kpi-sub">${done} of ${total}</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-num">${inprog}</div>
+        <div class="kpi-label">In Progress</div>
+        <div class="kpi-sub">Sprint ${SPRINT_ATUAL.numero || '?'} active</div>
+      </div>
+      <div class="kpi-card ${blockColor}">
+        <div class="kpi-num">${blocked}</div>
+        <div class="kpi-label">Blocked</div>
+        <div class="kpi-sub">${BLOCKERS.length} active blocker${BLOCKERS.length !== 1 ? 's' : ''}</div>
+      </div>
+      <div class="kpi-card ${daysColor}">
+        <div class="kpi-num">${daysLeft}</div>
+        <div class="kpi-label">Days to Sprint End</div>
+        <div class="kpi-sub">${SPRINT_ATUAL.fim || 'No end date set'}</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-num">${totalDias}d</div>
+        <div class="kpi-label">Total Estimated</div>
+        <div class="kpi-sub">Eng-days (all epics)</div>
+      </div>
+    `;
+}
+
+// ── Charts ──
+let chartDonut, chartBurndown, chartBar, chartEpicBar;
+
+function buildCharts() {
+    const counts = { todo:0, 'in-progress':0, done:0, blocked:0 };
+    workData.forEach(s => { counts[s.status] = (counts[s.status]||0) + 1; });
+    const total = workData.length;
+
+    // Donut — story status
+    const dCtx = document.getElementById('chartDonut').getContext('2d');
+    if (chartDonut) chartDonut.destroy();
+    chartDonut = new Chart(dCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                `Pending (${counts.todo})`,
+                `In Progress (${counts['in-progress']})`,
+                `Done (${counts.done})`,
+                `Blocked (${counts.blocked})`
+            ],
+            datasets: [{
+                data: [counts.todo, counts['in-progress'], counts.done, counts.blocked],
+                backgroundColor: ['#AAAAAA', 'rgb(255,0,84)', '#00B894', '#D63031'],
+                borderWidth: 2, borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: true,
+            plugins: { legend: { position: 'bottom', labels: { font: { family:'ForFutureSans', size:11 }, padding:12 } } },
+            cutout: '65%'
+        }
+    });
+
+    // Burndown — project-wide
+    (function buildBurndown() {
+        if (!SPRINT_CALENDAR || SPRINT_CALENDAR.length === 0) return;
+        const projStart = SPRINT_CALENDAR[0].inicio;
+        const projEnd   = SPRINT_CALENDAR[SPRINT_CALENDAR.length - 1].fim;
+        if (!projStart || !projEnd) return;
+
+        function workDays(start, end) {
+            const days = [];
+            const cur  = new Date(start + 'T12:00:00Z');
+            const fin  = new Date(end   + 'T12:00:00Z');
+            while (cur <= fin) {
+                const dow = cur.getUTCDay();
+                const iso = cur.toISOString().slice(0, 10);
+                if (dow !== 0 && dow !== 6 && !FERIADOS.has(iso)) days.push(iso);
+                cur.setUTCDate(cur.getUTCDate() + 1);
+            }
+            return days;
+        }
+
+        const projDays = workDays(projStart, projEnd);
+        const bdTotal  = total;
+
+        const bdIdeal = projDays.map((_, i) =>
+            Math.round((bdTotal - (bdTotal / Math.max(1, projDays.length - 1)) * i) * 10) / 10
+        );
+
+        const realMap = {};
+        BURNDOWN_REAL.forEach(b => { realMap[b.data] = b.concluidas; });
+        const bdReal = projDays.map(d => realMap[d] !== undefined ? bdTotal - realMap[d] : null);
+
+        // Sprint start labels
+        const sprintStarts = new Set(SPRINT_CALENDAR.map(s => s.inicio));
+        const sprintLabel  = {};
+        SPRINT_CALENDAR.forEach(s => { sprintLabel[s.inicio] = s.label || s.id; });
+
+        const bCtx = document.getElementById('chartBurndown').getContext('2d');
+        if (chartBurndown) chartBurndown.destroy();
+        chartBurndown = new Chart(bCtx, {
+            type: 'line',
+            data: {
+                labels: projDays,
+                datasets: [
+                    { label:'Ideal', data:bdIdeal, borderColor:'#AAAAAA', borderDash:[6,4], borderWidth:2, pointRadius:0, tension:0, fill:false, backgroundColor:'transparent' },
+                    { label:'Actual', data:bdReal, borderColor:'rgb(255,0,84)', borderWidth:2.5, pointRadius:5, backgroundColor:'rgba(255,0,84,.1)', tension:0.3, fill:true, spanGaps:false }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: true,
+                plugins: {
+                    legend: { position:'top', labels:{ font:{family:'ForFutureSans',size:11}, padding:14 } },
+                    tooltip: { mode:'index', intersect:false, callbacks: { title: (items) => { const iso = items[0]?.label||''; return (sprintLabel[iso] ? sprintLabel[iso]+' · ' : '') + iso.slice(8)+'/'+iso.slice(5,7)+'/'+iso.slice(0,4); } } }
+                },
+                scales: {
+                    y: { beginAtZero:true, title:{ display:true, text:'Remaining Stories', font:{family:'ForFutureSans',size:11} } },
+                    x: {
+                        ticks: { autoSkip:false, maxRotation:45, callback: function(val, idx) { const d=projDays[idx]; return sprintStarts.has(d) ? sprintLabel[d]||d.slice(8)+'/'+d.slice(5,7) : ''; } },
+                        title: { display:true, text:'Working Days', font:{family:'ForFutureSans',size:11} }
+                    }
+                }
+            }
+        });
+    })();
+
+    // Bar — by assignee
+    const assignees = [...new Set(workData.map(s => s.responsavel))].sort();
+    const barsData  = { done:[], 'in-progress':[], todo:[], blocked:[] };
+    assignees.forEach(r => {
+        const rs = workData.filter(s => s.responsavel === r);
+        barsData.done.push(rs.filter(s => s.status === 'done').length);
+        barsData['in-progress'].push(rs.filter(s => s.status === 'in-progress').length);
+        barsData.todo.push(rs.filter(s => s.status === 'todo').length);
+        barsData.blocked.push(rs.filter(s => s.status === 'blocked').length);
+    });
+    const barCtx = document.getElementById('chartBar').getContext('2d');
+    if (chartBar) chartBar.destroy();
+    chartBar = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: assignees,
+            datasets: [
+                { label:'Done',        data:barsData.done,           backgroundColor:'#00B894' },
+                { label:'In Progress', data:barsData['in-progress'], backgroundColor:'rgb(255,0,84)' },
+                { label:'Pending',     data:barsData.todo,           backgroundColor:'#CCCCCC' },
+                { label:'Blocked',     data:barsData.blocked,        backgroundColor:'#D63031' }
+            ]
+        },
+        options: { responsive:true, maintainAspectRatio:true, plugins:{ legend:{ position:'top', labels:{ font:{family:'ForFutureSans',size:11}, padding:12 } } }, scales:{ x:{ stacked:true }, y:{ stacked:true, beginAtZero:true, ticks:{ stepSize:1 } } } }
+    });
+
+    // Bar — by epic
+    const epicLabels = EPICS.map(e => e.codigo);
+    const epicsStackData = { done:[], 'in-progress':[], todo:[], blocked:[] };
+    EPICS.forEach(ep => {
+        const epSt = workData.filter(s => s.epicId === ep.id);
+        epicsStackData.done.push(epSt.filter(s => s.status === 'done').length);
+        epicsStackData['in-progress'].push(epSt.filter(s => s.status === 'in-progress').length);
+        epicsStackData.todo.push(epSt.filter(s => s.status === 'todo').length);
+        epicsStackData.blocked.push(epSt.filter(s => s.status === 'blocked').length);
+    });
+    const epicBarEl = document.getElementById('chartEpicBar');
+    if (epicBarEl) {
+        if (chartEpicBar) chartEpicBar.destroy();
+        chartEpicBar = new Chart(epicBarEl.getContext('2d'), {
+            type: 'bar',
+            data: { labels:epicLabels, datasets: [
+                { label:'Done',        data:epicsStackData.done,           backgroundColor:'#00B894' },
+                { label:'In Progress', data:epicsStackData['in-progress'], backgroundColor:'rgb(255,0,84)' },
+                { label:'Pending',     data:epicsStackData.todo,           backgroundColor:'#CCCCCC' },
+                { label:'Blocked',     data:epicsStackData.blocked,        backgroundColor:'#D63031' }
+            ]},
+            options: { responsive:true, maintainAspectRatio:true, plugins:{ legend:{ position:'top', labels:{ font:{family:'ForFutureSans',size:11}, padding:12 } } }, scales:{ x:{ stacked:true }, y:{ stacked:true, beginAtZero:true, ticks:{ stepSize:1 } } } }
+        });
+    }
+}
+
+// ── Stories Table ──
+let activeStatusRow = null;
+
+function buildTable(data) {
+    // Populate assignee filter
+    const respSel = document.getElementById('filter-resp');
+    if (respSel.options.length === 1) {
+        const assignees = [...new Set(STORIES.map(s => s.responsavel))].sort();
+        assignees.forEach(r => { const o = document.createElement('option'); o.value = r; o.textContent = r; respSel.appendChild(o); });
+    }
+
+    const tbody = document.getElementById('stories-tbody');
+    tbody.innerHTML = '';
+
+    if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:2rem;color:#888;font-style:italic;">No stories configured yet. Add entries to the STORIES array above.</td></tr>`;
+        return;
+    }
+
+    data.forEach(s => {
+        const depStr = (s.dependeDe || []).map(d => `<span class="dep-tag">${d}</span>`).join(' ');
+        const blkStr = s.bloqueio ? `<span class="blocker-tag" title="${BLOCKERS.find(b=>b.id===s.bloqueio)?.titulo||''}">${s.bloqueio}</span>` : '';
+        const row = document.createElement('tr');
+        row.dataset.storyId = s.id;
+        row.innerHTML = `
+          <td class="td-id">${STORY_FILES[s.id]
+            ? `<a href="${STORY_FILES[s.id]}" target="_blank" title="Open ${s.id}">${s.id}</a>`
+            : s.id}</td>
+          <td>${(() => { const ep = EPICS.find(e => e.id === s.epicId); const lbl = ep ? ep.codigo : s.epicId;
+            return EPIC_FILES[s.epicId]
+              ? `<a href="${EPIC_FILES[s.epicId]}" target="_blank" style="font-size:.75rem;font-weight:600;color:var(--minsait-fucsia);text-decoration:none;border-bottom:1px dashed var(--minsait-fucsia);">${lbl}</a>`
+              : `<span style="font-size:.75rem;font-weight:600;color:var(--minsait-fucsia);">${lbl || s.epicId}</span>`;
+          })()}</td>
+          <td class="td-title">${s.titulo}</td>
+          <td><input class="editable" type="text" value="${s.responsavel||''}" onchange="updateField('${s.id}','responsavel',this.value);refreshCharts();"></td>
+          <td style="text-align:center;">${s.estimativa}</td>
+          <td><span class="badge-prio ${prioClass(s.prioridade)}">${prioLabel(s.prioridade)}</span></td>
+          <td style="position:relative;">
+            <span class="badge-status ${statusClass(s.status)}" onclick="openStatusDD('${s.id}',this)" role="button" tabindex="0">
+              ${statusLabel(s.status)}
+            </span>
+          </td>
+          <td><input class="editable" type="date" value="${s.inicio||''}" onchange="updateField('${s.id}','inicio',this.value);"></td>
+          <td><input class="editable" type="date" value="${s.fim||''}"    onchange="updateField('${s.id}','fim',this.value);"></td>
+          <td><input class="editable" type="text" placeholder="—" value="${s.observacoes||''}" style="min-width:120px;" onchange="updateField('${s.id}','observacoes',this.value);"></td>
+          <td>${depStr}${blkStr}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function applyFilters() {
+    const fs = document.getElementById('filter-status').value;
+    const fr = document.getElementById('filter-resp').value;
+    const fp = document.getElementById('filter-prio').value;
+    const fe = document.getElementById('filter-epic')?.value || '';
+    buildTable(workData.filter(s =>
+        (!fs || s.status === fs) && (!fr || s.responsavel === fr) &&
+        (!fp || s.prioridade === fp) && (!fe || s.epicId === fe)
+    ));
+}
+
+function updateField(id, field, val) {
+    const s = workData.find(s => s.id === id);
+    if (s) s[field] = val;
+}
+
+// ── Status Dropdown ──
+let _ddTarget = null;
+function openStatusDD(id, el) {
+    _ddTarget = id;
+    const dd = document.getElementById('status-dropdown');
+    const r  = el.getBoundingClientRect();
+    dd.style.top  = (r.bottom + window.scrollY) + 'px';
+    dd.style.left = (r.left  + window.scrollX) + 'px';
+    dd.style.position = 'absolute';
+    dd.classList.add('open');
+}
+function setStatus(newStatus) {
+    if (!_ddTarget) return;
+    updateField(_ddTarget, 'status', newStatus);
+    document.getElementById('status-dropdown').classList.remove('open');
+    _ddTarget = null;
+    applyFilters(); refreshCharts();
+}
+document.addEventListener('click', e => {
+    if (!e.target.closest('#status-dropdown') && !e.target.classList.contains('badge-status'))
+        document.getElementById('status-dropdown').classList.remove('open');
+});
+
+function refreshCharts() { calcKPIs(); buildCharts(); buildEpicsPanorama(); buildTimeline(); }
+
+// ── Timeline Gantt ──
+function buildTimeline() {
+    const container = document.getElementById('timeline-container');
+    if (!SPRINT_CALENDAR || SPRINT_CALENDAR.length === 0) {
+        container.innerHTML = '<p style="color:#888;font-size:.85rem;">Configure SPRINT_CALENDAR to enable the timeline view.</p>';
+        return;
+    }
+
+    const allSprints  = SPRINT_CALENDAR.map(s => s.id);
+    const sprintLabel = {};
+    const sprintDates = {};
+    SPRINT_CALENDAR.forEach(s => { sprintLabel[s.id] = s.label || s.id; sprintDates[s.id] = s.inicio +' → '+ s.fim; });
+    const gateAtSprint = {};
+    GATES.forEach(g => { if (g.sprint) { const match = SPRINT_CALENDAR.find(s => g.sprint.includes(s.id)); if (match) gateAtSprint[match.id] = g.num; } });
+    const sprintOrder = {};
+    allSprints.forEach((id, idx) => { sprintOrder[id] = idx; });
+
+    let html = '<div class="timeline-grid" style="min-width:780px;">';
+    html += '<div class="tl-header" style="padding-left:175px;">';
+    allSprints.forEach(s => {
+        const isGate = !!gateAtSprint[s];
+        html += `<div class="tl-day${isGate?' gate-day':''}" style="flex:1;min-width:72px;text-align:center;padding:0 1px;">
+          <div style="font-weight:700;">${sprintLabel[s]}</div>
+          <div style="font-size:.62rem;font-weight:400;color:#aaa;">${(sprintDates[s]||'').slice(5,10)}</div>
+          ${isGate ? `<div style="font-size:.6rem;color:var(--danger);font-weight:800;">${gateAtSprint[s]}</div>` : '<div style="font-size:.6rem;">&nbsp;</div>'}
+        </div>`;
+    });
+    html += '</div>';
+
+    EPICS.forEach(ep => {
+        const startIdx = sprintOrder[ep.sprint]    ?? 0;
+        const endIdx   = sprintOrder[ep.sprintFim] ?? (allSprints.length - 1);
+        const spanLen  = endIdx - startIdx + 1;
+
+        const stories  = workData.filter(s => s.epicId === ep.id);
+        const totalSt  = stories.length;
+        const doneSt   = stories.filter(s => s.status === 'done').length;
+        const inprogSt = stories.filter(s => s.status === 'in-progress').length;
+        const blkSt    = stories.filter(s => s.status === 'blocked').length;
+        const pctSt    = totalSt ? Math.round(doneSt / totalSt * 100) : 0;
+        const fillPct  = totalSt ? Math.max((doneSt > 0 || inprogSt > 0) ? 6 : 0, Math.round((doneSt + inprogSt * 0.5) / totalSt * 100)) : 0;
+        const fillColor= blkSt > 0 ? 'var(--danger)' : doneSt === totalSt && totalSt > 0 ? 'var(--success)' : doneSt > 0 || inprogSt > 0 ? 'var(--minsait-fucsia)' : '#BBBBBB';
+        const textColor= (fillColor !== '#BBBBBB' && fillPct >= 30) ? '#fff' : (fillColor !== '#BBBBBB' && fillPct > 0) ? fillColor : '#666';
+        const fillRadius = fillPct >= 100 ? '6px' : '6px 0 0 6px';
+
+        let gateMarkersHtml = '';
+        for (let gi = startIdx; gi <= endIdx; gi++) {
+            const gs = allSprints[gi];
+            if (gateAtSprint[gs]) {
+                const relPct = ((gi - startIdx + 1) / spanLen * 100).toFixed(1);
+                gateMarkersHtml += `<div title="${gateAtSprint[gs]}" style="position:absolute;left:${relPct}%;top:0;bottom:0;width:3px;background:rgba(214,48,49,.7);z-index:3;"></div>`;
+            }
+        }
+
+        html += `<div class="tl-row">
+          <div class="tl-label" style="width:175px;font-size:.76rem;white-space:normal;line-height:1.25;padding-right:.5rem;">
+            <span style="font-weight:700;color:var(--minsait-fucsia);">${ep.codigo}</span>
+            <span style="color:#555;"> ${ep.titulo}</span>
+          </div>
+          <div class="tl-track">`;
+
+        for (let i = 0; i < startIdx; i++) html += `<div style="flex:1;min-width:72px;height:28px;"></div>`;
+
+        html += `<div style="flex:${spanLen};min-width:${72*spanLen}px;height:28px;border-radius:6px;background:#E0E0E0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+          ${fillPct > 0 ? `<div style="position:absolute;left:0;top:0;height:100%;width:${fillPct}%;background:${fillColor};border-radius:${fillRadius};transition:width .4s ease;"></div>` : ''}
+          ${gateMarkersHtml}
+          <span style="position:relative;z-index:2;font-size:.7rem;font-weight:700;color:${textColor};letter-spacing:.2px;">${pctSt}%</span>
+        </div>`;
+
+        for (let i = endIdx + 1; i < allSprints.length; i++) html += `<div style="flex:1;min-width:72px;height:28px;"></div>`;
+        html += '</div></div>';
+    });
+
+    if (Object.keys(gateAtSprint).length > 0) {
+        html += `<div class="tl-row" style="margin-top:.5rem;">
+          <div class="tl-label" style="width:175px;font-size:.72rem;font-weight:700;color:#999;">Risk Gates</div>
+          <div class="tl-track">`;
+        allSprints.forEach(s => { html += gateAtSprint[s] ? `<div style="flex:1;min-width:72px;text-align:center;"><div class="gate-label">🚦 ${gateAtSprint[s]}</div></div>` : `<div style="flex:1;min-width:72px;"></div>`; });
+        html += '</div></div>';
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// ── Epic Panorama ──
+function buildEpicsPanorama() {
+    const container = document.getElementById('epics-panorama-table');
+    if (!container) return;
+
+    if (EPICS.length === 0) {
+        container.innerHTML = '<p style="color:#888;font-size:.85rem;">No epics configured. Add entries to the EPICS array.</p>';
+        return;
+    }
+
+    let html = '<div class="table-scroll"><table class="epics-table"><thead><tr>'
+        + '<th>Epic</th><th>Title</th><th>Sprints</th><th>Assignee</th>'
+        + '<th>Stories</th><th>Done</th><th>In Progress</th>'
+        + '<th>Est. (d)</th><th>Progress</th><th>Status</th></tr></thead><tbody>';
+
+    EPICS.forEach(ep => {
+        const stories = workData.filter(s => s.epicId === ep.id);
+        const total   = stories.length;
+        const done    = stories.filter(s => s.status === 'done').length;
+        const inprog  = stories.filter(s => s.status === 'in-progress').length;
+        const blocked = stories.filter(s => s.status === 'blocked').length;
+        const pct     = total ? Math.round((done / total) * 100) : 0;
+        const barClass = blocked > 0 ? 'blocked' : (pct === 100 ? 'done' : '');
+        const link     = EPIC_FILES[ep.id] ? `<a href="${EPIC_FILES[ep.id]}" target="_blank">${ep.codigo}</a>` : ep.codigo;
+        const sprint   = ep.sprint === ep.sprintFim ? ep.sprint : `${ep.sprint} – ${ep.sprintFim}`;
+        const epicStatus = blocked > 0 ? 'blocked' : done === total && total > 0 ? 'done' : inprog > 0 ? 'in-progress' : 'todo';
+        const badge = { done:'<span class="badge-status bs-done">✅ Done</span>', 'in-progress':'<span class="badge-status bs-inprogress">🔄 In Progress</span>', blocked:'<span class="badge-status bs-blocked">🚫 Blocked</span>', todo:'<span class="badge-status bs-todo">⬜ Pending</span>' }[epicStatus];
+
+        html += `<tr>
+          <td class="epic-id-cell">${link}</td>
+          <td style="font-weight:600;color:#333;">${ep.titulo}</td>
+          <td style="white-space:nowrap;font-size:.78rem;color:#666;">${sprint}</td>
+          <td style="white-space:nowrap;font-size:.78rem;">${ep.responsavel}</td>
+          <td style="text-align:center;font-weight:700;">${total}</td>
+          <td style="text-align:center;color:var(--success);font-weight:700;">${done}</td>
+          <td style="text-align:center;color:rgb(180,0,60);font-weight:700;">${inprog}</td>
+          <td style="text-align:center;">${ep.estimativaDias}d</td>
+          <td style="min-width:100px;">
+            <div class="epic-progress-bar-wrap"><div class="epic-progress-bar ${barClass}" style="width:${pct}%"></div></div>
+            <div style="font-size:.7rem;color:#888;margin-top:2px;text-align:center;">${pct}%</div>
+          </td>
+          <td>${badge}</td>
+        </tr>`;
+    });
+
+    const totalUS   = workData.length;
+    const totalDone = workData.filter(s => s.status === 'done').length;
+    const totalDias = EPICS.reduce((acc, e) => acc + (e.estimativaDias||0), 0);
+    html += `</tbody></table></div>
+    <div style="margin-top:.75rem;font-size:.8rem;color:#666;text-align:right;">
+      Total: <strong>${totalUS} stories</strong> | <strong>${totalDone} done</strong> | Estimate: <strong>${totalDias}d-eng</strong>
+    </div>`;
+
+    container.innerHTML = html;
+}
+
+// ── Gates Cards ──
+function buildGatesCards() {
+    const container = document.getElementById('gates-cards');
+    if (!container) return;
+    if (!GATES || GATES.length === 0) {
+        container.innerHTML = '<p style="color:#888;font-size:.85rem;">No risk gates configured. Add entries to the GATES array.</p>';
+        return;
+    }
+    let html = '<div class="gates-grid">';
+    GATES.forEach(g => {
+        html += `<div class="gate-card gate-${g.tipo || 'pending'}">
+          <div class="gate-num">${g.num} · ${g.sprint}</div>
+          <div class="gate-title">${g.titulo}</div>
+          <div class="gate-date">📅 ${g.data}</div>
+          <span class="gate-status-badge ${g.status || 'pending'}">${{ ok:'✅ OK', fail:'❌ Failed', pending:'⏳ Pending' }[g.status] || '⏳ Pending'}</span>
+          <div class="gate-question">${g.questao || ''}</div>
+        </div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// ── Blockers Cards ──
+function buildBlockersCards() {
+    const container = document.getElementById('blockers-cards');
+    if (!container) return;
+    if (!BLOCKERS || BLOCKERS.length === 0) {
+        container.innerHTML = '<p style="color:#888;font-size:.85rem;">No active blockers. 🎉</p>';
+        return;
+    }
+    container.innerHTML = BLOCKERS.map(b => `
+        <div class="blocker-card">
+          <div class="blocker-id">${b.id} · ${b.severidade || ''}</div>
+          <div class="blocker-title">${b.titulo}</div>
+          <div class="blocker-meta">
+            <span>👤 ${b.owner || '—'}</span>
+            <span>Stories: ${(b.bloqueia || []).join(', ')}</span>
+          </div>
+          <div style="margin-top:.5rem;font-size:.8rem;color:#7B1818;">${b.descricao || ''}</div>
+        </div>`).join('');
+}
+
+// ── Export CSV ──
+function exportCSV() {
+    const headers = ['ID','Epic','Title','Assignee','Estimate','Priority','Status','Start','End','Notes','Depends On'];
+    const rows = workData.map(s => [
+        s.id, s.epicId,
+        `"${(s.titulo||'').replace(/"/g,'""')}"`,
+        s.responsavel, s.estimativa, s.prioridade,
+        statusLabel(s.status), s.inicio||'', s.fim||'',
+        `"${(s.observacoes||'').replace(/"/g,'""')}"`,
+        `"${(s.dependeDe||[]).join(', ')}"`
+    ].join(','));
+    const csv = [headers.join(','), ...rows].join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = `rollout-tracker-${PROJETO.sigla}-sprint${SPRINT_ATUAL.numero}.csv`;
+    a.click();
+}
+
+// ── Save to File ──
+async function salvarArquivo() {
+    const btn = document.getElementById('btn-salvar');
+    if (!btn) return;
+    if (!('showSaveFilePicker' in window)) {
+        showToast('⚠️ File System API not available in this browser.', 'error'); return;
+    }
+    try {
+        btn.disabled = true; btn.textContent = '⏳ Saving...';
+        const html = document.documentElement.outerHTML;
+        const handle = await window.showSaveFilePicker({
+            suggestedName: 'rollout-tracker.html',
+            types: [{ description:'HTML File', accept:{'text/html':['.html']} }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(html); await writable.close();
+        showToast('✅ Saved successfully!', 'success');
+    } catch (e) {
+        if (e.name !== 'AbortError') showToast('❌ Save failed: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = '💾 Save';
+    }
+}
+
+function showToast(msg, type = 'success') {
+    const t = document.getElementById('save-toast');
+    t.textContent = msg;
+    t.className = `save-toast ${type}`;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── Toggle Section ──
+function toggleSection(bodyId, arrowId) {
+    const body  = document.getElementById(bodyId);
+    const arrow = arrowId ? document.getElementById(arrowId) : null;
+    if (!body) return;
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    if (arrow) arrow.classList.toggle('open', !isOpen);
+}
+
+// ── Toggle Sidebar ──
+function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const m  = document.getElementById('mainContent');
+    const f  = document.getElementById('footer');
+    sb.classList.toggle('collapsed'); sb.classList.toggle('active');
+    m.classList.toggle('expanded'); f.classList.toggle('expanded');
+}
+
+// ── Scroll Spy ──
+window.addEventListener('scroll', () => {
+    const sections = document.querySelectorAll('section[id]');
+    const links    = document.querySelectorAll('.sidebar nav ul li a[href^="#"]');
+    let current = '';
+    sections.forEach(s => { if (window.pageYOffset + 100 >= s.offsetTop) current = s.getAttribute('id'); });
+    links.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === '#' + current) l.classList.add('active'); });
+});
+</script>
+
+</body>
+</html>

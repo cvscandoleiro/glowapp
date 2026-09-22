@@ -1,0 +1,363 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ealmeidaf_indra/m3a-team/core/mma.config.schema.json",
+  "title": "M3A Team Project Configuration",
+  "description": "JSON Schema for validating .github/mma/config.yaml in M3A Team projects",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["version", "project", "communication"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "M3A Team config schema version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0"]
+    },
+    "project": {
+      "type": "object",
+      "description": "Core project identification and metadata",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full project name",
+          "minLength": 1,
+          "maxLength": 100,
+          "examples": ["DRACO FIBER", "My Enterprise App"]
+        },
+        "code": {
+          "type": "string",
+          "description": "Short project code or acronym used in file prefixes",
+          "pattern": "^[A-Z0-9_-]{2,20}$",
+          "examples": ["DRACO", "MYP", "PRJ"]
+        },
+        "description": {
+          "type": "string",
+          "description": "One-line project description",
+          "maxLength": 250,
+          "examples": ["Fiber optic network management platform for Vivo"]
+        },
+        "type": {
+          "type": "string",
+          "description": "Project classification for workflow branching",
+          "enum": ["new", "existing", "legacy", "assessment", "docs"],
+          "examples": ["existing"]
+        },
+        "version_current": {
+          "type": "string",
+          "description": "Current AS-IS software version (empty for new projects)",
+          "examples": ["6.1.2", "2.4.0"]
+        },
+        "version_target": {
+          "type": "string",
+          "description": "Target TO-BE software version (empty for new projects)",
+          "examples": ["7.0.0", "3.0.0"]
+        },
+        "repo_url": {
+          "type": "string",
+          "description": "Remote repository URL (GitHub, GitLab, Azure DevOps, etc.)",
+          "format": "uri",
+          "examples": ["https://github.com/Minsait-GA/draco"]
+        },
+        "organization": {
+          "type": "string",
+          "description": "Short organization name",
+          "examples": ["Minsait", "Indra"]
+        },
+        "legal_entity": {
+          "type": "string",
+          "description": "Legal organization name for formal documents",
+          "examples": ["Minsait (Indra Company)"]
+        },
+        "tagline": {
+          "type": "string",
+          "description": "Branding tagline for HTML portal header",
+          "maxLength": 100,
+          "examples": ["Tech for impact"]
+        },
+        "client": {
+          "type": "string",
+          "description": "Client or end customer name. Use 'Internal' if not client-facing.",
+          "examples": ["Telefonica Vivo", "Internal", "Confidential"]
+        }
+      }
+    },
+    "communication": {
+      "type": "object",
+      "description": "Language and output format preferences",
+      "required": ["language"],
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "type": "string",
+          "description": "Primary output language for agent responses and documentation",
+          "enum": ["en-US", "es-ES", "pt-BR"],
+          "default": "en-US",
+          "examples": ["en-US", "pt-BR"]
+        },
+        "output_format": {
+          "type": "string",
+          "description": "Agent chat output verbosity level",
+          "enum": ["minimal", "verbose"],
+          "default": "minimal",
+          "examples": ["minimal"]
+        }
+      }
+    },
+    "docs": {
+      "type": "object",
+      "description": "Documentation generation preferences",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "description": "Documentation output mode",
+          "enum": ["markdown", "markdown+html", "portal"],
+          "default": "markdown",
+          "examples": ["portal"]
+        },
+        "output_dir": {
+          "type": "string",
+          "description": "Root directory for markdown documentation output",
+          "default": "docs/",
+          "examples": ["docs/"]
+        },
+        "html_dir": {
+          "type": "string",
+          "description": "Directory for HTML documentation output",
+          "default": "docs/html/",
+          "examples": ["docs/html/"]
+        },
+        "portal_title": {
+          "type": "string",
+          "description": "HTML portal page title and H1 heading",
+          "examples": ["DRACO FIBER — Documentation Portal"]
+        },
+        "portal_subtitle": {
+          "type": "string",
+          "description": "HTML portal subtitle shown below the main title",
+          "examples": ["Technical Documentation v7.0.0"]
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "description": "Quality, compliance, and process governance settings",
+      "additionalProperties": false,
+      "properties": {
+        "quality_gates": {
+          "type": "boolean",
+          "description": "Enable Definition of Done checklists per delivery type",
+          "default": true
+        },
+        "adr_required": {
+          "type": "boolean",
+          "description": "Require Architecture Decision Records for architectural changes",
+          "default": false
+        },
+        "risk_gates": {
+          "type": "boolean",
+          "description": "Enable go/no-go gates before major releases or migration phases",
+          "default": false
+        },
+        "human_in_the_loop": {
+          "type": "boolean",
+          "description": "Require explicit human approval for War Room and Risk Gates",
+          "default": true
+        },
+        "anti_duplicate_check": {
+          "type": "boolean",
+          "description": "Enforce duplicate detection before creating epics or stories (Law 3)",
+          "default": true
+        },
+        "sprint_tracking": {
+          "type": "boolean",
+          "description": "Enable Scrum-style sprint tracking with sprint-status.yaml",
+          "default": false
+        }
+      }
+    },
+    "stack": {
+      "type": "object",
+      "description": "Technology stack definition (AS-IS for existing projects)",
+      "additionalProperties": false,
+      "properties": {
+        "runtime": {
+          "type": "string",
+          "description": "Primary runtime or programming language with version",
+          "examples": ["Java 11 (Azul Zulu)", "Node.js 20 LTS", "Python 3.11"]
+        },
+        "runtime_version": {
+          "type": "string",
+          "description": "Specific runtime version string",
+          "examples": ["11.0.22", "20.11.0", "3.11.7"]
+        },
+        "runtime_target": {
+          "type": "string",
+          "description": "Target runtime for migration projects",
+          "examples": ["Java 21 (Azul Zulu LTS)"]
+        },
+        "os": {
+          "type": "string",
+          "description": "Operating system and version",
+          "examples": ["CentOS 7", "Ubuntu 22.04 LTS", "macOS 14"]
+        },
+        "os_target": {
+          "type": "string",
+          "description": "Target OS for migration projects",
+          "examples": ["Rocky Linux 9"]
+        },
+        "db": {
+          "type": "string",
+          "description": "Database technology and version",
+          "examples": ["PostgreSQL 12.2", "MySQL 8.0", "MongoDB 6.0"]
+        },
+        "db_target": {
+          "type": "string",
+          "description": "Target database for migration projects",
+          "examples": ["PostgreSQL 16"]
+        },
+        "ci": {
+          "type": "string",
+          "description": "CI/CD platform",
+          "examples": ["GitHub Actions", "Jenkins", "GitLab CI", "Azure DevOps"]
+        },
+        "deploy": {
+          "type": "string",
+          "description": "Deployment target environment",
+          "examples": ["Kubernetes 1.27", "Docker Compose", "Bare metal", "AWS ECS"]
+        }
+      }
+    },
+    "team": {
+      "type": "object",
+      "description": "Team member assignments for Layer 2 (executive) document attribution",
+      "additionalProperties": false,
+      "properties": {
+        "eng_a": {
+          "type": "string",
+          "description": "Engineer A — primary Layer 2 attribution name",
+          "examples": ["Eng. A", "J. Silva"]
+        },
+        "eng_b": {
+          "type": "string",
+          "description": "Engineer B — secondary Layer 2 attribution name",
+          "examples": ["Eng. B", "M. García"]
+        },
+        "eng_c": {
+          "type": "string",
+          "description": "Engineer C — tertiary Layer 2 attribution name",
+          "examples": ["Eng. C"]
+        },
+        "size": {
+          "type": "string",
+          "description": "Team size category",
+          "enum": ["solo", "small", "medium", "large"],
+          "examples": ["small"]
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "description": "File system paths for M3A Team artifacts within the project",
+      "additionalProperties": false,
+      "properties": {
+        "knowledge_base": {
+          "type": "string",
+          "description": "Knowledge base directory",
+          "default": ".github/mma/knowledge/",
+          "examples": [".github/mma/knowledge/"]
+        },
+        "agents": {
+          "type": "string",
+          "description": "Agent files directory",
+          "default": ".github/agents/",
+          "examples": [".github/agents/"]
+        },
+        "prompts": {
+          "type": "string",
+          "description": "Prompt/skill files directory",
+          "default": ".github/prompts/",
+          "examples": [".github/prompts/"]
+        },
+        "backlog": {
+          "type": "string",
+          "description": "Backlog root directory",
+          "default": ".github/mma/backlog/",
+          "examples": [".github/mma/backlog/"]
+        },
+        "epics": {
+          "type": "string",
+          "description": "Epics directory",
+          "default": ".github/mma/backlog/epics/",
+          "examples": [".github/mma/backlog/epics/"]
+        },
+        "stories": {
+          "type": "string",
+          "description": "User stories directory",
+          "default": ".github/mma/backlog/stories/",
+          "examples": [".github/mma/backlog/stories/"]
+        },
+        "sprint_status": {
+          "type": "string",
+          "description": "Sprint status YAML file path",
+          "default": ".github/mma/backlog/sprints/sprint-status.yaml",
+          "examples": [".github/mma/backlog/sprints/sprint-status.yaml"]
+        },
+        "workflows": {
+          "type": "string",
+          "description": "Workflow configuration directory",
+          "default": ".github/mma/workflows/",
+          "examples": [".github/mma/workflows/"]
+        },
+        "docs_output": {
+          "type": "string",
+          "description": "Documentation output directory",
+          "default": "docs/",
+          "examples": ["docs/"]
+        },
+        "html_output": {
+          "type": "string",
+          "description": "HTML documentation output directory",
+          "default": "docs/html/",
+          "examples": ["docs/html/"]
+        },
+        "decisions_log": {
+          "type": "string",
+          "description": "Project decisions log file path",
+          "default": ".github/mma/decisions/decisions-log.md",
+          "examples": [".github/mma/decisions/decisions-log.md"]
+        },
+        "team_config": {
+          "type": "string",
+          "description": "Team configuration (13 Laws) file path",
+          "default": ".github/mma/knowledge/team-config.md",
+          "examples": [".github/mma/knowledge/team-config.md"]
+        }
+      }
+    },
+    "encoding": {
+      "type": "object",
+      "description": "File encoding and line ending standards for generated artifacts",
+      "additionalProperties": false,
+      "properties": {
+        "line_ending": {
+          "type": "string",
+          "description": "Line ending standard for all generated text files",
+          "enum": ["lf", "crlf", "auto"],
+          "default": "lf",
+          "examples": ["lf"]
+        },
+        "charset": {
+          "type": "string",
+          "description": "Character encoding for all generated text files",
+          "enum": ["utf-8", "utf-8-bom", "iso-8859-1"],
+          "default": "utf-8",
+          "examples": ["utf-8"]
+        }
+      }
+    }
+  }
+}

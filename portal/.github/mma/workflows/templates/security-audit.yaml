@@ -1,0 +1,56 @@
+# M3A Team — Collaboration Template: Security Audit
+# Optimized for: OWASP review, CVE scan, hardening
+# Auto-selected when: COMPLEX + security/owasp/cve/audit keywords
+# Version: 1.0.0
+
+template: security-audit
+description: "Security audit — OWASP + CVE + hardening"
+version: "1.0.0"
+token_budget:
+  per_agent: 2000
+  total: 10000
+
+pipeline:
+  - step: 1
+    agent: analyst
+    role: "AS-IS inventory — modules, dependencies, attack surface"
+    receives:
+      - artifact_summary
+      - project_tech_stack
+    delivers: "handoff/01-analyst-output.md"
+    max_tokens: 500
+
+  - step: 2
+    agent: security
+    role: "OWASP Top 10 review + CVE scan + hardening recommendations"
+    veto_power: elevated  # security veto blocks the entire gate
+    receives:
+      - artifact_summary
+      - "handoff/01-analyst-output.md"
+    delivers: "handoff/02-security-output.md"
+    max_tokens: 500
+    depends_on: [analyst]
+
+  - step: 3
+    agent: architect
+    role: "Architecture impact of security findings"
+    receives:
+      - "handoff/02-security-output.md"
+    delivers: "handoff/03-architect-output.md"
+    max_tokens: 400
+    depends_on: [security]
+
+  - step: 4
+    agent: developer
+    conditional: "fixes_required"
+    role: "Remediation implementation plan"
+    receives:
+      - "handoff/03-architect-output.md"
+      - "handoff/02-security-output.md"
+    delivers: "handoff/04-developer-output.md"
+    max_tokens: 400
+    depends_on: [architect]
+
+verdict_format:
+  max_tokens: 150
+  required_fields: [status, justification, unblocking_condition]

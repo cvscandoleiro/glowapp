@@ -1,0 +1,7 @@
+# M3A Token Usage Log
+# IMPORTANT: Values are ESTIMATES based on artifact-generating tasks only.
+# Does NOT represent 100% of actual LLM token consumption.
+# Conversations, status queries and exploratory questions are NOT tracked.
+# tokens_in_est and tokens_out_est = round(char_count / 3.5) — approximation only.
+# confidence field is always "estimated" — never treat as billing-accurate data.
+date,sprint,agent,model,task_type,artifact,tokens_in_est,tokens_out_est,confidence

@@ -1,0 +1,46 @@
+# M3A Team — Collaboration Template: Bug Fix
+# Optimized for: targeted bug fixes (minimal agent overhead)
+# Auto-selected when: COMPLEX/MODERATE + bug/fix/hotfix keywords
+# Version: 1.0.0
+
+template: bug-fix
+description: "Targeted bug fix — minimal agent overhead"
+version: "1.0.0"
+token_budget:
+  per_agent: 1500
+  total: 6000
+
+pipeline:
+  - step: 1
+    agent: developer
+    role: "Diagnose and fix the bug"
+    receives:
+      - artifact_summary
+      - error_context      # stack trace, logs if available
+    delivers: "handoff/01-developer-output.md"
+    max_tokens: 400
+
+  - step: 2
+    agent: qa
+    role: "Verify fix + regression check"
+    receives:
+      - artifact_summary
+      - "handoff/01-developer-output.md"
+    delivers: "handoff/02-qa-output.md"
+    max_tokens: 400
+    depends_on: [developer]
+
+  - step: 3
+    agent: security
+    conditional: "security_keywords_detected"  # only if security-related
+    role: "Security impact assessment"
+    receives:
+      - artifact_summary
+      - "handoff/01-developer-output.md"
+    delivers: "handoff/03-security-output.md"
+    max_tokens: 300
+    depends_on: [developer]
+
+verdict_format:
+  max_tokens: 150
+  required_fields: [status, justification, unblocking_condition]

@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planning 2.0 - Procedimento de Instalacao em Outra Maquina</title>
+  <style>
+    :root {
+      --bg: #f7f3ef;
+      --surface: #ffffff;
+      --surface-2: #fff8f2;
+      --primary: #64183f;
+      --primary-2: #8b2456;
+      --text: #2a2430;
+      --muted: #6e6373;
+      --ok: #116b3a;
+      --warn: #8f5b00;
+      --line: #e6d7c8;
+      --mono: "Consolas", "Courier New", monospace;
+      --sans: "Segoe UI", "Tahoma", sans-serif;
+      --radius: 14px;
+      --shadow: 0 6px 20px rgba(64, 24, 47, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, #ffe7d6 0%, rgba(255, 231, 214, 0) 40%),
+        radial-gradient(circle at bottom left, #f0e8ff 0%, rgba(240, 232, 255, 0) 35%),
+        var(--bg);
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      background: linear-gradient(120deg, var(--primary), #4c0f2f 60%, #2a0819 100%);
+      color: #fff;
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -70px;
+      top: -90px;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.4rem, 2.2vw, 2rem);
+      letter-spacing: 0.4px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #f2dbe6;
+      max-width: 780px;
+    }
+
+    .meta {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.82rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .toc, .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .toc {
+      padding: 16px;
+      position: sticky;
+      top: 16px;
+      align-self: start;
+    }
+
+    .toc h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: var(--primary);
+    }
+
+    .toc a {
+      display: block;
+      color: var(--text);
+      text-decoration: none;
+      padding: 7px 9px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      font-size: 0.93rem;
+    }
+
+    .toc a:hover {
+      background: #f7ecef;
+      color: var(--primary);
+    }
+
+    .content {
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+
+    h3 {
+      margin: 14px 0 8px;
+      font-size: 1rem;
+      color: #3f0f29;
+    }
+
+    ul, ol { margin: 8px 0 0 18px; }
+    li { margin-bottom: 6px; }
+
+    .callout {
+      border-left: 5px solid var(--warn);
+      background: #fff8e9;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      color: #6b4d16;
+      font-size: 0.94rem;
+    }
+
+    .ok {
+      border-left-color: var(--ok);
+      background: #ebfff3;
+      color: #145235;
+    }
+
+    .code {
+      margin-top: 8px;
+      background: #1a1420;
+      color: #fcefff;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      overflow-x: auto;
+      border: 1px solid #39263f;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--surface-2);
+      color: #4b1732;
+    }
+
+    .footer {
+      margin: 16px 0 4px;
+      font-size: 0.84rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .toc { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <h1>Planning 2.0 - Instalacao em Outra Maquina</h1>
+      <p>
+        Documento operacional para preparar uma nova estacao, instalar dependencias,
+        configurar acesso Oracle/VPN e subir o portal localmente com frontend + backend.
+      </p>
+      <div class="meta">
+        <span class="chip">Stack: React + Vite + Express</span>
+        <span class="chip">Banco: Oracle</span>
+        <span class="chip">Portas padrao: 5173 e 5000</span>
+        <span class="chip">Sistema alvo: Windows</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <nav class="toc" aria-label="Sumario">
+        <h2>Sumario</h2>
+        <a href="#premissas">1. Premissas</a>
+        <a href="#dependencias">2. Dependencias</a>
+        <a href="#instalacao">3. Instalacao do Projeto</a>
+        <a href="#configuracao">4. Configuracoes Necessarias</a>
+        <a href="#execucao">5. Execucao da Aplicacao</a>
+        <a href="#validacao">6. Validacao Pos-Instalacao</a>
+        <a href="#atalho">7. Atalho Operacional</a>
+        <a href="#troubleshooting">8. Troubleshooting</a>
+      </nav>
+
+      <main class="content">
+        <section class="panel" id="premissas">
+          <h2>1. Premissas</h2>
+          <ul>
+            <li>Usuario com permissao de instalacao local e execucao de scripts.</li>
+            <li>Acesso ao repositorio com a pasta portal.</li>
+            <li>Acesso de rede ao Oracle no host 10.129.181.131:1521.</li>
+            <li>Quando aplicavel, VPN corporativa conectada na faixa 10.108.110.x.</li>
+            <li>Portas 5173 (frontend) e 5000 (backend) livres na maquina local.</li>
+          </ul>
+          <div class="callout">
+            Observacao: o backend tenta habilitar Oracle Thick Mode automaticamente. Se nao encontrar client local,
+            segue em Thin Mode. Em ambiente Oracle legado, priorizar Instant Client instalado.
+          </div>
+        </section>
+
+        <section class="panel" id="dependencias">
+          <h2>2. Dependencias</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Versao recomendada</th>
+                <th>Finalidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Node.js</td>
+                <td>22 LTS</td>
+                <td>Runtime do frontend e backend</td>
+              </tr>
+              <tr>
+                <td>npm</td>
+                <td>10+</td>
+                <td>Gerenciamento de pacotes e scripts</td>
+              </tr>
+              <tr>
+                <td>Oracle Instant Client (opcional porem recomendado)</td>
+                <td>Compativel com ambiente Oracle</td>
+                <td>Suporte Oracle Thick Mode via oracledb</td>
+              </tr>
+              <tr>
+                <td>Git</td>
+                <td>Atual</td>
+                <td>Clone/atualizacao do codigo</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="panel" id="instalacao">
+          <h2>3. Instalacao do Projeto</h2>
+          <h3>3.1 Clonar ou copiar o projeto</h3>
+          <div class="code">git clone &lt;url-do-repositorio&gt;
+cd "Planning 2.0/portal"</div>
+
+          <h3>3.2 Instalar dependencias</h3>
+          <div class="code">npm install</div>
+
+          <h3>3.3 Conferir scripts disponiveis</h3>
+          <div class="code">npm run</div>
+          <p>Devem existir pelo menos os scripts: dev e server.</p>
+        </section>
+
+        <section class="panel" id="configuracao">
+          <h2>4. Configuracoes Necessarias</h2>
+          <h3>4.1 Oracle e conectividade</h3>
+          <ul>
+            <li>Arquivo de backend: portal/server.js.</li>
+            <li>Credenciais e connectString estao definidos no objeto ORACLE_CONFIG.</li>
+            <li>Validar acesso ao host Oracle e liberacao de firewall.</li>
+            <li>Se a rede exigir VPN, confirmar IP local na faixa 10.108.110.x.</li>
+          </ul>
+
+          <h3>4.2 Proxy frontend para backend</h3>
+          <ul>
+            <li>Arquivo: portal/vite.config.ts.</li>
+            <li>Proxy esperado: /api apontando para http://127.0.0.1:5000.</li>
+          </ul>
+
+          <h3>4.3 Estrutura do projeto</h3>
+          <ul>
+            <li>Manter estrutura completa da pasta portal.</li>
+            <li>Todos os dados são consumidos do banco compartilhado — não há dependência de arquivos locais.</li>
+          </ul>
+        </section>
+
+        <section class="panel" id="execucao">
+          <h2>5. Execucao da Aplicacao</h2>
+          <h3>5.1 Subir backend (API)</h3>
+          <div class="code">npm run server</div>
+
+          <h3>5.2 Subir frontend (Vite)</h3>
+          <div class="code">npm run dev</div>
+
+          <h3>5.3 Acesso no navegador</h3>
+          <div class="code">http://localhost:5173</div>
+
+          <div class="callout ok">
+            Quando ambos os processos estiverem ativos, a interface deve carregar e consumir rotas /api via proxy local.
+          </div>
+        </section>
+
+        <section class="panel" id="validacao">
+          <h2>6. Validacao Pos-Instalacao</h2>
+          <ol>
+            <li>Abrir http://localhost:5173.</li>
+            <li>Verificar status de conexao no portal.</li>
+            <li>Testar carregamento de perfis, squad e feriados.</li>
+            <li>Confirmar ausencia de erro Oracle no terminal do backend.</li>
+          </ol>
+
+          <h3>Comandos de verificacao rapida (PowerShell)</h3>
+          <div class="code">Test-NetConnection localhost -Port 5000
+Test-NetConnection localhost -Port 5173</div>
+        </section>
+
+        <section class="panel" id="atalho">
+          <h2>7. Atalho Operacional</h2>
+          <p>
+            Para facilitar o uso na nova maquina, pode ser utilizado o atalho operacional criado no projeto raiz:
+            Portal Gestao e Planejamento.lnk.
+          </p>
+          <ul>
+            <li>Se API e frontend nao estiverem ativos: inicia npm run server e npm run dev.</li>
+            <li>Se ja estiverem ativos: apenas abre o navegador na URL do portal.</li>
+          </ul>
+          <p>Arquivos relacionados:</p>
+          <ul>
+            <li>start-portal.ps1</li>
+            <li>Portal Gestao e Planejamento.cmd</li>
+            <li>Portal Gestao e Planejamento.lnk</li>
+          </ul>
+        </section>
+
+        <section class="panel" id="troubleshooting">
+          <h2>8. Troubleshooting</h2>
+          <h3>8.1 Erro no modulo oracledb</h3>
+          <ul>
+            <li>Instalar/reinstalar Oracle Instant Client compativel.</li>
+            <li>Validar variaveis de ambiente Oracle se Thick Mode for exigido.</li>
+            <li>Executar npm install novamente apos ajuste de ambiente.</li>
+          </ul>
+
+          <h3>8.2 Porta em uso</h3>
+          <div class="code">Get-NetTCPConnection -LocalPort 5000,5173 -State Listen</div>
+          <ul>
+            <li>Encerrar processo conflitante ou ajustar porta local.</li>
+          </ul>
+
+          <h3>8.3 Falha de conexao com banco</h3>
+          <ul>
+            <li>Confirmar VPN ativa (quando necessaria).</li>
+            <li>Validar rota para 10.129.181.131:1521.</li>
+            <li>Revisar credenciais no ORACLE_CONFIG.</li>
+          </ul>
+        </section>
+      </main>
+    </div>
+
+    <div class="footer">
+      Documento tecnico de instalacao - Planning 2.0 | Revisao: 2026-06-17
+    </div>
+  </div>
+</body>
+</html>

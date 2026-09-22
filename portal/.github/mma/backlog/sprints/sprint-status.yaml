@@ -1,0 +1,9 @@
+sprint:
+  id: 0
+  name: "Sprint 0 - Setup"
+  status: "setup"
+  start_date: "2026-06-16"
+  end_date: ""
+  goals:
+    - "Inicializar contexto M3A Team"
+    - "Personalizar configuracoes do projeto"

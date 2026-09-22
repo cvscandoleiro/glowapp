@@ -1,0 +1,56 @@
+# M3A Team — Collaboration Template: Refactoring
+# Optimized for: code refactoring with scope boundary enforcement
+# Auto-selected when: COMPLEX + refactor/restructure/redesign keywords
+# IMPORTANT: Always requires human approval before implementation
+# Version: 1.0.0
+
+template: refactoring
+description: "Code refactoring — scope-bounded, human-approval required before implementation"
+version: "1.0.0"
+requires_human_approval: true  # MANDATORY — Law compliance
+token_budget:
+  per_agent: 2000
+  total: 10000
+
+pipeline:
+  - step: 1
+    agent: architect
+    role: "Define refactoring scope boundary — what changes, what MUST NOT change"
+    receives:
+      - artifact_summary
+      - current_architecture
+    delivers: "handoff/01-architect-output.md"
+    max_tokens: 500
+    gate: hard  # cannot be skipped
+
+  - step: 2
+    agents: [developer, qa]
+    parallel: true
+    role: "Implementation plan + test impact assessment"
+    receives:
+      - artifact_summary
+      - "handoff/01-architect-output.md"
+    delivers:
+      - "handoff/02-developer-output.md"
+      - "handoff/02-qa-output.md"
+    max_tokens: 500
+    depends_on: [architect]
+
+  - step: 3
+    agent: dba
+    conditional: "db_schema_touched"
+    role: "DB migration impact"
+    receives:
+      - "handoff/02-developer-output.md"
+    delivers: "handoff/03-dba-output.md"
+    max_tokens: 400
+    depends_on: [developer]
+
+human_approval_checkpoint:
+  after_step: 2
+  message: "Refactoring plan ready. Review and approve before implementation proceeds."
+  blocks_step: 3
+
+verdict_format:
+  max_tokens: 150
+  required_fields: [status, justification, unblocking_condition]

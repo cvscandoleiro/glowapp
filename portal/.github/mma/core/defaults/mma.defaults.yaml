@@ -1,0 +1,53 @@
+# M3A Team Default Configuration
+# File: core/defaults/mma.defaults.yaml
+# Description: Default values applied when fields are omitted from .github/mma/config.yaml
+# Schema: ../mma.config.schema.json
+# Version: 1.0.0
+# Author: Edimar Ferla de Almeida
+# Organization: Minsait (Indra Company)
+
+version: "1.0.0"
+
+communication:
+  language: "en-US"
+  output_format: "minimal"  # minimal | verbose
+
+docs:
+  mode: "markdown"          # markdown | markdown+html | portal
+  output_dir: "docs/"
+  html_dir: "docs/html/"
+
+governance:
+  quality_gates: true
+  adr_required: false
+  risk_gates: false
+  human_in_the_loop: true
+  anti_duplicate_check: true
+  sprint_tracking: false
+
+backlog:
+  epics_dir: ".github/mma/backlog/epics/"
+  stories_dir: ".github/mma/backlog/stories/"
+  sprint_status: ".github/mma/backlog/sprints/sprint-status.yaml"
+
+paths:
+  knowledge_base: ".github/mma/knowledge/"
+  agents: ".github/agents/"
+  prompts: ".github/prompts/"
+  backlog: ".github/mma/backlog/"
+  epics: ".github/mma/backlog/epics/"
+  stories: ".github/mma/backlog/stories/"
+  sprint_status: ".github/mma/backlog/sprints/sprint-status.yaml"
+  workflows: ".github/mma/workflows/"
+  docs_output: "docs/"
+  html_output: "docs/html/"
+  decisions_log: ".github/mma/decisions/decisions-log.md"
+  team_config: ".github/mma/knowledge/team-config.md"
+
+token_tracking:
+  enabled: true                             # set to false to disable all tracking
+  output_file: ".github/mma/usage/usage.csv"
+  report_file: ".github/mma/usage/usage-report.md"
+  estimation_divisor: 3.5                   # chars / divisor = estimated tokens
+  confidence: "estimated"                   # always "estimated" — Copilot API does not expose real counts
+  track_artifact_tasks_only: true           # conversations and status queries are never tracked

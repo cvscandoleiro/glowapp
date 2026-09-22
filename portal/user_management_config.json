@@ -1,0 +1,366 @@
+{
+  "roles": [
+    {
+      "id": "admin",
+      "name": "Administrador",
+      "permissions": {
+        "dashboard": true,
+        "projetos-menu": true,
+        "resources": true,
+        "calendar": true,
+        "ferries": true,
+        "administration": true,
+        "can_save": true,
+        "hierarchy": true
+      }
+    },
+    {
+      "id": "gestor",
+      "name": "Gestor",
+      "permissions": {
+        "dashboard": true,
+        "projetos-menu": true,
+        "resources": true,
+        "calendar": true,
+        "ferries": true,
+        "administration": true,
+        "can_save": true,
+        "hierarchy": true
+      }
+    },
+    {
+      "id": "colaborador",
+      "name": "Colaborador",
+      "permissions": {
+        "dashboard": true,
+        "projetos-menu": true,
+        "resources": false,
+        "calendar": true,
+        "ferries": true,
+        "administration": false,
+        "can_save": false,
+        "hierarchy": true
+      }
+    },
+    {
+      "id": "visualizador",
+      "name": "Visualizador",
+      "permissions": {
+        "dashboard": true,
+        "projetos-menu": true,
+        "resources": false,
+        "calendar": true,
+        "ferries": true,
+        "administration": false,
+        "can_save": false,
+        "hierarchy": true
+      }
+    }
+  ],
+  "userRoles": {
+    "ofpereira": "gestor",
+    "aluism": "gestor",
+    "tramos": "gestor",
+    "cvieira": "admin",
+    "ikolomenconkovas": "admin",
+    "mkasahara": "admin",
+    "gsouzap": "colaborador",
+    "dcarlosv": "colaborador",
+    "abatistar": "colaborador",
+    "alrprado": "visualizador",
+    "atoshiro": "colaborador",
+    "acantalice": "colaborador",
+    "atamilyn": "colaborador",
+    "aadnan": "colaborador",
+    "asluisa": "colaborador",
+    "adiasa": "colaborador",
+    "abeatrizsil": "colaborador",
+    "aklimag": "colaborador",
+    "acmelo": "gestor",
+    "balves": "colaborador",
+    "bgomest": "colaborador",
+    "bzuanetti": "colaborador",
+    "bborelli": "colaborador",
+    "cmunhoz": "colaborador",
+    "deduardos": "colaborador",
+    "dgonperez": "colaborador",
+    "drodriguess": "colaborador",
+    "dtnascimento": "colaborador",
+    "dtorresro": "colaborador",
+    "egodoy": "colaborador",
+    "elopes": "colaborador",
+    "fmedeirosa": "colaborador",
+    "flcorrea": "colaborador",
+    "fabreum": "colaborador",
+    "fmacedo": "colaborador",
+    "fandrade": "colaborador",
+    "fazevedo": "colaborador",
+    "fmartinsd": "colaborador",
+    "gteruithi": "colaborador",
+    "ghernandes": "colaborador",
+    "hdo": "colaborador",
+    "hferreirar": "colaborador",
+    "hsousaf": "colaborador",
+    "hleonardo": "colaborador",
+    "isartorato": "colaborador",
+    "ilmoreira": "colaborador",
+    "jitajahy": "colaborador",
+    "jpereiral": "colaborador",
+    "jppires": "colaborador",
+    "jorlandoj": "colaborador",
+    "jluender": "colaborador",
+    "koliveiras": "colaborador",
+    "lsoliveira": "colaborador",
+    "loliveiras": "colaborador",
+    "lsilvacar": "colaborador",
+    "mferreirad": "colaborador",
+    "mpereirad": "colaborador",
+    "pluizg": "colaborador",
+    "rioliveira": "colaborador",
+    "rsantanao": "colaborador",
+    "rfsousa": "colaborador",
+    "rpereira": "colaborador",
+    "sfelipe": "colaborador",
+    "smeschke": "colaborador",
+    "tados": "colaborador",
+    "gsousaf": "colaborador",
+    "sdosr": "colaborador",
+    "acarvalhoa": "colaborador",
+    "rnovaes": "colaborador",
+    "rsantosdi": "colaborador",
+    "sfreitasp": "colaborador",
+    "vcontrucci": "admin",
+    "mlimac": "gestor",
+    "kortiz": "colaborador",
+    "lcamaleonte": "gestor"
+  },
+  "userOperations": {
+    "alrprado": [
+      3
+    ],
+    "abatistar": [
+      1
+    ],
+    "atoshiro": [
+      1
+    ],
+    "acantalice": [
+      1
+    ],
+    "acarvalhoa": [
+      2
+    ],
+    "atamilyn": [
+      1
+    ],
+    "aadnan": [
+      1
+    ],
+    "asluisa": [
+      1
+    ],
+    "adiasa": [
+      1
+    ],
+    "aluism": [
+      3
+    ],
+    "abeatrizsil": [
+      3
+    ],
+    "aklimag": [
+      1
+    ],
+    "acmelo": [
+      1
+    ],
+    "balves": [
+      1
+    ],
+    "bgomest": [
+      1
+    ],
+    "bborelli": [
+      1
+    ],
+    "bzuanetti": [
+      3
+    ],
+    "cvieira": [
+      1,
+      2,
+      3
+    ],
+    "cmunhoz": [
+      1
+    ],
+    "dcarlosv": [
+      1
+    ],
+    "deduardos": [
+      1
+    ],
+    "dgonperez": [
+      1
+    ],
+    "drodriguess": [
+      1
+    ],
+    "dtnascimento": [
+      1
+    ],
+    "dtorresro": [
+      1
+    ],
+    "egodoy": [
+      1
+    ],
+    "elopes": [
+      1
+    ],
+    "fmedeirosa": [
+      1
+    ],
+    "flcorrea": [
+      1
+    ],
+    "fabreum": [
+      1
+    ],
+    "fmacedo": [
+      3
+    ],
+    "fandrade": [
+      1
+    ],
+    "fazevedo": [
+      1
+    ],
+    "fmartinsd": [
+      1
+    ],
+    "gsousaf": [
+      1
+    ],
+    "gteruithi": [
+      1
+    ],
+    "gsouzap": [
+      1
+    ],
+    "ghernandes": [
+      1
+    ],
+    "hdo": [
+      1
+    ],
+    "hferreirar": [
+      1
+    ],
+    "hsousaf": [
+      1
+    ],
+    "hleonardo": [
+      3
+    ],
+    "isartorato": [
+      1
+    ],
+    "ikolomenconkovas": [
+      1
+    ],
+    "ilmoreira": [
+      1
+    ],
+    "jitajahy": [
+      3
+    ],
+    "jppires": [
+      1
+    ],
+    "jpereiral": [
+      1
+    ],
+    "jorlandoj": [
+      1
+    ],
+    "jluender": [
+      3
+    ],
+    "kortiz": [
+      2
+    ],
+    "koliveiras": [
+      1
+    ],
+    "lsoliveira": [
+      1
+    ],
+    "lcamaleonte": [
+      2
+    ],
+    "loliveiras": [
+      3
+    ],
+    "lsilvacar": [
+      1
+    ],
+    "mlimac": [
+      2
+    ],
+    "mkasahara": [
+      1
+    ],
+    "mferreirad": [
+      1
+    ],
+    "mpereirad": [
+      1
+    ],
+    "ofpereira": [
+      2
+    ],
+    "pluizg": [
+      1
+    ],
+    "rnovaes": [
+      2
+    ],
+    "rioliveira": [
+      1
+    ],
+    "rsantanao": [
+      1
+    ],
+    "rsantosdi": [
+      2
+    ],
+    "rfsousa": [
+      3
+    ],
+    "rpereira": [
+      1
+    ],
+    "sfelipe": [
+      1
+    ],
+    "sdosr": [
+      1
+    ],
+    "smeschke": [
+      1
+    ],
+    "sfreitasp": [
+      2
+    ],
+    "tados": [
+      1
+    ],
+    "tramos": [
+      1
+    ],
+    "vcontrucci": [
+      1
+    ]
+  }
+}

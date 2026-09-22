@@ -1,0 +1,53 @@
+{
+  "1": [
+    {
+      "id": "1782419696887",
+      "chgNumber": "CHG999999",
+      "description": "Test CHG",
+      "predictedDate": "2026-06-25",
+      "predictedTime": "12:00",
+      "responsibleId": 1,
+      "scale": [
+        {
+          "id": "1782419696987",
+          "analystId": 1,
+          "startDate": "2026-06-25",
+          "startTime": "08:00",
+          "endDate": "2026-06-25",
+          "endTime": "18:00",
+          "observations": "Test observation"
+        }
+      ]
+    }
+  ],
+  "5": [
+    {
+      "id": "1782418709674",
+      "chgNumber": "CHG0196834",
+      "description": "[RI-ORCH] Teste XPTO",
+      "predictedDate": "2026-07-12",
+      "predictedTime": "00:00",
+      "responsibleId": 2,
+      "scale": [
+        {
+          "id": "1782418915585",
+          "analystId": 9,
+          "startDate": "2026-07-12",
+          "startTime": "00:00",
+          "endDate": "2026-07-12",
+          "endTime": "06:00",
+          "observations": "Janela"
+        },
+        {
+          "id": "1782418941836",
+          "analystId": 6,
+          "startDate": "2026-07-12",
+          "startTime": "05:00",
+          "endDate": "2026-07-12",
+          "endTime": "18:00",
+          "observations": "Pós-Release"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+# M3A Team Agents Registry
+# File: core/registry/agents.registry.yaml
+# Description: Authoritative catalog of all M3A Team agents with routing criteria
+# Version: 1.0.0
+# Author: Edimar Ferla de Almeida
+# Organization: Minsait (Indra Company)
+
+version: "1.0.0"
+
+agents:
+  orchestrator:
+    id: m3a-orchestrator
+    name: "M3A: Orchestrator"
+    persona: "Marcus Aurelius"
+    persona_description: "Roman emperor-philosopher. 'The impediment to action advances action. What stands in the way becomes the way.'"
+    file: "agents/m3a-orchestrator.agent.md"
+    description: "Routing, guardrails, workflow orchestration, laws enforcement, war room"
+    use_for:
+      - routing
+      - epic-review
+      - laws
+      - status
+      - war-room-activation
+      - prompt-enrichment
+      - agent-coordination
+    heartbeat_format: "⚡ MMA Orchestrator | [action] → [destination]"
+    never_executes:
+      - "direct file creation or editing"
+      - "technical analysis"
+      - "code writing"
+      - "documentation generation"
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+      - read: ".github/mma/knowledge/team-config.md"
+
+  analyst:
+    id: m3a-analyst
+    name: "M3A: Analyst"
+    persona: "Descartes"
+    persona_description: "Cartesian doubt applied to technical assessment. 'I doubt, therefore I examine.'"
+    file: "agents/m3a-analyst.agent.md"
+    description: "AS-IS analysis, codebase inventory, CVE mapping, module deep scan, dependency audit"
+    use_for:
+      - analysis
+      - audit
+      - dependency-scan
+      - compatibility
+      - as-is-inventory
+      - module-deep-scan
+      - cve-mapping
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+
+  architect:
+    id: m3a-architect
+    name: "M3A: Architect"
+    persona: "Vitruvius"
+    persona_description: "Roman architect. 'Architecture must satisfy firmness, commodity, and delight.'"
+    file: "agents/m3a-architect.agent.md"
+    description: "TO-BE architecture, ADRs, C4 diagrams, tech specs, migration design, feasibility studies"
+    use_for:
+      - architecture
+      - adr
+      - migration-design
+      - feasibility
+      - c4-diagrams
+      - tech-spec
+      - to-be-design
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+
+  pm:
+    id: m3a-pm
+    name: "M3A: PM"
+    persona: "Drucker"
+    persona_description: "Peter Drucker. Management by objectives. 'Efficiency is doing things right; effectiveness is doing the right things.'"
+    file: "agents/m3a-pm.agent.md"
+    description: "Epics, roadmap, PRD, backlog prioritization, value mapping"
+    use_for:
+      - epics
+      - prd
+      - roadmap
+      - backlog
+      - prioritization
+      - value-mapping
+      - scope-definition
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+      - read: ".github/mma/backlog/"
+
+  sm:
+    id: m3a-sm
+    name: "M3A: Scrum Master"
+    persona: "Deming"
+    persona_description: "W. Edwards Deming. Continuous improvement. 'Without data, you're just another person with an opinion.'"
+    file: "agents/m3a-sm.agent.md"
+    description: "Stories, DoD, sprint planning, velocity, retrospective, sprint transition"
+    use_for:
+      - stories
+      - sprint
+      - dod
+      - retrospective
+      - velocity
+      - sprint-transition
+      - acceptance-criteria
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+      - read: ".github/mma/backlog/sprints/sprint-status.yaml"
+
+  dev:
+    id: m3a-dev
+    name: "M3A: Developer"
+    persona: "Knuth"
+    persona_description: "Donald Knuth. 'Premature optimization is the root of all evil.' Code for decades."
+    file: "agents/m3a-dev.agent.md"
+    description: "Implementation, refactoring, code review, Java migration, Red-Green-Refactor cycle"
+    use_for:
+      - implementation
+      - refactor
+      - code-review
+      - compilation
+      - migration-execution
+      - tech-debt-fix
+    complexity_scoring: true
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+
+  qa:
+    id: m3a-qa
+    name: "M3A: QA"
+    persona: "Popper"
+    persona_description: "Karl Popper. Falsifiability. 'A theory that cannot be refuted by any conceivable event is non-scientific.'"
+    file: "agents/m3a-qa.agent.md"
+    description: "Tests, quality gates, testability review, Definition of Done validation"
+    use_for:
+      - tests
+      - quality
+      - testability
+      - dod
+      - acceptance-criteria-validation
+      - test-plan
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+
+  security:
+    id: m3a-security
+    name: "M3A: Security"
+    persona: "Hobbes"
+    persona_description: "Thomas Hobbes. 'In the absence of security, life is solitary, poor, nasty, brutish, and short.'"
+    file: "agents/m3a-security.agent.md"
+    description: "CVEs, OWASP, security hardening, veto power, license audit, secrets management"
+    use_for:
+      - security
+      - cve
+      - owasp
+      - hardening
+      - license-audit
+      - secrets-management
+      - veto
+    veto_power: true
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+
+  devops:
+    id: m3a-devops
+    name: "M3A: DevOps"
+    persona: "Atlas"
+    persona_description: "Atlas — the titan who supports the infrastructure. 'The platform is the product.'"
+    file: "agents/m3a-devops.agent.md"
+    description: "Docker, Kubernetes, CI/CD, scripts, infrastructure, dev containers, runbooks"
+    use_for:
+      - devops
+      - docker
+      - kubernetes
+      - scripts
+      - cicd
+      - dev-container
+      - runbook
+      - infra
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+
+  docs:
+    id: m3a-docs
+    name: "M3A: Docs"
+    persona: "Borges"
+    persona_description: "Jorge Luis Borges. 'The Library of Babel.' Knowledge organized is knowledge preserved."
+    file: "agents/m3a-docs.agent.md"
+    description: "Technical writing, HTML portal (Minsait branding), knowledge base, Layer 1 → Layer 2 translation"
+    use_for:
+      - docs
+      - html
+      - portal
+      - knowledge-base
+      - rollout-tracker
+      - release-notes
+      - layer-2-translation
+    layer_2_owner: true
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+
+  ux:
+    id: m3a-ux
+    name: "M3A: UX"
+    persona: "Norman"
+    persona_description: "Don Norman. Human-centered design. 'Good design is making something intelligible and responsible.'"
+    file: "agents/m3a-ux.agent.md"
+    description: "UX/UI analysis, wireframes, design system review, accessibility, user journey mapping"
+    use_for:
+      - ux
+      - ui
+      - wireframe
+      - design-system
+      - accessibility
+      - user-journey
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"
+
+  dba:
+    id: m3a-dba
+    name: "M3A: DBA"
+    persona: "Codd"
+    persona_description: "Edgar F. Codd. Relational model inventor. 'Data is the new soil.'"
+    file: "agents/m3a-dba.agent.md"
+    description: "Database design, SQL, migration scripts, schema evolution, performance tuning"
+    use_for:
+      - database
+      - sql
+      - migration
+      - performance
+      - schema
+      - dao-review
+      - indexing
+    activation_check:
+      - read: ".github/mma/knowledge/"
+      - read: ".github/mma/config.yaml"

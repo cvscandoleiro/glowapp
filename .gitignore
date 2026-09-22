@@ -1,0 +1,32 @@
+# Dependências
+node_modules/
+portal/node_modules/
+
+# Builds e outputs
+dist/
+portal/dist/
+dist-ssr/
+*.local
+
+# Variáveis de ambiente e senhas (Segurança)
+.env
+.env.*
+!.env.example
+portal/.env
+portal/.env.*
+!portal/.env.example
+Senha*.txt
+*.key
+*.pem
+
+# Arquivos temporários e grandes
+*.zip
+*.tar.gz
+*.log
+logs/
+
+# IDEs e Sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

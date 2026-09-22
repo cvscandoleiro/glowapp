@@ -1,0 +1,470 @@
+# M3A Team Skills Registry
+# File: core/registry/skills.registry.yaml
+# Description: Catalog of all M3A Team skills (slash commands / prompt files)
+# Version: 1.1.0
+# Author: Edimar Ferla de Almeida
+# Organization: Minsait (Indra Company)
+
+version: "1.2.0"
+
+# Skills are single-purpose capabilities implemented as prompt files.
+# They are lighter-weight than workflows and typically involve 1-2 agents.
+
+skills:
+
+  # ─── Core Skills ────────────────────────────────────────────────────────────
+
+  prompt-enricher:
+    id: prompt-enricher
+    file: "skills/m3a-prompt-enricher.prompt.md"
+    command: "/m3a-prompt-enricher"
+    lead_agent: m3a-orchestrator
+    description: >
+      Silently enriches weak or incomplete prompts before routing to a specialist agent.
+      Adds project stack context, known constraints, relevant laws, and configuration.
+      Silent mode by default — user is not notified unless enrichment fundamentally changes intent.
+    auto_trigger: true
+    trigger_conditions:
+      - "Any prompt routed through the orchestrator"
+      - "Prompt lacks project context (no version, stack, or module reference)"
+    bypass: "--no-enrich flag appended to command"
+    category: core
+
+  troubleshooting:
+    id: troubleshooting
+    file: "skills/m3a-troubleshooting.prompt.md"
+    command: "/m3a-troubleshooting"
+    lead_agent: m3a-dev
+    supporting_agents: [m3a-devops]
+    description: >
+      Structured diagnosis flow: symptoms → probable causes → fixes → prevention.
+      Produces a troubleshooting report artifact, not a chat narration.
+    auto_trigger: false
+    trigger_conditions: []
+    category: core
+
+  plan-issues:
+    id: plan-issues
+    file: "skills/m3a-plan-issues.prompt.md"
+    command: "/m3a-plan-issues"
+    lead_agent: m3a-pm
+    description: >
+      Creates standardized GitHub/GitLab issues from backlog items (epics or stories).
+      Applies issue templates, labels, milestones. Requires /m3a-init completed.
+    auto_trigger: false
+    trigger_conditions: []
+    category: core
+
+  create-agent:
+    id: create-agent
+    file: "skills/m3a-create-agent.prompt.md"
+    command: "/m3a-create-agent"
+    lead_agent: m3a-orchestrator
+    description: >
+      Scaffolds a new custom agent with correct frontmatter, 13 Laws reference,
+      activation steps, and specialty section. Registers in agents.registry.yaml.
+    auto_trigger: false
+    trigger_conditions: []
+    category: core
+
+  refactor:
+    id: refactor
+    file: "skills/m3a-refactor.prompt.md"
+    command: "/m3a-refactor"
+    lead_agent: m3a-dev
+    supporting_agents: [m3a-analyst, m3a-architect]
+    description: >
+      Refactor war room: AS-IS analysis → impact assessment → plan → epics/stories.
+      NEVER auto-rewrites code. Produces a plan that requires human approval.
+      Human must explicitly authorize implementation after reviewing the plan.
+    auto_trigger: false
+    trigger_conditions: []
+    requires_human_approval: true
+    category: core
+
+  create-dev-container:
+    id: create-dev-container
+    file: "skills/m3a-create-dev-container.prompt.md"
+    command: "/m3a-create-dev-container"
+    lead_agent: m3a-devops
+    description: >
+      Generates a .devcontainer/ configuration tailored to the project's stack.
+      Reads stack from .github/mma/config.yaml. Generates devcontainer.json, Dockerfile,
+      postCreateCommand scripts.
+    auto_trigger: false
+    trigger_conditions: []
+    category: core
+
+  # ─── Initialization Skills ──────────────────────────────────────────────────
+
+  init:
+    id: init
+    file: "skills/m3a-init.prompt.md"
+    command: "/m3a-init"
+    lead_agent: m3a-orchestrator
+    supporting_agents: [m3a-analyst, m3a-pm]
+    description: >
+      Full project onboarding: collects project metadata, stack, team info,
+      populates .github/mma/config.yaml, scaffolds knowledge base and backlog structure.
+      Mandatory first step before any productive MMA action.
+    auto_trigger: false
+    trigger_conditions: []
+    category: initialization
+
+  init-docs:
+    id: init-docs
+    file: "skills/m3a-init-docs.prompt.md"
+    command: "/m3a-init-docs"
+    lead_agent: m3a-docs
+    supporting_agents: [m3a-ux]
+    description: >
+      Bootstraps Minsait-branded HTML documentation portal for the project.
+      Creates index.html, navigation, architecture page, and team page.
+      Reads config.yaml for branding and project metadata.
+    auto_trigger: false
+    trigger_conditions: []
+    category: initialization
+
+  init-epic:
+    id: init-epic
+    file: "skills/m3a-init-epic.prompt.md"
+    command: "/m3a-init-epic"
+    lead_agent: m3a-pm
+    supporting_agents: [m3a-orchestrator, m3a-analyst]
+    description: >
+      Guided epic creation flow: brainstorm → anti-duplicate scan → draft →
+      multi-agent review → approval. Produces EPIC-NNN-slug.md in backlog.
+    auto_trigger: false
+    trigger_conditions: []
+    category: initialization
+
+  init-knowledge:
+    id: init-knowledge
+    file: "skills/m3a-init-knowledge.prompt.md"
+    command: "/m3a-init-knowledge"
+    lead_agent: m3a-analyst
+    supporting_agents: [m3a-architect, m3a-security]
+    description: >
+      Systematic AS-IS scan of the entire project: module inventory, dependency
+      analysis, CVE audit, technical debt identification, effort estimation.
+      Populates .github/mma/knowledge/ with structured project intelligence.
+    auto_trigger: false
+    trigger_conditions: []
+    category: initialization
+
+  # ─── Documentation Skills ────────────────────────────────────────────────────
+
+  create-doc-portal:
+    id: create-doc-portal
+    file: "skills/m3a-create-doc-portal.prompt.md"
+    command: "/m3a-create-doc-portal"
+    lead_agent: m3a-docs
+    supporting_agents: [m3a-ux]
+    description: >
+      Generates a Minsait-branded HTML documentation portal: index, navigation,
+      architecture, decisions, team pages. Uses ForFutureSans fonts and Minsait
+      brand palette. Reads project config for title, subtitle, tagline.
+    auto_trigger: false
+    trigger_conditions: []
+    category: documentation
+
+  create-html:
+    id: create-html
+    file: "skills/m3a-create-html.prompt.md"
+    command: "/m3a-create-html"
+    lead_agent: m3a-docs
+    supporting_agents: [m3a-ux]
+    description: >
+      Guided HTML intake wizard for portals, dashboards, rollout trackers,
+      report pages, landing pages, and related HTML outputs. Collects a
+      structured HTML design brief one question at a time before generation.
+    auto_trigger: false
+    trigger_conditions: []
+    category: documentation
+
+  create-pdf:
+    id: create-pdf
+    file: "skills/m3a-create-pdf.prompt.md"
+    command: "/m3a-create-pdf"
+    lead_agent: m3a-docs
+    supporting_agents: [m3a-devops]
+    description: >
+      Guided PDF generation wizard. Converts one or more Markdown files into a
+      professionally formatted PDF with optional corporate DOCX template.
+      Auto-detects and offers to install missing dependencies (pandoc, uv, Chrome).
+      Can also be invoked directly via CLI: uv run scripts/md-to-pdf.py
+    auto_trigger: false
+    trigger_conditions: []
+    scripts: ["scripts/md-to-pdf.py", "scripts/md_to_docx.py"]
+    category: documentation
+
+  adr:
+    id: adr
+    file: "skills/m3a-adr.prompt.md"
+    command: "/m3a-adr"
+    lead_agent: m3a-architect
+    description: >
+      Generates a single Architecture Decision Record (ADR) from decision context.
+      Uses the standard ADR template from templates/markdown/adr.md.
+      ADR MUST include: context, decision, rationale, rejected alternatives, consequences.
+    auto_trigger: false
+    trigger_conditions: []
+    output_path: ".github/mma/decisions/"
+    category: documentation
+
+  runbook:
+    id: runbook
+    file: "skills/m3a-runbook.prompt.md"
+    command: "/m3a-runbook"
+    lead_agent: m3a-devops
+    supporting_agents: [m3a-docs]
+    description: >
+      Generates an operational runbook for a specific procedure.
+      Structure: prerequisites, step-by-step, verification, rollback, escalation.
+      Human must review before marking as production-ready.
+    auto_trigger: false
+    trigger_conditions: []
+    output_path: "docs/runbooks/"
+    category: documentation
+
+  release-notes:
+    id: release-notes
+    file: "skills/m3a-release-notes.prompt.md"
+    command: "/m3a-release-notes"
+    lead_agent: m3a-docs
+    supporting_agents: [m3a-pm, m3a-devops]
+    description: >
+      Generates release notes from version scope (git log, story list, or epic list).
+      Layer 1: CHANGELOG.md update. Layer 2: HTML executive release notes page.
+    auto_trigger: false
+    trigger_conditions: []
+    category: documentation
+
+  # ─── Architecture Skills ─────────────────────────────────────────────────────
+
+  migration-planner:
+    id: migration-planner
+    file: "skills/m3a-migration-planner.prompt.md"
+    command: "/m3a-migration-planner"
+    lead_agent: m3a-architect
+    supporting_agents: [m3a-analyst, m3a-security, m3a-devops, m3a-dba]
+    description: >
+      Creates a full stack migration plan: AS-IS baseline, TO-BE target, gap analysis,
+      risk matrix, phased roadmap, rollback strategy.
+      Does NOT execute code rewrites. Produces plan for human approval only.
+    auto_trigger: false
+    trigger_conditions: []
+    requires_human_approval: true
+    category: architecture
+
+  architecture-c4:
+    id: architecture-c4
+    file: "skills/m3a-architecture-c4.prompt.md"
+    command: "/m3a-architecture-c4"
+    lead_agent: m3a-architect
+    description: >
+      Generates C4 diagrams (Context, Container, Component levels) in Mermaid format.
+      Uses project stack from config.yaml. Outputs to architecture-c4.md template.
+    auto_trigger: false
+    trigger_conditions: []
+    category: architecture
+
+  # ─── Quality & Governance Skills ─────────────────────────────────────────────
+
+  quality-gates:
+    id: quality-gates
+    file: "skills/m3a-quality-gates.prompt.md"
+    command: "/m3a-quality-gates"
+    lead_agent: m3a-qa
+    description: >
+      Defines Definition of Done checklists per delivery type (feature, hotfix, migration,
+      infrastructure, documentation). Generates quality-gates.md per the template.
+    auto_trigger: false
+    trigger_conditions: []
+    category: governance
+
+  risk-gates:
+    id: risk-gates
+    file: "skills/m3a-risk-gates.prompt.md"
+    command: "/m3a-risk-gates"
+    lead_agent: m3a-orchestrator
+    supporting_agents: [m3a-security, m3a-architect, m3a-qa, m3a-devops]
+    description: >
+      Evaluates go/no-go gate criteria before major releases or migration phases.
+      Produces a risk gate report with pass/fail per criterion and recommendation.
+      ALWAYS requires explicit human approval to proceed. No agent may auto-approve.
+    auto_trigger: false
+    trigger_conditions: []
+    requires_human_approval: true
+    category: governance
+
+  dependency-audit:
+    id: dependency-audit
+    file: "skills/m3a-dependency-audit.prompt.md"
+    command: "/m3a-dependency-audit"
+    lead_agent: m3a-security
+    supporting_agents: [m3a-analyst, m3a-dba]
+    description: >
+      Performs dependency inventory, CVE severity scan summary, EOL calendar,
+      and recommended updates. Updates risk register. Flags security ADR candidates.
+    auto_trigger: false
+    trigger_conditions: []
+    category: governance
+
+  assessment:
+    id: assessment
+    file: "skills/m3a-assessment.prompt.md"
+    command: "/m3a-assessment"
+    lead_agent: m3a-analyst
+    supporting_agents: [m3a-architect, m3a-security, m3a-devops, m3a-dba]
+    description: >
+      Full technical diagnosis: module inventory, technical debt map, CVE/EOL summary,
+      risk register, and modernization recommendations.
+      Layer 1: assessment-report.md. Layer 2: HTML executive summary.
+    auto_trigger: false
+    trigger_conditions: []
+    category: governance
+
+  # ─── Operations Skills ───────────────────────────────────────────────────────
+
+  observability:
+    id: observability
+    file: "skills/m3a-observability.prompt.md"
+    command: "/m3a-observability"
+    lead_agent: m3a-devops
+    description: >
+      Defines logging, metrics, and distributed tracing standards for the project stack.
+      Recommends tools and patterns appropriate to the configured runtime and deploy target.
+    auto_trigger: false
+    trigger_conditions: []
+    category: operations
+
+  security-baseline:
+    id: security-baseline
+    file: "skills/m3a-security-baseline.prompt.md"
+    command: "/m3a-security-baseline"
+    lead_agent: m3a-security
+    description: >
+      Establishes OWASP Top 10 baseline, secrets management policy, and hardening checklist
+      for the project's stack. Outputs a security-baseline.md artifact.
+    auto_trigger: false
+    trigger_conditions: []
+    category: operations
+
+  data-classification:
+    id: data-classification
+    file: "skills/m3a-data-classification.prompt.md"
+    command: "/m3a-data-classification"
+    lead_agent: m3a-security
+    supporting_agents: [m3a-dba]
+    description: >
+      Produces data classification policy, PII inventory, and data retention rules
+      for the project's data model. Requires schema or DAO analysis from Codd.
+    auto_trigger: false
+    trigger_conditions: []
+    category: operations
+
+  session-summary:
+    id: session-summary
+    file: "skills/m3a-session-summary.prompt.md"
+    command: "/m3a-session-summary"
+    lead_agent: m3a-orchestrator
+    description: >
+      Generates a compact session summary (≤ 400 tokens) at end of work session.
+      Enables cross-session continuity: Orchestrator loads only this summary at next
+      session start instead of reloading multiple knowledge files. Saves ~15% token
+      loading per session.
+    auto_trigger: false
+    trigger_conditions:
+      - "Human requests session wrap-up"
+      - "End of significant work session"
+    category: core
+
+  doctor:
+    id: doctor
+    file: "skills/m3a-doctor.prompt.md"
+    command: "/m3a-doctor"
+    lead_agent: m3a-orchestrator
+    description: >
+      Installation health check and auto-fix. Validates required files, YAML syntax,
+      registry consistency, orphaned references, agent version sync, and Tool Guardian
+      status. Non-technical friendly output with ✅/⚠️/❌ per item. Auto-fixes registry
+      sync and version mismatch with user confirmation.
+    auto_trigger: false
+    trigger_conditions:
+      - "User reports M3A not working correctly"
+      - "After upgrade to verify installation integrity"
+    category: core
+
+  incident:
+    id: incident
+    file: "skills/m3a-incident.prompt.md"
+    command: "/m3a-incident"
+    lead_agent: m3a-orchestrator
+    supporting_agents:
+      - m3a-analyst
+      - m3a-architect
+      - m3a-dev
+      - m3a-qa
+      - m3a-security
+      - m3a-devops
+      - m3a-dba
+    description: >
+      Activates Incident War Room — all 12 agents in collaborative mode.
+      Produces incident log, root cause analysis, mitigation steps, lessons learned.
+      MUST be triggered explicitly by a human. No agent may auto-activate this.
+      This is Law 5 — War Room = Human Only.
+    auto_trigger: false
+    trigger_conditions:
+      - "Explicit human command only — NEVER auto-triggered by any agent"
+
+  update-latest:
+    id: update-latest
+    file: "skills/m3a-update-latest.prompt.md"
+    command: "/m3a-update-latest"
+    lead_agent: m3a-orchestrator
+    description: >
+      Chat-first upgrade wizard. Updates M3A Team to the latest GitHub release without overwriting
+      user customizations. Detects project-level and user-level installs, auto-backs up all modified
+      files, then offers [S]obrescrever / [M]erge per conflicting file.
+      Always pulls from releases/latest — never from main branch.
+    auto_trigger: false
+    trigger_conditions: []
+    category: operations
+    requires_human_approval: true
+    human_only_trigger: true
+
+  restore-customizations:
+    id: restore-customizations
+    file: "skills/m3a-restore-customizations.prompt.md"
+    command: "/m3a-restore-customizations"
+    lead_agent: m3a-orchestrator
+    supporting_agents: [m3a-docs]
+    description: >
+      Post-upgrade recovery skill. Borges analyzes backup vs current installation,
+      identifies user-added sections and modified lines, then restores selected
+      customizations surgically into the updated files.
+    auto_trigger: false
+    trigger_conditions: []
+    category: operations
+    requires_human_approval: true
+    human_only_trigger: true
+
+  # ─── Usage Tracking Skills ───────────────────────────────────────────────────
+
+  usage-report:
+    id: usage-report
+    file: "skills/m3a-usage-report.prompt.md"
+    command: "/m3a-usage-report"
+    lead_agent: m3a-docs
+    description: >
+      Generates a token usage report from .github/mma/usage/usage.csv.
+      Reads all artifact-generating task entries and produces a structured Markdown
+      summary at .github/mma/usage/usage-report.md. Supports optional filters:
+      sprint=Sprint-NN, agent=M3A: X, last=N.
+      IMPORTANT: token values are estimates (char_count / 3.5) — not billing-accurate.
+      Tracks artifact-generating tasks only — conversations are not included.
+    auto_trigger: false
+    trigger_conditions: []
+    output_path: ".github/mma/usage/usage-report.md"
+    category: operations

@@ -1,0 +1,488 @@
+{
+  "lang": "en",
+  "nav": {
+    "about": "About",
+    "agents": "Agents",
+    "features": "Features",
+    "skills": "Skills",
+    "workflows": "Workflows",
+    "laws": "Laws",
+    "commands": "Commands",
+    "install": "Install"
+  },
+  "hero": {
+    "title": "M3A Team",
+    "subtitle": "Minsait Multi-Agent AI Framework — specialized agents orchestrated inside VS Code, with GitHub Copilot",
+    "cta": "Get Started",
+    "version": "v1.1.0",
+    "stat_agents": "Specialized Agents",
+    "stat_gates": "Quality Gates",
+    "stat_commands": "Commands",
+    "stat_skills": "Skills",
+    "stat_workflows": "Workflows",
+    "stat_laws": "Laws"
+  },
+  "about": {
+    "heading": "What is M3A Team?",
+    "p1": "M3A Team (Multi-Agent AI Architecture) is an enterprise-grade, reusable multi-agent AI ecosystem designed for any Minsait project — new or existing, any stack, any domain.",
+    "p2": "It provides a team of 12 specialized AI agents, each with a distinct persona inspired by historical and intellectual figures. Agents collaborate on quality gates, enforce architectural decisions, and produce executive-grade documentation — all within VS Code using GitHub Copilot Agent mode.",
+    "p3": "No external services, no cloud subscriptions beyond Copilot. Install with one command, activate with /m3a-init, and your entire team gains a structured AI workforce governed by 13 immutable laws.",
+    "highlight1_title": "Works Inside VS Code",
+    "highlight1_desc": "No external tools or platforms. Agents run as Copilot agent modes directly in your editor.",
+    "highlight2_title": "Zero Cloud Dependencies",
+    "highlight2_desc": "Everything lives in your repository under .github/ — fully version-controlled and reviewable via PR.",
+    "highlight3_title": "13 Immutable Laws",
+    "highlight3_desc": "Governance baked into every agent: knowledge-first, no silence in reviews, mandatory consensus, operational honesty."
+  },
+  "agents": {
+    "heading": "The Agent Roster",
+    "description": "12 specialized agents, each with a distinct persona and area of expertise. Click any card to see full capabilities.",
+    "orchestrator": {
+      "icon": "⚡",
+      "role": "Orchestrator",
+      "persona": "Marcus Aurelius",
+      "motto": "Governs without executing — decisions under pressure with rationality and long-term vision.",
+      "capabilities": [
+        "Routes requests to the correct specialized agent",
+        "Coordinates multi-agent review sessions",
+        "Enforces the 13 immutable governance laws",
+        "Manages epic creation and approval flow",
+        "Consolidates review verdicts from all agents",
+        "Records all project decisions in the knowledge base"
+      ]
+    },
+    "analyst": {
+      "icon": "📊",
+      "role": "Analyst",
+      "persona": "Descartes",
+      "motto": "Decompose each problem into parts until nothing remains unexplained.",
+      "capabilities": [
+        "AS-IS analysis and module decomposition",
+        "CVE auditing and dependency inventory",
+        "Shallow, intermediate, and deep component analysis",
+        "Compatibility and technical impact assessment",
+        "EOL verification and technology lifecycle mapping",
+        "Knowledge base construction from codebase scanning"
+      ]
+    },
+    "architect": {
+      "icon": "🏗️",
+      "role": "Architect",
+      "persona": "Vitruvius",
+      "motto": "Firmitas, Utilitas, Venustas — good architecture serves purpose, is robust, and survives through time.",
+      "capabilities": [
+        "TO-BE architecture design and migration planning",
+        "Architecture Decision Record (ADR) creation",
+        "C4 diagrams (Context, Container, Component)",
+        "Technical feasibility analysis for epics",
+        "Stack migration gap analysis (AS-IS → TO-BE)",
+        "Epic risk assessment with elevated veto power"
+      ]
+    },
+    "pm": {
+      "icon": "📋",
+      "role": "Product Manager",
+      "persona": "Drucker",
+      "motto": "Effectiveness is doing the right things. What generates no value does not exist.",
+      "capabilities": [
+        "Epic creation with structured brainstorm process",
+        "Anti-duplicate checking across the backlog",
+        "Backlog prioritization and roadmap planning",
+        "PRD (Product Requirements Document) creation",
+        "Acceptance criteria definition and refinement",
+        "Modernization roadmap for legacy projects"
+      ]
+    },
+    "sm": {
+      "icon": "🏃",
+      "role": "Scrum Master",
+      "persona": "Deming",
+      "motto": "Good results come from good systems, not heroes.",
+      "capabilities": [
+        "Sprint planning (never beyond Sprint N+1)",
+        "Story creation and decomposition from epics",
+        "Sprint status tracking and management",
+        "Reviews, retrospectives, and velocity tracking",
+        "Definition of Ready / Definition of Done enforcement",
+        "Team cadence and process improvement"
+      ]
+    },
+    "dev": {
+      "icon": "💻",
+      "role": "Developer",
+      "persona": "Knuth",
+      "motto": "Premature optimization is the root of all evil. Code must survive decades.",
+      "capabilities": [
+        "Story implementation using Red-Green-Refactor",
+        "Code review and structured refactoring",
+        "Multi-stack support (Java, .NET, Python, Node, etc.)",
+        "Technical specification proposals",
+        "Module-level analysis for implementation planning",
+        "DevContainer generation for reproducible environments"
+      ]
+    },
+    "qa": {
+      "icon": "🔍",
+      "role": "QA Engineer",
+      "persona": "Popper",
+      "motto": "Only what can be falsified can be validated.",
+      "capabilities": [
+        "Test strategy and planning per story/epic",
+        "Acceptance criteria validation and testability review",
+        "Definition of Done enforcement at quality gates",
+        "Test coverage strategy and gap analysis",
+        "Story-done and epic-done gate participation",
+        "Quality metrics tracking and reporting"
+      ]
+    },
+    "security": {
+      "icon": "🔒",
+      "role": "Security Engineer",
+      "persona": "Hobbes",
+      "motto": "Without adequate security, systems are solitary, poor, nasty, brutish, and short.",
+      "capabilities": [
+        "OWASP Top 10 audit and compliance checking",
+        "CVE dependency scanning and remediation plans",
+        "System hardening recommendations",
+        "Attack surface analysis and threat modeling",
+        "VETO power — blocks any unsafe epic or story",
+        "Security baseline and hardening checklists"
+      ]
+    },
+    "devops": {
+      "icon": "☁️",
+      "role": "DevOps Engineer",
+      "persona": "Atlas",
+      "motto": "Without reliable infrastructure, software does not exist in production.",
+      "capabilities": [
+        "Docker and containerization setup",
+        "Kubernetes manifests and orchestration",
+        "CI/CD pipeline design and automation",
+        "DevContainer generation for team onboarding",
+        "Deployment automation and environment management",
+        "Observability standards (logging, metrics, tracing)"
+      ]
+    },
+    "docs": {
+      "icon": "📄",
+      "role": "Technical Writer",
+      "persona": "Borges",
+      "motto": "The challenge is not to create — it is to structure so it can be found.",
+      "capabilities": [
+        "Minsait-branded HTML documentation portals",
+        "Executive-level reporting for stakeholders",
+        "Knowledge base curation and maintenance",
+        "Portal generation with rollout trackers",
+        "Agent documentation and changelog management"
+      ]
+    },
+    "ux": {
+      "icon": "🎨",
+      "role": "UX/UI Designer",
+      "persona": "Norman",
+      "motto": "Good design makes complex things understandable.",
+      "capabilities": [
+        "Usability analysis and heuristic evaluation",
+        "Interface design review and recommendations",
+        "WCAG accessibility audit and compliance",
+        "Design system review and consistency checks",
+        "User journey mapping and flow optimization",
+        "UI component analysis and improvement proposals"
+      ]
+    },
+    "dba": {
+      "icon": "🗄️",
+      "role": "Database Architect",
+      "persona": "Codd",
+      "motto": "Data shall be accessed by its content, not by its location.",
+      "capabilities": [
+        "Schema design, analysis, and optimization",
+        "Reversible database migration scripts",
+        "Query performance tuning and indexing strategy",
+        "Database impact assessment for epics",
+        "DAO/Repository pattern guidance",
+        "ORM evaluation and data access layer review"
+      ]
+    }
+  },
+  "features": {
+    "heading": "Key Features",
+    "description": "A comprehensive AI-powered engineering workflow — from idea to production.",
+    "bootstrap": {
+      "title": "New Product Bootstrap",
+      "description": "Go from a product idea to your first sprint in a structured, agent-guided process.",
+      "steps": [
+        "Drucker creates the PRD and defines the product vision",
+        "Vitruvius designs the TO-BE architecture with C4 diagrams",
+        "Atlas generates DevContainers and CI/CD scaffolding",
+        "Descartes scans the landscape and builds the knowledge base",
+        "Deming plans Sprint 1 with stories and acceptance criteria"
+      ],
+      "agents_involved": "Drucker → Vitruvius → Atlas → Descartes → Deming"
+    },
+    "quality_gates": {
+      "title": "Quality Gates",
+      "story_title": "Story Done Gate",
+      "story_desc": "5 agents perform a surgical review of every completed story. QA, Security, and Developer hold veto power — one rejection blocks the story.",
+      "story_agents": "QA · Security · Developer · Architect · Docs",
+      "epic_title": "Epic Done Gate",
+      "epic_desc": "Up to 9 agents perform a systemic review of the entire epic. Architect and DBA gain elevated veto power. No agent may remain silent.",
+      "epic_agents": "QA · Security · Developer · Architect · Docs · PM + DBA · DevOps · UX",
+      "veto_label": "Veto Power",
+      "warning_label": "Advisory Role"
+    },
+    "platform_title": "Platform Features",
+    "knowledge": {
+      "title": "Knowledge-Driven",
+      "description": "Every decision, convention, and architectural choice is recorded in a structured knowledge base that grows with your project.",
+      "points": [
+        "Descartes builds the knowledge base from deep codebase scans",
+        "Marcus Aurelius records all decisions in the decisions log",
+        "Borges curates and structures documentation for discoverability",
+        "All agents read knowledge before acting — Law 1: Knowledge First"
+      ]
+    },
+    "multistack": {
+      "title": "Multi-Stack Support",
+      "description": "Works on any technology stack. MMA auto-detects your project's languages, frameworks, and tools — then adapts all 12 agents accordingly.",
+      "stacks": "Java · .NET · Python · Node.js · Go · Angular · React · Vue · and more"
+    },
+    "executive_docs": {
+      "title": "Executive Documentation",
+      "description": "Borges translates technical analysis into executive-grade reports with Minsait branding.",
+      "points": [
+        "Minsait-branded HTML portals with ForFutureSans typography",
+        "Automatic Layer 1 → Layer 2 translation (technical → executive)",
+        "Sprint reports, epic summaries, risk registers",
+        "Rollout trackers and release notes"
+      ]
+    },
+    "security_first": {
+      "title": "Security First",
+      "description": "Hobbes has absolute VETO power — no unsafe epic or story passes review. Security is not an afterthought, it's enforced at every gate.",
+      "points": [
+        "OWASP Top 10 audit on every review",
+        "CVE dependency scanning with remediation plans",
+        "System hardening and attack surface analysis",
+        "Security baseline enforcement across all stacks"
+      ]
+    },
+    "existing_project": {
+      "title": "Existing Projects & Modernization",
+      "description": "Start from an existing codebase — legacy system, monolith, or partial refactoring. MMA maps the AS-IS state, identifies technical debt, and builds a structured modernization roadmap.",
+      "steps": [
+        "Descartes runs AS-IS analysis: stack scan, CVEs, module decomposition",
+        "Knowledge base built from codebase, docs, and architecture artifacts",
+        "Vitruvius designs the TO-BE architecture with migration gap analysis",
+        "Hobbes audits security posture and CVE exposure",
+        "Drucker creates a modernization roadmap with prioritized epics"
+      ],
+      "agents_involved": "Descartes → Vitruvius → Hobbes → Drucker → Deming"
+    }
+  },
+  "commands": {
+    "heading": "Available Commands",
+    "description": "All /m3a-* commands available after installation. Run them in VS Code Copilot Chat.",
+    "col_command": "Command",
+    "col_description": "Description",
+    "cat_init": "Initialization",
+    "cat_arch": "Assessment & Architecture",
+    "cat_quality": "Quality & Governance",
+    "cat_docs": "Documentation",
+    "cat_ops": "Operations",
+    "cat_utils": "Utilities",
+    "cmd_init": "Start here — onboarding wizard, personalizes config",
+    "cmd_upgrade": "Upgrade agent setup (minimal → full) without re-configuration",
+    "cmd_init_new": "Greenfield project scaffold (PRD → C4 → DevContainer)",
+    "cmd_init_existing": "Legacy/existing project scan (AS-IS → knowledge base)",
+    "cmd_init_knowledge": "Deep scan + knowledge base bootstrap",
+    "cmd_init_docs": "Documentation portal scaffold",
+    "cmd_init_epic": "Backlog structure + epic/story tracker",
+    "cmd_assessment": "Full technical diagnosis (inventory, debt, CVEs, risks)",
+    "cmd_c4": "Generate C4 diagrams (Context, Container, Component)",
+    "cmd_adr": "Generate Architecture Decision Record",
+    "cmd_migration": "Stack migration plan (AS-IS → TO-BE gap analysis)",
+    "cmd_quality_gates": "Definition of Done checklists per delivery type",
+    "cmd_risk_gates": "Go/No-Go gate evaluation (requires human approval)",
+    "cmd_dep_audit": "CVE scan, EOL calendar, update recommendations",
+    "cmd_sec_baseline": "OWASP baseline, hardening checklist",
+    "cmd_story_done": "Story completion quality gate — 5-agent parallel review",
+    "cmd_epic_done": "Epic completion systemic gate — up to 9-agent review",
+    "cmd_doc_portal": "Generate Minsait-branded HTML documentation portal",
+    "cmd_runbook": "Generate operational runbook",
+    "cmd_release_notes": "Generate release notes from version scope",
+    "cmd_troubleshooting": "Structured diagnosis: symptoms → causes → fixes",
+    "cmd_observability": "Logging, metrics, tracing standards",
+    "cmd_incident": "Incident war room (human-only trigger)",
+    "cmd_plan_issues": "Create standardized GitHub/GitLab issues",
+    "cmd_refactor": "War room analysis → plan → epics (never auto-rewrites)",
+    "cmd_create_agent": "Scaffold a new custom agent",
+    "cmd_create_devcontainer": "Generate .devcontainer/ for your stack",
+    "cmd_data_class": "Data classification policy, PII inventory",
+    "cmd_doctor": "Validate M3A Team installation and configuration",
+    "cmd_prompt_enricher": "Enrich weak prompts before routing"
+  },
+  "skills": {
+    "heading": "Skills",
+    "description": "25 specialized prompt skills — automation routines that agents use to execute complex, multi-step operations."
+  },
+  "workflows": {
+    "heading": "Workflows",
+    "description": "11 structured multi-agent processes — end-to-end coordination protocols from project bootstrap to quality gates."
+  },
+  "laws": {
+    "heading": "13 Immutable Laws",
+    "description": "Governance baked into every agent. Absolute, inviolable, applied at every interaction.",
+    "items": [
+      {
+        "n": "01",
+        "name": "Knowledge First",
+        "desc": "Every agent reads the knowledge base before any action. New knowledge physically updates the files — never stays in chat only."
+      },
+      {
+        "n": "02",
+        "name": "Minimal Chat",
+        "desc": "Only status formats in chat: ✅ file, ⚠️ warning, ❌ blocked. No narration, no reasoning, no content duplication."
+      },
+      {
+        "n": "03",
+        "name": "Anti-Duplicate",
+        "desc": "Before creating anything, check the backlog for similar epics, stories, and analyses already done."
+      },
+      {
+        "n": "04",
+        "name": "Continuous Learning",
+        "desc": "Every new relevant knowledge about the project physically updates the knowledge base — never gets lost."
+      },
+      {
+        "n": "05",
+        "name": "War Room = Human Only",
+        "desc": "No agent triggers a War Room automatically. Agents can only suggest it to the human with clear justification."
+      },
+      {
+        "n": "06",
+        "name": "No Silence in Review",
+        "desc": "Every agent evaluates every epic through their specialized lens. Silence requires explicit documented justification."
+      },
+      {
+        "n": "07",
+        "name": "Mandatory Consensus",
+        "desc": "Disagreements between agents must be resolved with evidence exchange. Unresolved after 2 rounds → escalate to human."
+      },
+      {
+        "n": "08",
+        "name": "Sprint-by-Sprint",
+        "desc": "Never detail beyond Sprint N+1. Each sprint is refined based on actual results of the previous sprint."
+      },
+      {
+        "n": "09",
+        "name": "Multi-Agent Approval",
+        "desc": "No epic advances from draft to approved with any agent blocked (❌). All 12 agents must review and respond."
+      },
+      {
+        "n": "10",
+        "name": "Two Output Layers",
+        "desc": "Layer 1: operational/technical (internal). Layer 2: executive (for management). Docs agent translates between them."
+      },
+      {
+        "n": "11",
+        "name": "Agent Versioning",
+        "desc": "Every agent update increments semantic version and adds a changelog entry. Full traceability is mandatory."
+      },
+      {
+        "n": "12",
+        "name": "Build Always Passes",
+        "desc": "No story is done without evidence of a passing build. Build broken = story returns to in-progress."
+      },
+      {
+        "n": "13",
+        "name": "Operational Honesty",
+        "desc": "An agent that skipped a mandatory step must actively declare it. Silence about a deviation equals a false declaration."
+      }
+    ]
+  },
+  "install": {
+    "heading": "Install M3A Team",
+    "description": "One command installs all 12 agents into any VS Code project with GitHub Copilot.",
+    "prerequisites": "Prerequisites",
+    "prereq_heading": "⚠️ Prerequisites — Required before installing",
+    "prereq_desc": "Make sure you have all three before running the install script.",
+    "prereq_vscode": "VS Code with GitHub Copilot extension",
+    "prereq_cli": "GitHub CLI (gh) — installed and authenticated",
+    "prereq_copilot": "GitHub Copilot subscription (Chat + Agent mode)",
+    "step1_title": "Run the install script",
+    "step1_desc": "Execute from your project root (where .git/ lives)",
+    "step2_title": "Activate with /m3a-init",
+    "step2_desc": "Personalizes config and activates all 12 agents for your project",
+    "step2_callout": "Required before any other command. /m3a-init configures agents with your project stack, team, and context. Without it, agents operate without project knowledge.",
+    "mandatory_label": "⚡ Mandatory — Run First",
+    "step3_title": "Initialize knowledge base",
+    "step3_desc": "Recommended for existing projects — deep codebase scan that powers all agent analysis",
+    "step4_title": "Start using commands",
+    "step4_desc": "All /m3a-* commands are now available in Copilot Chat",
+    "windows_label": "Windows PowerShell",
+    "linux_label": "Linux / macOS"
+  },
+  "footer": {
+    "tagline": "Tech for impact",
+    "copyright": "© 2026 Minsait (An Indra Company) — All rights reserved",
+    "github": "View on GitHub"
+  },
+  "workflow_cards": {
+    "new_project": {
+      "name": "New Project",
+      "desc": "Greenfield bootstrap: PRD → C4 architecture → DevContainer setup → Sprint 1 planning",
+      "agents": "Drucker · Vitruvius · Atlas · Descartes · Deming"
+    },
+    "existing": {
+      "name": "Existing Project",
+      "desc": "Legacy onboarding: AS-IS scan → knowledge base construction → gap analysis → modernization roadmap",
+      "agents": "Descartes · Vitruvius · Hobbes · Deming"
+    },
+    "epic_planning": {
+      "name": "Epic Planning",
+      "desc": "Epic creation → anti-duplicate check → 12-agent multi-perspective review → approval → sprint planning",
+      "agents": "All 12 agents"
+    },
+    "story_done": {
+      "name": "Story Done Gate",
+      "desc": "5-agent surgical review of every completed story. QA, Security and Developer hold veto power.",
+      "agents": "Popper · Hobbes · Knuth · Vitruvius · Borges"
+    },
+    "epic_done": {
+      "name": "Epic Done Gate",
+      "desc": "9-agent systemic review of the entire epic scope. Architect and DBA gain elevated veto power.",
+      "agents": "9 reviewing agents"
+    },
+    "docs_portal": {
+      "name": "Docs Portal",
+      "desc": "Generates the Minsait-branded HTML documentation portal with rollout trackers and sprint reports",
+      "agents": "Borges"
+    },
+    "knowledge": {
+      "name": "Knowledge Bootstrap",
+      "desc": "Full knowledge base initialization from codebase scan, docs, architecture artifacts, and ADRs",
+      "agents": "Descartes · Borges"
+    },
+    "migration": {
+      "name": "Migration Planner",
+      "desc": "Multi-agent migration planning: AS-IS baseline → TO-BE target → gap analysis → phased roadmap with rollback",
+      "agents": "Vitruvius · Descartes · Hobbes · Atlas · Codd"
+    },
+    "dep_audit": {
+      "name": "Dependency Audit",
+      "desc": "Full dependency inventory, CVE severity scan, EOL calendar, and remediation recommendations",
+      "agents": "Hobbes · Descartes · Codd"
+    },
+    "release": {
+      "name": "Release Cycle",
+      "desc": "End-to-end release governance: ADRs → runbooks → release notes → risk gate approval",
+      "agents": "Vitruvius · Atlas · Borges · Drucker"
+    },
+    "incident": {
+      "name": "Incident & Troubleshooting",
+      "desc": "War Room incident protocol: root cause analysis, mitigation, lessons learned (human-only trigger)",
+      "agents": "All 12 agents"
+    }
+  }
+}

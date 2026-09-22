@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<!--
+    M3A Team — Executive Presentation v2
+    © 2026 Minsait (An Indra Company) — Tech for impact
+-->
+<html lang="en" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M3A Team | Executive Presentation</title>
+<link rel="icon" href="../assets/AF_MINSAIT_SIM_POS.png" type="image/png">
+<style>
+@font-face{font-family:'FF';src:url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Light.woff2')format('woff2');font-weight:300;font-display:swap}
+@font-face{font-family:'FF';src:url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Regular.woff2')format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'FF';src:url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Medium.woff2')format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'FF';src:url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Bold.woff2')format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'FF';src:url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Black.woff2')format('woff2');font-weight:800;font-display:block}
+:root{
+  --f:rgb(255,0,84);--f2:rgba(255,0,84,.6);--p:rgb(72,14,42);--pd:rgb(38,7,23);
+  --bg:#03030a;--bg2:#07070f;--c:rgba(255,255,255,.035);--b:rgba(255,255,255,.07);
+  --bh:rgba(255,0,84,.4);--t:rgba(255,255,255,.93);--t2:rgba(255,255,255,.5);--t3:rgba(255,255,255,.25);
+  --m:'SFMono-Regular',Consolas,monospace;
+  --gl:0 0 30px rgba(255,0,84,.4),0 0 80px rgba(255,0,84,.12);--gs:0 0 12px rgba(255,0,84,.3);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{font-family:'FF',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--t);line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}img{display:block;max-width:100%}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--p);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--f)}
+
+/* PARTICLE CANVAS */
+#bgc{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:1}
+
+/* AMBIENT ORBS (neocortex style) */
+
+
+/* SPOTLIGHT */
+.spl{position:fixed;width:650px;height:650px;border-radius:50%;background:radial-gradient(circle,rgba(255,0,84,.055)0%,transparent 65%);pointer-events:none;z-index:1;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:opacity .3s}
+
+/* NAV */
+.nav{position:fixed;top:.85rem;left:50%;transform:translateX(-50%);z-index:999;display:flex;align-items:center;gap:.25rem;padding:.45rem .6rem;background:rgba(3,3,10,.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--b);border-radius:50px;transition:all .4s;white-space:nowrap}
+.nav.solid{background:rgba(3,3,10,.95);border-color:rgba(255,0,84,.2);box-shadow:0 4px 40px rgba(0,0,0,.6)}
+.nav-logo{height:21px;opacity:.85;margin-right:.6rem;flex-shrink:0;transition:opacity .2s}
+.nav-logo:hover{opacity:1}
+.nav-links{display:flex;gap:.05rem}
+.nav-links a{color:var(--t2);font-size:.77rem;font-weight:500;padding:.38rem .72rem;border-radius:30px;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--t);background:rgba(255,255,255,.07)}
+.nav-cta{background:var(--f);color:#fff;font-size:.77rem;font-weight:700;padding:.38rem .95rem;border-radius:30px;margin-left:.4rem;transition:all .25s;flex-shrink:0}
+.nav-cta:hover{box-shadow:var(--gs);transform:translateY(-1px)}
+
+/* LANG DROPDOWN */
+.lang-drop{position:relative;margin-left:.6rem;flex-shrink:0}
+.lang-btn{display:flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.07);border:1px solid var(--b);color:var(--t2);font-family:'FF',sans-serif;font-size:.72rem;font-weight:600;padding:.2rem .5rem;border-radius:20px;cursor:pointer;transition:all .2s;letter-spacing:.03em}
+.lang-btn:hover{background:rgba(255,255,255,.12);color:var(--t)}
+.lang-btn .lf{line-height:1;display:inline-flex;align-items:center}
+.lang-chev{width:10px;height:10px;opacity:.5;transition:transform .25s}
+.lang-drop.open .lang-chev{transform:rotate(180deg)}
+.lang-menu{position:absolute;top:calc(100% + .5rem);right:0;background:rgba(10,10,18,.96);backdrop-filter:blur(20px);border:1px solid var(--b);border-radius:12px;padding:.4rem;min-width:130px;opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;transition:all .22s cubic-bezier(.4,0,.2,1);box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.lang-drop.open .lang-menu{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.lang-opt{display:flex;align-items:center;gap:.55rem;width:100%;background:none;border:none;color:var(--t2);font-family:'FF',sans-serif;font-size:.78rem;padding:.5rem .7rem;border-radius:8px;cursor:pointer;transition:all .18s;text-align:left}
+.lang-opt:hover{background:rgba(255,255,255,.07);color:var(--t)}
+.lang-opt.cur{color:var(--f);background:rgba(255,0,84,.08)}
+.lang-opt .lf{display:inline-flex;align-items:center}
+.flag-img{width:20px;height:14px;border-radius:2px;object-fit:cover;vertical-align:middle;display:inline-block;flex-shrink:0}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8rem 2rem 6rem;text-align:center;position:relative;z-index:2}
+.h-eye{display:inline-flex;align-items:center;gap:.5rem;padding:.28rem .85rem;border-radius:30px;background:rgba(255,0,84,.07);border:1px solid rgba(255,0,84,.18);font-family:var(--m);font-size:.65rem;color:var(--f);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2rem;animation:fu .9s ease both}
+.h-dot{width:6px;height:6px;border-radius:50%;background:var(--f);box-shadow:var(--gs);animation:bd 2s ease-in-out infinite;flex-shrink:0}
+@keyframes bd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.25;transform:scale(.6)}}
+#hero h1{font-size:clamp(3rem,8vw,6.5rem);font-weight:800;line-height:.96;letter-spacing:-.04em;margin-bottom:1.6rem;animation:fu .9s ease .1s both}
+.gr{display:block;background:linear-gradient(130deg,var(--f) 0%,#ff85b3 45%,var(--f) 100%);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:sh 4s linear infinite}
+@keyframes sh{0%{background-position:0%}100%{background-position:200%}}
+.h-sub{font-size:clamp(.95rem,2vw,1.18rem);font-weight:300;color:var(--t2);max-width:580px;line-height:1.75;margin:0 auto 2.75rem;animation:fu .9s ease .22s both}
+.h-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fu .9s ease .34s both}
+
+/* Moving border */
+.mb{position:relative;padding:1px;border-radius:14px;display:inline-flex;overflow:hidden}
+.mb::before{content:'';position:absolute;inset:0;background:conic-gradient(from var(--a,0deg),transparent 20%,var(--f) 40%,transparent 60%);animation:rb 3s linear infinite;border-radius:inherit}
+@property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
+@keyframes rb{to{--a:360deg}}
+.mb-i{display:inline-flex;align-items:center;gap:.5rem;padding:.82rem 1.85rem;background:var(--bg);color:var(--t);font-family:'FF',sans-serif;font-size:.92rem;font-weight:700;border-radius:13px;position:relative;z-index:1;transition:background .3s}
+.mb:hover .mb-i{background:rgba(255,0,84,.08)}
+.btn-s{display:inline-flex;align-items:center;gap:.5rem;padding:.82rem 1.85rem;background:var(--f);color:#fff;font-size:.92rem;font-weight:700;border-radius:14px;transition:all .3s}
+.btn-s:hover{box-shadow:var(--gl);transform:translateY(-3px)}
+
+/* Ticker */
+.hticker{margin-top:3.75rem;animation:fu .9s ease .48s both;position:relative;overflow:hidden;height:2.4rem;display:flex;align-items:center}
+.hticker::before,.hticker::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.hticker::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.hticker::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.tt{display:flex;gap:2.5rem;animation:tk 60s linear infinite;white-space:nowrap;align-items:center;transition:animation-duration .3s}
+.tt:hover{animation-play-state:paused}
+.ti{display:flex;align-items:center;gap:.55rem;font-family:var(--m);font-size:.82rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;flex-shrink:0}
+.ti .tv{color:var(--f);font-weight:700}
+.ts{width:4px;height:4px;border-radius:50%;background:var(--b);flex-shrink:0}
+@keyframes tk{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes fu{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+
+/* MARQUEE STRIP */
+/* mstrip removed */
+.mit{font-family:var(--m);font-size:.7rem;font-weight:700;letter-spacing:.1em;color:#fff;padding:0 2rem;flex-shrink:0}
+.mdot{opacity:.45;padding:0 .35rem}
+@keyframes mq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SECTIONS */
+section{padding:7rem 2rem;position:relative;z-index:2}
+.w{max-width:1180px;margin:0 auto}
+.lbl{font-family:var(--m);font-size:.74rem;color:var(--f);letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:.6rem}
+.st{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.035em;line-height:1.05;margin-bottom:.7rem}
+.ss{font-size:1rem;font-weight:300;color:var(--t2);max-width:570px;line-height:1.75}
+.sh{margin-bottom:3.75rem}.sh.c{text-align:center}.sh.c .ss{margin:0 auto}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .75s ease,transform .75s ease}
+.rv.in{opacity:1;transform:translateY(0)}
+.rv.d1{transition-delay:.09s}.rv.d2{transition-delay:.19s}.rv.d3{transition-delay:.29s}.rv.d4{transition-delay:.39s}
+
+/* LAMP */
+.lamp{position:relative;overflow:hidden;padding:4rem 2rem 0;text-align:center;margin-bottom:.5rem}
+.lb{position:absolute;top:0;left:50%;transform:translateX(-50%);width:900px;height:500px;background:radial-gradient(ellipse 55% 100% at 50% 0%,rgba(255,0,84,.17) 0%,rgba(255,0,84,.05) 45%,transparent 70%);pointer-events:none}
+.ll{position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:220px;background:linear-gradient(180deg,rgba(255,0,84,.9),transparent);opacity:.8}
+.lg{position:absolute;top:0;left:50%;transform:translateX(-50%);width:180px;height:8px;border-radius:50%;background:var(--f);filter:blur(20px);opacity:.85;animation:lp 3s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:.45;width:90px}50%{opacity:.8;width:130px}}
+.lamp .st{position:relative;z-index:1}
+
+/* PAIN */
+#pain{background:var(--bg2)}
+.pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--b);border:1px solid var(--b);border-radius:22px;overflow:hidden}
+.pc{background:var(--bg2);padding:2.1rem;transition:background .3s;position:relative;overflow:hidden;cursor:default}
+.pc::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,0,84,.07)0%,transparent 55%);opacity:0;transition:opacity .3s;pointer-events:none}
+.pc:hover::after{opacity:1}
+.pc:hover{background:rgba(255,255,255,.02)}
+.pcn{font-family:var(--m);font-size:.63rem;color:var(--t3);letter-spacing:.1em;margin-bottom:1.25rem;display:block}
+.pci{font-size:2rem;margin-bottom:.85rem;display:block}
+.pct{font-size:1.14rem;font-weight:700;margin-bottom:.45rem;letter-spacing:-.01em}
+.pcd{font-size:.92rem;color:var(--t2);line-height:1.65;margin-bottom:1.1rem}
+.pcf{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--m);font-size:.74rem;color:#5dde8a;background:rgba(93,222,138,.07);border:1px solid rgba(93,222,138,.18);padding:.25rem .7rem;border-radius:6px}
+
+/* ROI */
+#roi{padding:7rem 2rem}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b);border:1px solid var(--b);border-radius:22px;overflow:hidden;margin-bottom:4.5rem}
+.rb{padding:3.25rem;background:var(--bg);transition:background .3s;position:relative;overflow:hidden}
+.rb:hover{background:rgba(255,0,84,.03)}
+.rbtag{font-family:var(--m);font-size:.63rem;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem}
+.rbig{font-size:clamp(3.5rem,7vw,6rem);font-weight:800;line-height:1;letter-spacing:-.05em;color:var(--f);text-shadow:var(--gl);display:block;margin-bottom:.4rem}
+.rbig.sm{font-size:clamp(2.2rem,4vw,3.8rem)}
+.rdesc{font-size:.9rem;color:var(--t2);font-weight:300;line-height:1.65;max-width:260px}
+.rbens{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.rben{padding:1.65rem;background:var(--c);border:1px solid var(--b);border-radius:18px;transition:all .3s}
+.rben:hover{border-color:var(--bh);background:rgba(255,255,255,.04);transform:translateY(-4px)}
+.rben-i{font-size:1.65rem;margin-bottom:.8rem}
+.rben h4{font-size:.9rem;font-weight:700;margin-bottom:.55rem}
+.rben ul{list-style:none;padding:0}
+.rben li{font-size:.8rem;color:var(--t2);padding:.28rem 0 .28rem 1rem;position:relative;line-height:1.5;border-bottom:1px solid rgba(255,255,255,.04)}
+.rben li:last-child{border:none}
+.rben li::before{content:'';position:absolute;left:0;top:.6rem;width:4px;height:4px;border-radius:50%;background:var(--f)}
+
+/* BENTO */
+#features{background:var(--bg2)}
+.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);border-radius:22px;overflow:hidden}
+.bc{background:var(--bg2);padding:1.9rem;position:relative;overflow:hidden;transition:background .3s}
+.bc:hover{background:rgba(255,255,255,.022)}
+.bc.s2{grid-column:span 2}
+.bc-l{font-family:var(--m);font-size:.67rem;color:var(--f);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.7rem;display:block}
+.bc-t{font-size:1.2rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.55rem;line-height:1.2}
+.bc-d{font-size:.9rem;color:var(--t2);line-height:1.65}
+.bc-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.9rem}
+.bc-tag{font-family:var(--m);font-size:.65rem;color:var(--f);background:rgba(255,0,84,.07);border:1px solid rgba(255,0,84,.18);padding:.16rem .52rem;border-radius:5px}
+.bcnum{font-size:clamp(2.8rem,5vw,4.5rem);font-weight:800;line-height:1;color:var(--f);text-shadow:var(--gl);margin:.85rem 0 .4rem;letter-spacing:-.04em}
+.bcu{font-size:.74rem;color:var(--t3);font-family:var(--m);letter-spacing:.08em;text-transform:uppercase}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.38rem;margin:.85rem 0}
+.mc{border-radius:8px;padding:.7rem .4rem;text-align:center;font-size:.62rem;font-family:var(--m);letter-spacing:.04em;border:1px solid;transition:all .3s}
+.mc.pass{background:rgba(93,222,138,.07);border-color:rgba(93,222,138,.25);color:#5dde8a}
+.mc.pend{background:rgba(255,200,80,.07);border-color:rgba(255,200,80,.2);color:#ffd166}
+.mc.blk{background:rgba(255,0,84,.07);border-color:rgba(255,0,84,.25);color:var(--f)}
+.mc .mi{font-size:.85rem;display:block;margin-bottom:.2rem}
+.mver{display:flex;gap:.45rem;justify-content:center;margin-top:.65rem;font-family:var(--m);font-size:.68rem}
+.vp{color:#5dde8a;background:rgba(93,222,138,.08);border:1px solid rgba(93,222,138,.22);padding:.22rem .65rem;border-radius:5px}
+.vb{color:var(--f);background:rgba(255,0,84,.08);border:1px solid rgba(255,0,84,.22);padding:.22rem .65rem;border-radius:5px}
+.ktree{font-family:var(--m);font-size:.7rem;line-height:2;margin:.7rem 0}
+.ktree .kd{color:#7ec8e3}.ktree .kf{color:#a8d8a8}.ktree .kg{color:var(--f);text-shadow:0 0 8px rgba(255,0,84,.35)}
+.aml{display:flex;flex-direction:column;gap:.38rem;margin-top:.7rem}
+.ami{display:flex;align-items:center;gap:.6rem;padding:.45rem .6rem;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid var(--b);transition:all .22s;font-size:.78rem}
+.ami:hover{border-color:var(--bh);background:rgba(255,0,84,.05)}
+.amir{font-weight:600;color:var(--t);font-size:.76rem;line-height:1.2}
+.amip{color:var(--f);font-size:.63rem;font-family:var(--m)}
+/* TECH MULTI-ROW MARQUEE */
+.tmq{overflow:hidden;position:relative;padding:.5rem 0;-webkit-mask-image:linear-gradient(90deg,transparent 0%,black 6%,black 94%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0%,black 6%,black 94%,transparent 100%);flex:1;display:flex;flex-direction:column;justify-content:center;gap:.65rem}
+.tm-row{display:flex;gap:.8rem;margin-bottom:0;align-items:center}
+.tm-track{display:flex;gap:.8rem;animation:tk var(--spd,60s) linear infinite;flex-shrink:0}
+.tm-row.rev .tm-track{animation-direction:reverse}
+.tc{display:inline-flex;align-items:center;gap:1rem;padding:1rem 1.5rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,0,84,.1);border-radius:14px;flex-shrink:0;transition:border-color .5s,background .5s;cursor:default}
+.tc:hover{background:rgba(255,255,255,.05);border-color:rgba(255,0,84,.3)}
+.tci{width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.tci img{width:28px;height:28px;object-fit:contain;transition:filter .5s}
+.tc:hover .tci img{filter:brightness(1.15)}
+.tcn{font-size:.87rem;font-weight:500;color:rgba(255,255,255,.58);white-space:nowrap;font-family:var(--m);transition:color .5s}
+.tc:hover .tcn{color:rgba(255,255,255,.9)}
+
+/* TIMELINE */
+#how{padding:7rem 2rem}
+.tl{position:relative;display:flex;flex-direction:column;gap:0;padding-left:2.25rem;max-width:760px;margin:0 auto}
+.tl::before{content:'';position:absolute;left:.55rem;top:.4rem;bottom:.4rem;width:1px;background:linear-gradient(180deg,var(--f)0%,rgba(255,0,84,.1)100%)}
+.tli{padding:0 0 2.75rem 1.85rem;position:relative}
+.tli:last-child{padding-bottom:0}
+.tld{position:absolute;left:-1.75rem;top:.15rem;width:13px;height:13px;border-radius:50%;background:var(--f);box-shadow:0 0 12px rgba(255,0,84,.5),0 0 28px rgba(255,0,84,.12);border:2px solid var(--bg)}
+.tln{font-family:var(--m);font-size:.62rem;color:var(--f);letter-spacing:.1em;margin-bottom:.35rem;display:block}
+.tlt{font-size:1.28rem;font-weight:700;margin-bottom:.45rem;letter-spacing:-.02em}
+.tldesc{font-size:.87rem;color:var(--t2);line-height:1.7;margin-bottom:.65rem}
+.tlc{font-family:var(--m);font-size:.74rem;color:var(--f);background:rgba(255,0,84,.07);border:1px solid rgba(255,0,84,.2);padding:.28rem .75rem;border-radius:7px;display:inline-flex;align-items:center;gap:.38rem}
+.tlc::before{content:'$';color:var(--f2)}
+
+/* ROADMAP */
+#roadmap{background:var(--bg2);overflow:hidden}
+.rms{display:flex;gap:1.1rem;overflow-x:auto;padding-bottom:1.4rem;scrollbar-width:thin;scrollbar-color:var(--p) transparent;cursor:grab;user-select:none}
+.rms:active{cursor:grabbing}
+.rmc{background:var(--bg);border:1px solid var(--b);border-radius:18px;padding:1.4rem;min-width:268px;max-width:268px;flex-shrink:0;transition:border-color .25s}
+.rmc:hover{border-color:rgba(255,255,255,.12)}
+.rmch{display:flex;align-items:center;gap:.55rem;margin-bottom:1.1rem}
+.rmdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.rmdot.g{background:#5dde8a;box-shadow:0 0 8px rgba(93,222,138,.5)}
+.rmdot.b{background:#5bc0f8;box-shadow:0 0 8px rgba(91,192,248,.5)}
+.rmdot.y{background:#ffd166;box-shadow:0 0 8px rgba(255,209,102,.5)}
+.rmdot.pu{background:#c084fc;box-shadow:0 0 8px rgba(192,132,252,.5)}
+.rmct{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--m)}
+.rmct.g{color:#5dde8a}.rmct.b{color:#5bc0f8}.rmct.y{color:#ffd166}.rmct.pu{color:#c084fc}
+.rmi{padding:.55rem .65rem;border-radius:8px;margin-bottom:.3rem;border:1px solid transparent;transition:all .18s}
+.rmi:hover{background:rgba(255,255,255,.04);border-color:var(--b)}
+.rmil{font-family:var(--m);font-size:.67rem;color:var(--t3);letter-spacing:.08em;margin-bottom:.12rem}
+.rmin{font-size:.83rem;color:var(--t);font-weight:500;line-height:1.4}
+
+/* INSTALL */
+#install{position:relative;overflow:hidden;padding:9rem 2rem}
+#sc{position:absolute;inset:0;pointer-events:none;z-index:0}
+#install .w{position:relative;z-index:1;text-align:center}
+.prqs{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.25rem}
+.prq{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--b);border-radius:10px;font-size:.83rem;color:var(--t2);transition:all .22s}
+.prq:hover{background:rgba(255,255,255,.08);border-color:var(--bh);color:var(--t)}
+.cw{max-width:610px;margin:0 auto 2.25rem}
+.ctabs{display:flex;gap:.2rem;margin-bottom:0}
+.ctab{padding:.38rem .85rem;border:none;background:rgba(255,255,255,.04);color:var(--t3);font-family:'FF',sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;border-radius:7px 7px 0 0;transition:all .2s}
+.ctab.on{background:rgba(0,0,0,.55);color:var(--f)}
+.cbox{background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.09);border-radius:0 10px 10px 10px;padding:.95rem 1.2rem;display:none;cursor:pointer;position:relative;transition:all .2s}
+.cbox.on{display:block}.cbox:hover{background:rgba(0,0,0,.75)}
+.cbox code{font-family:var(--m);font-size:.76rem;color:rgba(255,255,255,.88);white-space:pre-wrap;word-break:break-all;line-height:1.6}
+.cbox::after{content:'\1F4CB';position:absolute;top:.6rem;right:.75rem;font-size:.8rem;opacity:.25;transition:opacity .2s;pointer-events:none}
+.cbox:hover::after{opacity:.6}
+.cbox.cp{background:rgba(0,80,40,.4)}.cbox.cp::after{content:'\2705';opacity:1}
+.srow{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:2.25rem;max-width:680px;margin-left:auto;margin-right:auto}
+.stp{padding:1.4rem;background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:15px;text-align:center;transition:all .3s}
+.stp:hover{border-color:var(--bh);background:rgba(255,0,84,.04);transform:translateY(-3px)}
+.stp-n{width:34px;height:34px;border-radius:50%;background:var(--f);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;margin:0 auto .65rem}
+.stp h4{font-size:.82rem;font-weight:700;margin-bottom:.28rem}
+.stp p{font-size:.74rem;color:var(--t2);line-height:1.5}
+.stp-c{font-family:var(--m);font-size:.68rem;color:var(--f);background:rgba(255,0,84,.07);padding:.18rem .52rem;border-radius:5px;margin-top:.38rem;display:inline-block}
+.ghb{display:inline-flex;align-items:center;gap:.55rem;padding:.65rem 1.4rem;background:rgba(255,255,255,.06);border:1px solid var(--b);border-radius:11px;font-size:.83rem;font-weight:500;color:var(--t2);transition:all .3s;margin-top:2rem}
+.ghb:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.18);color:var(--t);transform:translateY(-2px)}
+
+/* FOOTER */
+footer{background:var(--pd);padding:2.25rem 2rem;text-align:center;border-top:1px solid rgba(255,255,255,.05);position:relative;z-index:2}
+footer img{height:23px;opacity:.38;margin:0 auto .7rem}
+footer p{font-size:.76rem;color:var(--t3)}
+.ftl{display:flex;gap:1.4rem;justify-content:center;margin-top:.55rem}
+.ftl a{font-size:.76rem;color:var(--t3);transition:color .2s}
+.ftl a:hover{color:var(--f)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .bento{grid-template-columns:1fr 1fr}
+  .bc.s2{grid-column:span 1}
+  .rgrid{grid-template-columns:1fr}
+  .rbens{grid-template-columns:1fr 1fr}
+  .pgrid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .rbens{grid-template-columns:1fr}
+  .bento{grid-template-columns:1fr}
+  .bc.s2{grid-column:span 1}
+  .srow{grid-template-columns:1fr}
+  section{padding:5rem 1.25rem}
+  #hero{padding:6.5rem 1.25rem 4.5rem}
+  .tl{padding-left:1.6rem}
+}
+</style>
+</head>
+<body>
+<canvas id="bgc"></canvas>
+<div class="spl" id="spl"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <img src="../assets/AF_MINSAIT_LOG_NEG.png" alt="Minsait" class="nav-logo">
+  <div class="nav-links">
+    <a href="#pain" data-i18n="nav.pain">Pain Points</a>
+    <a href="#roi" data-i18n="nav.roi">ROI</a>
+    <a href="#features" data-i18n="nav.feat">Features</a>
+    <a href="#how" data-i18n="nav.how">How It Works</a>
+    <a href="#roadmap" data-i18n="nav.rm">Roadmap</a>
+  </div>
+  <a href="#install" class="nav-cta" data-i18n="nav.cta">Deploy Now →</a>
+  <!-- LANG DROPDOWN -->
+  <div class="lang-drop" id="ld">
+    <button class="lang-btn" id="lbtn" onclick="toggleLD()">
+      <span id="lf"><img class="flag-img" src="https://flagcdn.com/20x15/us.png" alt="US"></span>
+      <svg class="lang-chev" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+    <div class="lang-menu" id="lmenu">
+      <button class="lang-opt" onclick="setLang('en')"><img class="flag-img" src="https://flagcdn.com/20x15/us.png" alt="US">English</button>
+      <button class="lang-opt" onclick="setLang('pt')"><img class="flag-img" src="https://flagcdn.com/20x15/br.png" alt="BR">Português</button>
+      <button class="lang-opt" onclick="setLang('es')"><img class="flag-img" src="https://flagcdn.com/20x15/es.png" alt="ES">Español</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="h-eye"><span class="h-dot"></span><span data-i18n="hero.badge">⚡ M3A TEAM · v1.4.0 · 12 AGENTS · VS CODE NATIVE</span></div>
+  <h1><span data-i18n="hero.h1a">Your Engineering Team</span><br><span class="gr" data-i18n="hero.h1b">Just Got Smarter.</span></h1>
+  <p class="h-sub" data-i18n="hero.sub">A full AI workforce of 12 specialized agents — from architecture reviews to security audits — deployed in one command, governed by 13 immutable laws.</p>
+  <div class="h-btns">
+    <a href="#install" class="btn-s btn-s2"><span data-i18n="hero.btn2">One Command. 12 Agents. Start Now →</span></a>
+  </div>
+  <div class="hticker">
+    <div class="tt" id="tt">
+      <span class="ti"><span class="tv">12</span><span data-i18n="t.agents">Specialized Agents</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">13</span><span data-i18n="t.laws">Governance Laws</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">27</span><span data-i18n="t.skills">Automation Skills</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">11</span><span data-i18n="t.wf">Structured Workflows</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">5+</span><span data-i18n="t.gates">Quality Gates</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">ZERO</span><span data-i18n="t.ext">External Services</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">ONE</span><span data-i18n="t.cmd">Install Command</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">12</span><span data-i18n="t.agents">Specialized Agents</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">13</span><span data-i18n="t.laws">Governance Laws</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">27</span><span data-i18n="t.skills">Automation Skills</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">11</span><span data-i18n="t.wf">Structured Workflows</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">5+</span><span data-i18n="t.gates">Quality Gates</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">ZERO</span><span data-i18n="t.ext">External Services</span></span><span class="ts"></span>
+      <span class="ti"><span class="tv">ONE</span><span data-i18n="t.cmd">Install Command</span></span><span class="ts"></span>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+
+
+<!-- PAIN POINTS -->
+<section id="pain">
+  <div class="w">
+    <div class="lamp rv"><div class="lb"></div><div class="ll"></div><div class="lg"></div>
+      <span class="lbl" data-i18n="pain.lbl">// the problem</span>
+      <h2 class="st" data-i18n="pain.title">Every Engineering Team<br>Faces the Same Walls.</h2>
+    </div>
+    <p class="ss rv" style="margin:0 auto 3.25rem;text-align:center" data-i18n="pain.sub">M3A Team doesn't suggest solutions — it enforces them. Every pain point has a dedicated agent with authority to block, approve, or veto.</p>
+    <div class="pgrid rv">
+      <div class="pc" data-spt><span class="pcn" data-i18n="p1.n">PAIN_01</span><span class="pci">🔥</span><div class="pct" data-i18n="p1.t">Code Reviews Are Inconsistent</div><div class="pcd" data-i18n="p1.d">Reviews depend on who's available. Quality varies. Security holes slip through. Every merge is a gamble.</div><div class="pcf" data-i18n="p1.f">5-Agent Story-Done Gate — parallel, every merge</div></div>
+      <div class="pc" data-spt><span class="pcn" data-i18n="p2.n">PAIN_02</span><span class="pci">🗂️</span><div class="pct" data-i18n="p2.t">Documentation Is Always Outdated</div><div class="pcd" data-i18n="p2.d">Nobody has time to update docs. New devs spend weeks just understanding the system. Critical knowledge lives in Slack.</div><div class="pcf" data-i18n="p2.f">Borges auto-generates Minsait-branded HTML portals</div></div>
+      <div class="pc" data-spt><span class="pcn" data-i18n="p3.n">PAIN_03</span><span class="pci">🔒</span><div class="pct" data-i18n="p3.t">Security Found Too Late</div><div class="pcd" data-i18n="p3.d">Vulnerabilities in production cost 10× more to fix. Security is an afterthought, bolted on instead of built in.</div><div class="pcf" data-i18n="p3.f">Hobbes has VETO power on every single story</div></div>
+      <div class="pc" data-spt><span class="pcn" data-i18n="p4.n">PAIN_04</span><span class="pci">🏗️</span><div class="pct" data-i18n="p4.t">Architecture Decisions Without Structure</div><div class="pcd" data-i18n="p4.d">No ADRs. No formal review. Architectural drift compounds until a complete rewrite is the only option.</div><div class="pcf" data-i18n="p4.f">Vitruvius generates ADRs, C4 diagrams, migration plans</div></div>
+      <div class="pc" data-spt><span class="pcn" data-i18n="p5.n">PAIN_05</span><span class="pci">📋</span><div class="pct" data-i18n="p5.t">Epics Approved Without Technical Validation</div><div class="pcd" data-i18n="p5.d">Product creates epics without engineering review. Blockers discovered during implementation — too late to change direction.</div><div class="pcf" data-i18n="p5.f">12-agent multi-perspective review before sprint-1</div></div>
+      <div class="pc" data-spt><span class="pcn" data-i18n="p6.n">PAIN_06</span><span class="pci">📊</span><div class="pct" data-i18n="p6.t">Tribal Knowledge Owns the System</div><div class="pcd" data-i18n="p6.d">Decisions live in the heads of people who already left. No onboarding. Each new dev reconstructs everything from scratch.</div><div class="pcf" data-i18n="p6.f">Descartes builds a persistent, searchable knowledge base</div></div>
+      <div class="pc" data-spt><span class="pcn" data-i18n="p7.n">PAIN_07</span><span class="pci">🌀</span><div class="pct" data-i18n="p7.t">Sprint Planning Is Chaotic</div><div class="pcd" data-i18n="p7.d">Sprints overloaded. Stories have no acceptance criteria. DoD isn't enforced. Velocity is unpredictable.</div><div class="pcf" data-i18n="p7.f">Deming plans sprints with stories, ACs, and DoD</div></div>
+      <div class="pc" data-spt><span class="pcn" data-i18n="p8.n">PAIN_08</span><span class="pci">🤖</span><div class="pct" data-i18n="p8.t">AI Usage Is Unstructured</div><div class="pcd" data-i18n="p8.d">Teams use AI ad-hoc. No consistency. No governance. No traceability. Each developer gets different quality from the same tools.</div><div class="pcf" data-i18n="p8.f">13 Immutable Laws govern every AI interaction</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section id="roi">
+  <div class="w">
+    <div class="sh rv">
+      <span class="lbl" data-i18n="roi.lbl">// business impact</span>
+      <h2 class="st" data-i18n="roi.title">The Numbers<br>Leadership Cares About.</h2>
+      <p class="ss" data-i18n="roi.sub">Quantified impact across the software delivery lifecycle.</p>
+    </div>
+    <div class="rgrid rv">
+      <div class="rb"><span class="rbtag" data-i18n="roi.tag1">code review speed</span><span class="rbig" data-count="70" data-suffix="%">70%</span><p class="rdesc" data-i18n="roi.d1">Faster reviews with the 5-agent Story-Done gate — no waiting in queues.</p></div>
+      <div class="rb"><span class="rbtag" data-i18n="roi.tag2">security detection</span><span class="rbig" data-count="10" data-suffix="×">10×</span><p class="rdesc" data-i18n="roi.d2">Earlier security detection. Code-time vs production fix costs — orders of magnitude difference.</p></div>
+      <div class="rb"><span class="rbtag" data-i18n="roi.tag3">sprint story creation</span><span class="rbig sm" data-i18n="roi.big3">2h → 20min</span><p class="rdesc" data-i18n="roi.d3">Deming generates stories with acceptance criteria in one command. Production-ready artifacts.</p></div>
+      <div class="rb"><span class="rbtag" data-i18n="roi.tag4">architecture records</span><span class="rbig" data-count="100" data-suffix="%">100%</span><p class="rdesc" data-i18n="roi.d4">ADR coverage on all architectural decisions. Every choice traced and justified by Vitruvius.</p></div>
+    </div>
+    <div class="rbens rv">
+      <div class="rben"><div class="rben-i">🚀</div><h4 data-i18n="ben1.t">Delivery Acceleration</h4><ul>
+        <li data-i18n="ben1.l1">5 agents review every story in parallel</li>
+        <li data-i18n="ben1.l2">Security, QA, Dev, Architect, Docs in one pass</li>
+        <li data-i18n="ben1.l3">No back-and-forth on missing ACs</li>
+        <li data-i18n="ben1.l4">Stories generated with ACs in one command</li>
+        <li data-i18n="ben1.l5">Sprint DoD enforced before any story closes</li>
+      </ul></div>
+      <div class="rben"><div class="rben-i">🛡️</div><h4 data-i18n="ben2.t">Risk Elimination</h4><ul>
+        <li data-i18n="ben2.l1">Security VETO blocks unsafe stories before merge</li>
+        <li data-i18n="ben2.l2">OWASP Top 10 checked on every epic review</li>
+        <li data-i18n="ben2.l3">CVE audit with automated remediation plans</li>
+        <li data-i18n="ben2.l4">Architecture drift caught at design phase</li>
+        <li data-i18n="ben2.l5">Epic-done: 9 agents before marking complete</li>
+      </ul></div>
+      <div class="rben"><div class="rben-i">🧠</div><h4 data-i18n="ben3.t">Institutional Memory</h4><ul>
+        <li data-i18n="ben3.l1">Knowledge base from day-1 codebase scan</li>
+        <li data-i18n="ben3.l2">Every decision recorded with rationale</li>
+        <li data-i18n="ben3.l3">New devs onboard in hours, not weeks</li>
+        <li data-i18n="ben3.l4">Zero tribal knowledge loss when team rotates</li>
+        <li data-i18n="ben3.l5">All 12 agents read KB before every action</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES BENTO -->
+<section id="features">
+  <div class="w">
+    <div class="lamp rv"><div class="lb"></div><div class="ll"></div><div class="lg"></div>
+      <span class="lbl" data-i18n="feat.lbl">// capabilities</span>
+      <h2 class="st" data-i18n="feat.title">Enterprise-Grade Features.<br>Zero Overhead.</h2>
+    </div>
+    <div class="bento rv" style="margin-top:2.75rem">
+      <div class="bc s2">
+        <span class="bc-l" data-i18n="feat.gate.lbl">quality gate</span>
+        <div class="bc-t" data-i18n="feat.gate.t">Multi-Agent Story-Done Gate</div>
+        <div class="bc-d" data-i18n="feat.gate.d">Every story passes 5 specialist agents in parallel. QA, Security, and Developer hold veto power. One ❌ blocks the story — no overrides.</div>
+        <div class="mgrid">
+          <div class="mc pass"><span class="mi">🔍</span>QA</div>
+          <div class="mc pass"><span class="mi">🔒</span><span data-i18n="mc.sec">Security</span></div>
+          <div class="mc pass"><span class="mi">💻</span>Dev</div>
+          <div class="mc pend"><span class="mi">🏗️</span><span data-i18n="mc.arch">Architect</span></div>
+          <div class="mc blk"><span class="mi">📄</span>Docs</div>
+          <div class="mc blk"><span class="mi">⚡</span>Gate</div>
+        </div>
+        <div class="mver">
+          <span class="vp" data-i18n="gate.pass">✅ APPROVED → can close</span>
+          <span class="vb" data-i18n="gate.block">❌ BLOCKED → returns to dev</span>
+        </div>
+        <div class="bc-tags"><span class="bc-tag">PARALLEL</span><span class="bc-tag">VETO POWER</span><span class="bc-tag" data-i18n="tag.every">EVERY STORY</span><span class="bc-tag" data-i18n="tag.noexc">NO EXCEPTIONS</span></div>
+      </div>
+      <div class="bc">
+        <span class="bc-l" data-i18n="feat.agents.lbl">agents deployed</span>
+        <div class="bcnum" data-count="12">12</div>
+        <div class="bcu" data-i18n="feat.agents.u">Specialized Agents</div>
+        <div class="bc-d" style="margin-top:.65rem;font-size:.78rem" data-i18n="feat.agents.d">Each with a distinct persona, area of expertise, and enforcement authority. Orchestrated by Marcus Aurelius.</div>
+      </div>
+      <div class="bc s2">
+        <span class="bc-l" data-i18n="feat.know.lbl">knowledge-first · law 01</span>
+        <div class="bc-t" data-i18n="feat.know.t">Persistent Project Intelligence</div>
+        <div class="bc-d" data-i18n="feat.know.d">Every agent reads the knowledge base before acting. Descartes deep-scans the codebase on day one and builds permanent institutional memory.</div>
+        <div class="ktree">
+          <div><span class="kd">.github/mma/</span></div>
+          <div>&nbsp;&nbsp;<span class="kd">knowledge/</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kg">team-config.md</span> <span style="color:var(--t3);font-size:.63rem">← 13 <span data-i18n="kt.laws">Laws</span></span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kg">project-decisions-log.md</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kf">as-is-analysis.md</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kf">tech-stack.md</span></div>
+          <div>&nbsp;&nbsp;<span class="kd">backlog/epics/</span> <span class="kd">stories/</span> <span class="kd">sprints/</span></div>
+        </div>
+        <div class="bc-tags"><span class="bc-tag">PERSISTENT</span><span class="bc-tag">GIT-TRACKED</span><span class="bc-tag" data-i18n="tag.readb4">READ BEFORE EVERY ACTION</span></div>
+      </div>
+      <div class="bc">
+        <span class="bc-l" data-i18n="feat.laws.lbl">governance</span>
+        <div class="bcnum" data-count="13">13</div>
+        <div class="bcu" data-i18n="feat.laws.u">Immutable Laws</div>
+        <div class="bc-d" style="margin-top:.65rem;font-size:.78rem" data-i18n="feat.laws.d">Knowledge First · No Silence · Anti-Duplicate · Sprint-by-Sprint · Operational Honesty · Build Always Passes.</div>
+      </div>
+      <div class="bc">
+        <span class="bc-l" data-i18n="feat.team.lbl">the team</span>
+        <div class="bc-t" data-i18n="feat.team.t">12 Personas</div>
+        <div class="aml">
+          <div class="ami"><span style="font-size:1rem">⚡</span><div><div class="amir">Orchestrator</div><div class="amip">Marcus Aurelius</div></div></div>
+          <div class="ami"><span style="font-size:1rem">📊</span><div><div class="amir">Analyst</div><div class="amip">Descartes</div></div></div>
+          <div class="ami"><span style="font-size:1rem">🏗️</span><div><div class="amir">Architect</div><div class="amip">Vitruvius</div></div></div>
+          <div class="ami"><span style="font-size:1rem">🔒</span><div><div class="amir">Security</div><div class="amip">Hobbes</div></div></div>
+          <div class="ami"><span style="font-size:1rem">💻</span><div><div class="amir">Developer</div><div class="amip">Knuth</div></div></div>
+          <div class="ami"><span style="font-size:1rem">🔍</span><div><div class="amir">QA Engineer</div><div class="amip">Popper</div></div></div>
+        </div>
+      </div>
+      <div class="bc s2" style="display:flex;flex-direction:column">
+        <span class="bc-l" data-i18n="feat.stack.lbl" style="flex-shrink:0">multi-stack</span>
+        <div class="bc-t" data-i18n="feat.stack.t">Auto-Detects Your Stack. All 12 Agents Adapt.</div>
+        <div class="bc-d" data-i18n="feat.stack.d">M3A scans your project's languages, frameworks, and tools — no configuration needed.</div>
+        <div class="tmq">
+        <div class="tm-row"><div class="tm-track" style="--spd:50s"><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" width="22" height="22" alt="Java" loading="lazy"></div><span class="tcn">Java</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" width="22" height="22" alt="Python" loading="lazy"></div><span class="tcn">Python</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dotnetcore/dotnetcore-original.svg" width="22" height="22" alt=".NET" loading="lazy"></div><span class="tcn">.NET</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg" width="22" height="22" alt="Go" loading="lazy"></div><span class="tcn">Go</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" width="22" height="22" alt="Node.js" loading="lazy"></div><span class="tcn">Node.js</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" width="22" height="22" alt="TypeScript" loading="lazy"></div><span class="tcn">TypeScript</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg" width="22" height="22" alt="Swift" loading="lazy"></div><span class="tcn">Swift</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" width="22" height="22" alt="Kotlin" loading="lazy"></div><span class="tcn">Kotlin</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg" width="22" height="22" alt="Ruby" loading="lazy"></div><span class="tcn">Ruby</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg" width="22" height="22" alt="C#" loading="lazy"></div><span class="tcn">C#</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rust/rust-original.svg" width="22" height="22" alt="Rust" loading="lazy"></div><span class="tcn">Rust</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" width="22" height="22" alt="PHP" loading="lazy"></div><span class="tcn">PHP</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" width="22" height="22" alt="Java" loading="lazy"></div><span class="tcn">Java</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" width="22" height="22" alt="Python" loading="lazy"></div><span class="tcn">Python</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dotnetcore/dotnetcore-original.svg" width="22" height="22" alt=".NET" loading="lazy"></div><span class="tcn">.NET</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg" width="22" height="22" alt="Go" loading="lazy"></div><span class="tcn">Go</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" width="22" height="22" alt="Node.js" loading="lazy"></div><span class="tcn">Node.js</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" width="22" height="22" alt="TypeScript" loading="lazy"></div><span class="tcn">TypeScript</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg" width="22" height="22" alt="Swift" loading="lazy"></div><span class="tcn">Swift</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" width="22" height="22" alt="Kotlin" loading="lazy"></div><span class="tcn">Kotlin</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg" width="22" height="22" alt="Ruby" loading="lazy"></div><span class="tcn">Ruby</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg" width="22" height="22" alt="C#" loading="lazy"></div><span class="tcn">C#</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rust/rust-original.svg" width="22" height="22" alt="Rust" loading="lazy"></div><span class="tcn">Rust</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" width="22" height="22" alt="PHP" loading="lazy"></div><span class="tcn">PHP</span></div></div><div class="tm-track" style="--spd:50s" aria-hidden="true"><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" width="22" height="22" alt="Java" loading="lazy"></div><span class="tcn">Java</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" width="22" height="22" alt="Python" loading="lazy"></div><span class="tcn">Python</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dotnetcore/dotnetcore-original.svg" width="22" height="22" alt=".NET" loading="lazy"></div><span class="tcn">.NET</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg" width="22" height="22" alt="Go" loading="lazy"></div><span class="tcn">Go</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" width="22" height="22" alt="Node.js" loading="lazy"></div><span class="tcn">Node.js</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" width="22" height="22" alt="TypeScript" loading="lazy"></div><span class="tcn">TypeScript</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg" width="22" height="22" alt="Swift" loading="lazy"></div><span class="tcn">Swift</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" width="22" height="22" alt="Kotlin" loading="lazy"></div><span class="tcn">Kotlin</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg" width="22" height="22" alt="Ruby" loading="lazy"></div><span class="tcn">Ruby</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg" width="22" height="22" alt="C#" loading="lazy"></div><span class="tcn">C#</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rust/rust-original.svg" width="22" height="22" alt="Rust" loading="lazy"></div><span class="tcn">Rust</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" width="22" height="22" alt="PHP" loading="lazy"></div><span class="tcn">PHP</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" width="22" height="22" alt="Java" loading="lazy"></div><span class="tcn">Java</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" width="22" height="22" alt="Python" loading="lazy"></div><span class="tcn">Python</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dotnetcore/dotnetcore-original.svg" width="22" height="22" alt=".NET" loading="lazy"></div><span class="tcn">.NET</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg" width="22" height="22" alt="Go" loading="lazy"></div><span class="tcn">Go</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" width="22" height="22" alt="Node.js" loading="lazy"></div><span class="tcn">Node.js</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" width="22" height="22" alt="TypeScript" loading="lazy"></div><span class="tcn">TypeScript</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg" width="22" height="22" alt="Swift" loading="lazy"></div><span class="tcn">Swift</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" width="22" height="22" alt="Kotlin" loading="lazy"></div><span class="tcn">Kotlin</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg" width="22" height="22" alt="Ruby" loading="lazy"></div><span class="tcn">Ruby</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg" width="22" height="22" alt="C#" loading="lazy"></div><span class="tcn">C#</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rust/rust-original.svg" width="22" height="22" alt="Rust" loading="lazy"></div><span class="tcn">Rust</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" width="22" height="22" alt="PHP" loading="lazy"></div><span class="tcn">PHP</span></div></div></div>
+        <div class="tm-row rev"><div class="tm-track" style="--spd:40s"><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" width="22" height="22" alt="React" loading="lazy"></div><span class="tcn">React</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg" width="22" height="22" alt="Angular" loading="lazy"></div><span class="tcn">Angular</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg" width="22" height="22" alt="Vue" loading="lazy"></div><span class="tcn">Vue</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg" width="22" height="22" alt="Spring" loading="lazy"></div><span class="tcn">Spring</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nestjs/nestjs-original.svg" width="22" height="22" alt="NestJS" loading="lazy"></div><span class="tcn">NestJS</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" width="22" height="22" alt="Next.js" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Next.js</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/laravel/laravel-original.svg" width="22" height="22" alt="Laravel" loading="lazy"></div><span class="tcn">Laravel</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg" width="22" height="22" alt="FastAPI" loading="lazy"></div><span class="tcn">FastAPI</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/svelte/svelte-original.svg" width="22" height="22" alt="Svelte" loading="lazy"></div><span class="tcn">Svelte</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg" width="22" height="22" alt="Django" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Django</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original.svg" width="22" height="22" alt="Express" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Express</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redux/redux-original.svg" width="22" height="22" alt="Redux" loading="lazy"></div><span class="tcn">Redux</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" width="22" height="22" alt="React" loading="lazy"></div><span class="tcn">React</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg" width="22" height="22" alt="Angular" loading="lazy"></div><span class="tcn">Angular</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg" width="22" height="22" alt="Vue" loading="lazy"></div><span class="tcn">Vue</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg" width="22" height="22" alt="Spring" loading="lazy"></div><span class="tcn">Spring</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nestjs/nestjs-original.svg" width="22" height="22" alt="NestJS" loading="lazy"></div><span class="tcn">NestJS</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" width="22" height="22" alt="Next.js" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Next.js</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/laravel/laravel-original.svg" width="22" height="22" alt="Laravel" loading="lazy"></div><span class="tcn">Laravel</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg" width="22" height="22" alt="FastAPI" loading="lazy"></div><span class="tcn">FastAPI</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/svelte/svelte-original.svg" width="22" height="22" alt="Svelte" loading="lazy"></div><span class="tcn">Svelte</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg" width="22" height="22" alt="Django" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Django</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original.svg" width="22" height="22" alt="Express" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Express</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redux/redux-original.svg" width="22" height="22" alt="Redux" loading="lazy"></div><span class="tcn">Redux</span></div></div><div class="tm-track" style="--spd:40s" aria-hidden="true"><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" width="22" height="22" alt="React" loading="lazy"></div><span class="tcn">React</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg" width="22" height="22" alt="Angular" loading="lazy"></div><span class="tcn">Angular</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg" width="22" height="22" alt="Vue" loading="lazy"></div><span class="tcn">Vue</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg" width="22" height="22" alt="Spring" loading="lazy"></div><span class="tcn">Spring</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nestjs/nestjs-original.svg" width="22" height="22" alt="NestJS" loading="lazy"></div><span class="tcn">NestJS</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" width="22" height="22" alt="Next.js" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Next.js</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/laravel/laravel-original.svg" width="22" height="22" alt="Laravel" loading="lazy"></div><span class="tcn">Laravel</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg" width="22" height="22" alt="FastAPI" loading="lazy"></div><span class="tcn">FastAPI</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/svelte/svelte-original.svg" width="22" height="22" alt="Svelte" loading="lazy"></div><span class="tcn">Svelte</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg" width="22" height="22" alt="Django" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Django</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original.svg" width="22" height="22" alt="Express" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Express</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redux/redux-original.svg" width="22" height="22" alt="Redux" loading="lazy"></div><span class="tcn">Redux</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" width="22" height="22" alt="React" loading="lazy"></div><span class="tcn">React</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg" width="22" height="22" alt="Angular" loading="lazy"></div><span class="tcn">Angular</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg" width="22" height="22" alt="Vue" loading="lazy"></div><span class="tcn">Vue</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg" width="22" height="22" alt="Spring" loading="lazy"></div><span class="tcn">Spring</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nestjs/nestjs-original.svg" width="22" height="22" alt="NestJS" loading="lazy"></div><span class="tcn">NestJS</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" width="22" height="22" alt="Next.js" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Next.js</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/laravel/laravel-original.svg" width="22" height="22" alt="Laravel" loading="lazy"></div><span class="tcn">Laravel</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg" width="22" height="22" alt="FastAPI" loading="lazy"></div><span class="tcn">FastAPI</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/svelte/svelte-original.svg" width="22" height="22" alt="Svelte" loading="lazy"></div><span class="tcn">Svelte</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg" width="22" height="22" alt="Django" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Django</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original.svg" width="22" height="22" alt="Express" loading="lazy" style="filter:brightness(0)invert(1)"></div><span class="tcn">Express</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redux/redux-original.svg" width="22" height="22" alt="Redux" loading="lazy"></div><span class="tcn">Redux</span></div></div></div>
+        <div class="tm-row"><div class="tm-track" style="--spd:50s"><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" width="22" height="22" alt="Docker" loading="lazy"></div><span class="tcn">Docker</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-original.svg" width="22" height="22" alt="Kubernetes" loading="lazy"></div><span class="tcn">Kubernetes</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" width="22" height="22" alt="PostgreSQL" loading="lazy"></div><span class="tcn">PostgreSQL</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg" width="22" height="22" alt="MongoDB" loading="lazy"></div><span class="tcn">MongoDB</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" width="22" height="22" alt="Redis" loading="lazy"></div><span class="tcn">Redis</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" width="22" height="22" alt="MySQL" loading="lazy"></div><span class="tcn">MySQL</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" width="22" height="22" alt="AWS" loading="lazy"></div><span class="tcn">AWS</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg" width="22" height="22" alt="Azure" loading="lazy"></div><span class="tcn">Azure</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg" width="22" height="22" alt="GCP" loading="lazy"></div><span class="tcn">GCP</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg" width="22" height="22" alt="Terraform" loading="lazy"></div><span class="tcn">Terraform</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/gitlab/gitlab-original.svg" width="22" height="22" alt="GitLab" loading="lazy"></div><span class="tcn">GitLab</span></div><div class="tc"><div class="tci"><img src="https://cdn.simpleicons.org/github/ffffff" width="22" height="22" alt="GitHub" loading="lazy"></div><span class="tcn">GitHub</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" width="22" height="22" alt="Docker" loading="lazy"></div><span class="tcn">Docker</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-original.svg" width="22" height="22" alt="Kubernetes" loading="lazy"></div><span class="tcn">Kubernetes</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" width="22" height="22" alt="PostgreSQL" loading="lazy"></div><span class="tcn">PostgreSQL</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg" width="22" height="22" alt="MongoDB" loading="lazy"></div><span class="tcn">MongoDB</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" width="22" height="22" alt="Redis" loading="lazy"></div><span class="tcn">Redis</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" width="22" height="22" alt="MySQL" loading="lazy"></div><span class="tcn">MySQL</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" width="22" height="22" alt="AWS" loading="lazy"></div><span class="tcn">AWS</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg" width="22" height="22" alt="Azure" loading="lazy"></div><span class="tcn">Azure</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg" width="22" height="22" alt="GCP" loading="lazy"></div><span class="tcn">GCP</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg" width="22" height="22" alt="Terraform" loading="lazy"></div><span class="tcn">Terraform</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/gitlab/gitlab-original.svg" width="22" height="22" alt="GitLab" loading="lazy"></div><span class="tcn">GitLab</span></div><div class="tc"><div class="tci"><img src="https://cdn.simpleicons.org/github/ffffff" width="22" height="22" alt="GitHub" loading="lazy"></div><span class="tcn">GitHub</span></div></div><div class="tm-track" style="--spd:50s" aria-hidden="true"><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" width="22" height="22" alt="Docker" loading="lazy"></div><span class="tcn">Docker</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-original.svg" width="22" height="22" alt="Kubernetes" loading="lazy"></div><span class="tcn">Kubernetes</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" width="22" height="22" alt="PostgreSQL" loading="lazy"></div><span class="tcn">PostgreSQL</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg" width="22" height="22" alt="MongoDB" loading="lazy"></div><span class="tcn">MongoDB</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" width="22" height="22" alt="Redis" loading="lazy"></div><span class="tcn">Redis</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" width="22" height="22" alt="MySQL" loading="lazy"></div><span class="tcn">MySQL</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" width="22" height="22" alt="AWS" loading="lazy"></div><span class="tcn">AWS</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg" width="22" height="22" alt="Azure" loading="lazy"></div><span class="tcn">Azure</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg" width="22" height="22" alt="GCP" loading="lazy"></div><span class="tcn">GCP</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg" width="22" height="22" alt="Terraform" loading="lazy"></div><span class="tcn">Terraform</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/gitlab/gitlab-original.svg" width="22" height="22" alt="GitLab" loading="lazy"></div><span class="tcn">GitLab</span></div><div class="tc"><div class="tci"><img src="https://cdn.simpleicons.org/github/ffffff" width="22" height="22" alt="GitHub" loading="lazy"></div><span class="tcn">GitHub</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" width="22" height="22" alt="Docker" loading="lazy"></div><span class="tcn">Docker</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-original.svg" width="22" height="22" alt="Kubernetes" loading="lazy"></div><span class="tcn">Kubernetes</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" width="22" height="22" alt="PostgreSQL" loading="lazy"></div><span class="tcn">PostgreSQL</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg" width="22" height="22" alt="MongoDB" loading="lazy"></div><span class="tcn">MongoDB</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" width="22" height="22" alt="Redis" loading="lazy"></div><span class="tcn">Redis</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" width="22" height="22" alt="MySQL" loading="lazy"></div><span class="tcn">MySQL</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" width="22" height="22" alt="AWS" loading="lazy"></div><span class="tcn">AWS</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg" width="22" height="22" alt="Azure" loading="lazy"></div><span class="tcn">Azure</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg" width="22" height="22" alt="GCP" loading="lazy"></div><span class="tcn">GCP</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg" width="22" height="22" alt="Terraform" loading="lazy"></div><span class="tcn">Terraform</span></div><div class="tc"><div class="tci"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/gitlab/gitlab-original.svg" width="22" height="22" alt="GitLab" loading="lazy"></div><span class="tcn">GitLab</span></div><div class="tc"><div class="tci"><img src="https://cdn.simpleicons.org/github/ffffff" width="22" height="22" alt="GitHub" loading="lazy"></div><span class="tcn">GitHub</span></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="w">
+    <div class="sh rv" style="max-width:540px">
+      <span class="lbl" data-i18n="how.lbl">// from zero to governed</span>
+      <h2 class="st" data-i18n="how.title">One Command.<br>A Full AI Team.</h2>
+      <p class="ss" data-i18n="how.sub">From nothing to a governed AI workforce in under 60 seconds. No external services, no extra subscriptions.</p>
+    </div>
+    <div class="tl">
+      <div class="tli rv"><div class="tld"></div><span class="tln" data-i18n="s1.n">STEP_01</span><div class="tlt" data-i18n="s1.t">Install</div><div class="tldesc" data-i18n="s1.d">One bash command deploys all 12 agents into your project's .github/ folder. Everything is version-controlled and reviewable via PR.</div><span class="tlc">bash &lt;(curl -fsSL …/install.sh)</span></div>
+      <div class="tli rv d1"><div class="tld"></div><span class="tln" data-i18n="s2.n">STEP_02</span><div class="tlt" data-i18n="s2.t">Activate with /m3a-init</div><div class="tldesc" data-i18n="s2.d">Personalizes all 12 agents with your project's stack, team conventions, and domain context. Transforms generic agents into project-aware specialists.</div><span class="tlc">/m3a-init</span></div>
+      <div class="tli rv d2"><div class="tld"></div><span class="tln" data-i18n="s3.n">STEP_03</span><div class="tlt" data-i18n="s3.t">Build the Knowledge Base</div><div class="tldesc" data-i18n="s3.d">Descartes deep-scans the codebase, maps dependencies, identifies technical debt, and constructs a structured knowledge base all 12 agents read before every action.</div><span class="tlc">/m3a-init-knowledge</span></div>
+      <div class="tli rv d3"><div class="tld"></div><span class="tln" data-i18n="s4.n">STEP_04</span><div class="tlt" data-i18n="s4.t">Create Your First Epic</div><div class="tldesc" data-i18n="s4.d">Drucker leads a structured brainstorm, performs anti-duplicate check, then triggers a 12-agent review. Nothing advances without consensus.</div><span class="tlc">/m3a-init-epic</span></div>
+      <div class="tli rv d4"><div class="tld"></div><span class="tln" data-i18n="s5.n">STEP_05</span><div class="tlt" data-i18n="s5.t">Govern Every Story</div><div class="tldesc" data-i18n="s5.d">Every story passes through the Story-Done gate before it can close. No exceptions. No shortcuts. No silent agents.</div><span class="tlc">/m3a-story-done STORY-N</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="w">
+    <div class="sh c rv">
+      <span class="lbl" data-i18n="rm.lbl">// what's coming</span>
+      <h2 class="st" data-i18n="rm.title">Roadmap</h2>
+      <p class="ss" data-i18n="rm.sub">M3A Team evolves with the enterprise AI ecosystem.</p>
+    </div>
+    <div class="rms rv" id="rms">
+      <div class="rmc"><div class="rmch"><div class="rmdot g"></div><span class="rmct g" data-i18n="rm.s">✅ Shipped</span></div>
+        <div class="rmi"><div class="rmil">QUALITY</div><div class="rmin" data-i18n="rs1">Story-Done &amp; Epic-Done parallel gate workflows</div></div>
+        <div class="rmi"><div class="rmil">GOVERNANCE</div><div class="rmin" data-i18n="rs2">Confidence Scale 🟢🟡🔴 on all artifacts</div></div>
+        <div class="rmi"><div class="rmil">SAFETY</div><div class="rmin" data-i18n="rs3">Prerequisite Guards before any skill runs</div></div>
+        <div class="rmi"><div class="rmil">KARPATHY</div><div class="rmin" data-i18n="rs4">Behavioral principles: Think Before Coding</div></div>
+        <div class="rmi"><div class="rmil">UPGRADE</div><div class="rmin" data-i18n="rs5">Safe upgrade wizard /m3a-update-latest</div></div>
+        <div class="rmi"><div class="rmil">DIRECTIVES</div><div class="rmin" data-i18n="rs6">Global Karpathy directives for all 12 agents</div></div>
+      </div>
+      <div class="rmc"><div class="rmch"><div class="rmdot b"></div><span class="rmct b" data-i18n="rm.sp">📋 Specified</span></div>
+        <div class="rmi"><div class="rmil">ANALYTICS</div><div class="rmin" data-i18n="rsp1">Continuous metrics tracking across all agents and sprints</div></div>
+        <div class="rmi"><div class="rmil">REPORTS</div><div class="rmin" data-i18n="rsp2">Automated executive report generation pipeline</div></div>
+        <div class="rmi"><div class="rmil">TOKEN ECONOMY</div><div class="rmin" data-i18n="rsp3">Progressive Disclosure Skills (≤500 lines)</div></div>
+        <div class="rmi"><div class="rmil">TOKEN ECONOMY</div><div class="rmin" data-i18n="rsp4">Agent Instruction Trimming — ≥30% reduction</div></div>
+        <div class="rmi"><div class="rmil">SPEC-KIT</div><div class="rmin" data-i18n="rsp5">/m3a-specify + /m3a-clarify pipeline</div></div>
+      </div>
+      <div class="rmc"><div class="rmch"><div class="rmdot y"></div><span class="rmct y" data-i18n="rm.d">💬 In Discussion</span></div>
+        <div class="rmi"><div class="rmil">ANALYTICS AGENT</div><div class="rmin" data-i18n="rd1">M3A: Analytics agent — executive KPI dashboard</div></div>
+        <div class="rmi"><div class="rmil">INTEGRATIONS</div><div class="rmin" data-i18n="rd2">Hooks: JIRA, SonarQube, Azure DevOps</div></div>
+        <div class="rmi"><div class="rmil">DISTRIBUTION</div><div class="rmin" data-i18n="rd3">APM — apm install minsait/m3a-team</div></div>
+        <div class="rmi"><div class="rmil">LEARNING</div><div class="rmin" data-i18n="rd4">Agent Learning Loop — cross-session memory</div></div>
+        <div class="rmi"><div class="rmil">ROI</div><div class="rmin" data-i18n="rd5">M3A: ROI Agent — real-time efficiency metrics</div></div>
+      </div>
+      <div class="rmc"><div class="rmch"><div class="rmdot pu"></div><span class="rmct pu" data-i18n="rm.e">🧠 Exploring</span></div>
+        <div class="rmi"><div class="rmil">OPEN STD</div><div class="rmin" data-i18n="re1">skills.sh compatibility — 35+ agent support</div></div>
+        <div class="rmi"><div class="rmil">MEMORY</div><div class="rmin" data-i18n="re2">Raw Context Persistence — LGPD-compliant</div></div>
+        <div class="rmi"><div class="rmil">HERÓDOTO</div><div class="rmin" data-i18n="re3">Reverse-engineer code into tech docs</div></div>
+        <div class="rmi"><div class="rmil">HIPÓCRATES</div><div class="rmin" data-i18n="re4">Evidence-first troubleshooting protocol</div></div>
+        <div class="rmi"><div class="rmil">CONSTITUTION</div><div class="rmin" data-i18n="re5">/m3a-constitution — enforceable principles</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section id="install">
+  <canvas id="sc"></canvas>
+  <div class="w">
+    <div class="sh c rv">
+      <span class="lbl" data-i18n="inst.lbl">// deploy</span>
+      <h2 class="st" data-i18n="inst.title">Ready to Deploy<br>Your AI Team?</h2>
+      <p class="ss" data-i18n="inst.sub">One command. 12 agents. 13 laws. Zero external services.</p>
+    </div>
+    <div class="prqs rv">
+      <div class="prq" data-i18n="inst.p1">🖥️ VS Code + GitHub Copilot</div>
+      <div class="prq" data-i18n="inst.p2">⚡ GitHub CLI — authenticated</div>
+      <div class="prq" data-i18n="inst.p3">🔑 Copilot Subscription</div>
+    </div>
+    <div class="cw rv">
+      <div class="ctabs">
+        <button class="ctab on" onclick="switchTab('lx',this)" data-i18n="inst.tab1">Linux / macOS</button>
+        <button class="ctab" onclick="switchTab('win',this)" data-i18n="inst.tab2">Windows PowerShell</button>
+      </div>
+      <div class="cbox on" id="tab-lx" onclick="cpCode(this)"><code>tag=$(gh api repos/ealmeidaf_indra/m3a-team/releases/latest --jq '.tag_name') &amp;&amp; t=$(mktemp -d) &amp;&amp; gh repo clone ealmeidaf_indra/m3a-team "$t" -- --depth 1 -b "$tag" -q -c advice.detachedHead=false &amp;&amp; bash "$t/scripts/install.sh" --mode=project &amp;&amp; rm -rf "$t"</code></div>
+      <div class="cbox" id="tab-win" onclick="cpCode(this)"><code>$tag=$(gh api repos/ealmeidaf_indra/m3a-team/releases/latest --jq '.tag_name'); $t="$env:TEMP\m3a-$(Get-Random)"; gh repo clone ealmeidaf_indra/m3a-team $t -- --depth 1 -b $tag -q -c advice.detachedHead=false; if($LASTEXITCODE -eq 0){ &amp; "$t\scripts\install.ps1" -Mode project }else{ Write-Host "[ERR] Clone failed. Run 'gh auth login' and retry." -ForegroundColor Red }; if(Test-Path $t){ Remove-Item -Recurse -Force $t }</code></div>
+    </div>
+    <div class="srow rv">
+      <div class="stp"><div class="stp-n">1</div><h4 data-i18n="st1.t">Activate</h4><p data-i18n="st1.d">Personalizes all 12 agents</p><span class="stp-c">/m3a-init</span></div>
+      <div class="stp"><div class="stp-n">2</div><h4 data-i18n="st2.t">Learn</h4><p data-i18n="st2.d">Descartes builds the knowledge base</p><span class="stp-c">/m3a-init-knowledge</span></div>
+      <div class="stp"><div class="stp-n">3</div><h4 data-i18n="st3.t">Build</h4><p data-i18n="st3.d">Create epics, plan sprints, govern every story</p><span class="stp-c">/m3a-init-epic</span></div>
+    </div>
+    <a href="https://github.com/ealmeidaf_indra/m3a-team" class="ghb rv" target="_blank" rel="noopener noreferrer">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      <span data-i18n="inst.gh">View on GitHub</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <img src="../assets/AF_MINSAIT_LOG_NEG.png" alt="Minsait">
+  <p data-i18n="ft.copy">© 2026 Minsait (An Indra Company) — Tech for impact</p>
+  <div class="ftl">
+    <a href="https://github.com/ealmeidaf_indra/m3a-team" target="_blank" rel="noopener noreferrer" data-i18n="ft.gh">GitHub</a>
+  </div>
+</footer>
+<script>
+/* i18n DATA */
+const T={
+en:{
+'nav.pain':'Pain Points','nav.roi':'ROI','nav.feat':'Features','nav.how':'How It Works','nav.rm':'Roadmap','nav.cta':'Deploy Now →',
+'hero.badge':'⚡ M3A TEAM · v1.4.0 · 12 AGENTS · VS CODE NATIVE',
+'hero.h1a':'Your Engineering Team','hero.h1b':'Just Got Smarter.',
+'hero.sub':'A full AI workforce of 12 specialized agents — from architecture reviews to security audits — deployed in one command, governed by 13 immutable laws.',
+'hero.btn1':'One Command. 12 Agents. Start Now →','hero.btn2':'One Command. 12 Agents. Start Now →',
+'t.agents':'Specialized Agents','t.laws':'Governance Laws','t.skills':'Automation Skills','t.wf':'Structured Workflows','t.gates':'Quality Gates','t.ext':'External Services','t.cmd':'Install Command',
+'pain.lbl':'// the problem','pain.title':'Every Engineering Team<br>Faces the Same Walls.',
+'pain.sub':'M3A Team doesn\'t suggest solutions — it enforces them. Every pain point has a dedicated agent with authority to block, approve, or veto.',
+'p1.n':'PAIN_01','p1.t':'Code Reviews Are Inconsistent','p1.d':'Reviews depend on who\'s available. Quality varies. Security holes slip through. Every merge is a gamble.','p1.f':'5-Agent Story-Done Gate — parallel, every merge',
+'p2.n':'PAIN_02','p2.t':'Documentation Is Always Outdated','p2.d':'Nobody has time to update docs. New devs spend weeks just understanding the system. Critical knowledge lives in Slack.','p2.f':'Borges auto-generates Minsait-branded HTML portals',
+'p3.n':'PAIN_03','p3.t':'Security Found Too Late','p3.d':'Vulnerabilities in production cost 10× more to fix. Security is an afterthought, bolted on instead of built in.','p3.f':'Hobbes has VETO power on every single story',
+'p4.n':'PAIN_04','p4.t':'Architecture Decisions Without Structure','p4.d':'No ADRs. No formal review. Architectural drift compounds until a complete rewrite is the only option.','p4.f':'Vitruvius generates ADRs, C4 diagrams, migration plans',
+'p5.n':'PAIN_05','p5.t':'Epics Approved Without Technical Validation','p5.d':'Product creates epics without engineering review. Blockers discovered during implementation — too late to change direction.','p5.f':'12-agent multi-perspective review before sprint-1',
+'p6.n':'PAIN_06','p6.t':'Tribal Knowledge Owns the System','p6.d':'Decisions live in the heads of people who already left. Each new dev reconstructs everything from scratch.','p6.f':'Descartes builds a persistent, searchable knowledge base',
+'p7.n':'PAIN_07','p7.t':'Sprint Planning Is Chaotic','p7.d':'Sprints overloaded. Stories have no acceptance criteria. DoD isn\'t enforced. Velocity is unpredictable.','p7.f':'Deming plans sprints with stories, ACs, and DoD',
+'p8.n':'PAIN_08','p8.t':'AI Usage Is Unstructured','p8.d':'Teams use AI ad-hoc. No consistency. No governance. No traceability. Each developer gets different quality from the same tools.','p8.f':'13 Immutable Laws govern every AI interaction',
+'roi.lbl':'// business impact','roi.title':'The Numbers<br>Leadership Cares About.','roi.sub':'Quantified impact across the software delivery lifecycle.',
+'roi.tag1':'code review speed','roi.d1':'Faster reviews with the 5-agent Story-Done gate — no waiting in queues.',
+'roi.tag2':'security detection','roi.d2':'Earlier security detection. Code-time vs production fix costs — orders of magnitude difference.',
+'roi.tag3':'sprint story creation','roi.big3':'2h → 20min','roi.d3':'Deming generates stories with acceptance criteria in one command. Production-ready artifacts.',
+'roi.tag4':'architecture records','roi.d4':'ADR coverage on all decisions. Every choice traced and justified by Vitruvius.',
+'ben1.t':'Delivery Acceleration','ben1.l1':'5 agents review every story in parallel','ben1.l2':'Security, QA, Dev, Architect, Docs in one pass','ben1.l3':'No back-and-forth on missing ACs','ben1.l4':'Stories generated with ACs in one command','ben1.l5':'Sprint DoD enforced before any story closes',
+'ben2.t':'Risk Elimination','ben2.l1':'Security VETO blocks unsafe stories before merge','ben2.l2':'OWASP Top 10 checked on every epic review','ben2.l3':'CVE audit with automated remediation plans','ben2.l4':'Architecture drift caught at design phase','ben2.l5':'Epic-done: 9 agents before marking complete',
+'ben3.t':'Institutional Memory','ben3.l1':'Knowledge base from day-1 codebase scan','ben3.l2':'Every decision recorded with rationale','ben3.l3':'New devs onboard in hours, not weeks','ben3.l4':'Zero tribal knowledge loss when team rotates','ben3.l5':'All 12 agents read KB before every action',
+'feat.lbl':'// capabilities','feat.title':'Enterprise-Grade Features.<br>Zero Overhead.',
+'feat.gate.lbl':'quality gate','feat.gate.t':'Multi-Agent Story-Done Gate','feat.gate.d':'Every story passes 5 specialist agents in parallel. QA, Security, and Developer hold veto power. One ❌ blocks the story — no overrides.',
+'feat.agents.lbl':'agents deployed','feat.agents.u':'Specialized Agents','feat.agents.d':'Each with a distinct persona, area of expertise, and enforcement authority. Orchestrated by Marcus Aurelius.',
+'feat.know.lbl':'knowledge-first · law 01','feat.know.t':'Persistent Project Intelligence','feat.know.d':'Every agent reads the knowledge base before acting. Descartes deep-scans the codebase on day one and builds permanent institutional memory.',
+'feat.laws.lbl':'governance','feat.laws.u':'Immutable Laws','feat.laws.d':'Knowledge First · No Silence · Anti-Duplicate · Sprint-by-Sprint · Operational Honesty · Build Always Passes.',
+'feat.team.lbl':'the team','feat.team.t':'12 Personas',
+'feat.stack.lbl':'multi-stack','feat.stack.t':'Auto-Detects Your Stack. All 12 Agents Adapt.','feat.stack.d':'M3A scans your project\'s languages, frameworks, and tools — no configuration needed.',
+'mc.sec':'Security','mc.arch':'Architect','gate.pass':'✅ APPROVED → can close','gate.block':'❌ BLOCKED → returns to dev','tag.every':'EVERY STORY','tag.noexc':'NO EXCEPTIONS','tag.readb4':'READ BEFORE EVERY ACTION','kt.laws':'Laws',
+'how.lbl':'// from zero to governed','how.title':'One Command.<br>A Full AI Team.','how.sub':'From nothing to a governed AI workforce in under 60 seconds. No external services, no extra subscriptions.',
+'s1.n':'STEP_01','s1.t':'Install','s1.d':'One bash command deploys all 12 agents into your project\'s .github/ folder. Everything is version-controlled and reviewable via PR.',
+'s2.n':'STEP_02','s2.t':'Activate with /m3a-init','s2.d':'Personalizes all 12 agents with your project\'s stack, team conventions, and domain context. Transforms generic agents into project-aware specialists.',
+'s3.n':'STEP_03','s3.t':'Build the Knowledge Base','s3.d':'Descartes deep-scans the codebase, maps dependencies, identifies technical debt, and constructs a structured knowledge base all 12 agents read before every action.',
+'s4.n':'STEP_04','s4.t':'Create Your First Epic','s4.d':'Drucker leads a structured brainstorm, performs anti-duplicate check, then triggers a 12-agent review. Nothing advances without consensus.',
+'s5.n':'STEP_05','s5.t':'Govern Every Story','s5.d':'Every story passes through the Story-Done gate before it can close. No exceptions. No shortcuts. No silent agents.',
+'rm.lbl':'// what\'s coming','rm.title':'Roadmap','rm.sub':'M3A Team evolves with the enterprise AI ecosystem.',
+'rm.s':'✅ Shipped','rm.sp':'📋 Specified','rm.d':'💬 In Discussion','rm.e':'🧠 Exploring',
+'rs1':'Story-Done & Epic-Done parallel gate workflows','rs2':'Confidence Scale 🟢🟡🔴 on all artifacts','rs3':'Prerequisite Guards before any skill runs','rs4':'Behavioral principles: Think Before Coding','rs5':'Safe upgrade wizard /m3a-update-latest','rs6':'Global Karpathy directives for all 12 agents',
+'rsp1':'Continuous metrics tracking across all agents and sprints','rsp2':'Automated executive report generation pipeline','rsp3':'Progressive Disclosure Skills (≤500 lines)','rsp4':'Agent Instruction Trimming — ≥30% reduction','rsp5':'/m3a-specify + /m3a-clarify pipeline',
+'rd1':'M3A: Analytics Agent — executive KPI dashboard','rd2':'Hooks: JIRA, SonarQube, Azure DevOps','rd3':'APM — apm install minsait/m3a-team','rd4':'Agent Learning Loop — cross-session memory','rd5':'M3A: ROI Agent — real-time efficiency metrics',
+'re1':'skills.sh compatibility — 35+ agent support','re2':'Raw Context Persistence — LGPD-compliant','re3':'Reverse-engineer code into tech docs','re4':'Evidence-first troubleshooting protocol','re5':'/m3a-constitution — enforceable principles',
+'rm.hl.t':'M3A: Analytics Agent<br>Executive KPI Dashboard','rm.hl.d':'Autonomous monitoring agent that tracks KPIs across all sprints, generates executive dashboards, and alerts leadership on risk triggers in real time.',
+'inst.lbl':'// deploy','inst.title':'Ready to Deploy<br>Your AI Team?','inst.sub':'One command. 12 agents. 13 laws. Zero external services.',
+'inst.p1':'🖥️ VS Code + GitHub Copilot','inst.p2':'⚡ GitHub CLI — authenticated','inst.p3':'🔑 Copilot Subscription',
+'inst.tab1':'Linux / macOS','inst.tab2':'Windows PowerShell',
+'st1.t':'Activate','st1.d':'Personalizes all 12 agents with your project context',
+'st2.t':'Learn','st2.d':'Descartes deep-scans the codebase, builds knowledge base',
+'st3.t':'Build','st3.d':'Create epics, plan sprints, govern every story',
+'inst.gh':'View on GitHub',
+'ft.copy':'© 2026 Minsait (An Indra Company) — Tech for impact','ft.main':'← Main Page','ft.gh':'GitHub'
+},
+pt:{
+'nav.pain':'Desafios','nav.roi':'ROI','nav.feat':'Features','nav.how':'Como Funciona','nav.rm':'Roadmap','nav.cta':'Instalar Agora →',
+'hero.badge':'⚡ M3A TEAM · v1.4.0 · 12 AGENTES · NATIVO NO VS CODE',
+'hero.h1a':'Seu Time de Engenharia','hero.h1b':'Ficou Mais Inteligente.',
+'hero.sub':'Uma força de trabalho AI completa com 12 agentes especializados — de revisões de arquitetura a auditorias de segurança — implantada em um comando, regida por 13 leis imutáveis.',
+'hero.btn1':'Um Comando. 12 Agentes. Comece Agora →','hero.btn2':'Um Comando. 12 Agentes. Comece Agora →',
+'t.agents':'Agentes Especializados','t.laws':'Leis de Governança','t.skills':'Skills de Automação','t.wf':'Workflows Estruturados','t.gates':'Quality Gates','t.ext':'Serviços Externos','t.cmd':'Comando de Instalação',
+'pain.lbl':'// o problema','pain.title':'Os Times de Engenharia<br>Enfrentam as Mesmas Barreiras.',
+'pain.sub':'O M3A Team não sugere soluções — ele as aplica. Cada dor tem um agente dedicado com autoridade para bloquear, aprovar ou vetar.',
+'p1.n':'DOR_01','p1.t':'Code Reviews são Inconsistentes','p1.d':'Reviews dependem de quem está disponível. A qualidade varia. Falhas de segurança passam. Cada merge é uma aposta.','p1.f':'Gate Story-Done com 5 Agentes — paralelo, em todo merge',
+'p2.n':'DOR_02','p2.t':'Documentação Sempre Desatualizada','p2.d':'Ninguém tem tempo para atualizar docs. Novos devs levam semanas para entender o sistema. O conhecimento vive no Slack.','p2.f':'Borges gera portais HTML com a marca Minsait automaticamente',
+'p3.n':'DOR_03','p3.t':'Segurança Encontrada Tarde Demais','p3.d':'Vulnerabilidades em produção custam 10× mais para corrigir. Segurança é um afterthought, colada depois em vez de embutida.','p3.f':'Hobbes tem poder de VETO em cada story',
+'p4.n':'DOR_04','p4.t':'Decisões de Arquitetura Sem Estrutura','p4.d':'Sem ADRs. Sem revisão formal. O drift arquitetural se acumula até que a única saída é uma reescrita completa.','p4.f':'Vitruvius gera ADRs, diagramas C4 e planos de migração',
+'p5.n':'DOR_05','p5.t':'Épicos Aprovados Sem Validação Técnica','p5.d':'Produto cria épicos sem revisão de engenharia. Bloqueios descobertos durante a implementação — tarde demais para mudar de direção.','p5.f':'Revisão multi-perspectiva de 12 agentes antes do sprint-1',
+'p6.n':'DOR_06','p6.t':'Conhecimento Tribal Domina o Sistema','p6.d':'Decisões vivem na cabeça de quem já saiu. Sem onboarding. Cada novo dev reconstrói tudo do zero.','p6.f':'Descartes constrói uma base de conhecimento persistente e pesquisável',
+'p7.n':'DOR_07','p7.t':'Planejamento de Sprint é Caótico','p7.d':'Sprints sobrecarregados. Stories sem critérios de aceite. DoD não é aplicado. Velocidade imprevisível.','p7.f':'Deming planeja sprints com stories, ACs e DoD',
+'p8.n':'DOR_08','p8.t':'Uso de IA Sem Estrutura','p8.d':'Times usam IA de forma ad-hoc. Sem consistência. Sem governança. Cada dev recebe qualidade diferente das mesmas ferramentas.','p8.f':'13 Leis Imutáveis governam toda interação com IA',
+'roi.lbl':'// impacto no negócio','roi.title':'Os Números que a<br>Liderança se Importa.',
+'roi.sub':'Impacto quantificado em todo o ciclo de entrega de software.',
+'roi.tag1':'velocidade de code review','roi.d1':'Reviews mais rápidos com o gate Story-Done de 5 agentes rodando em paralelo — sem filas de espera.',
+'roi.tag2':'detecção de segurança','roi.d2':'Detecção mais cedo. Custo de correção em tempo de código vs. produção — a diferença é de ordens de grandeza.',
+'roi.tag3':'criação de stories','roi.big3':'2h → 20min','roi.d3':'Deming gera stories com critérios de aceite em um comando. Artefatos prontos para produção.',
+'roi.tag4':'registros de arquitetura','roi.d4':'Cobertura de ADR em todas as decisões arquiteturais. Cada escolha rastreada e justificada pelo Vitruvius.',
+'ben1.t':'Aceleração de Entrega','ben1.l1':'5 agentes revisam cada story em paralelo','ben1.l2':'Segurança, QA, Dev, Arquiteto, Docs em uma passagem','ben1.l3':'Sem vai-e-vem por falta de critérios de aceite','ben1.l4':'Stories geradas com ACs em um único comando','ben1.l5':'DoD do sprint aplicado antes de qualquer story fechar',
+'ben2.t':'Eliminação de Riscos','ben2.l1':'VETO de Segurança bloqueia stories inseguras antes do merge','ben2.l2':'OWASP Top 10 verificado em toda revisão de épico','ben2.l3':'Auditoria de CVEs com planos de remediação automáticos','ben2.l4':'Drift de arquitetura detectado na fase de design','ben2.l5':'Epic-done: 9 agentes antes de marcar como completo',
+'ben3.t':'Memória Institucional','ben3.l1':'Base de conhecimento desde o scan inicial do codebase','ben3.l2':'Toda decisão registrada com contexto e justificativa','ben3.l3':'Novos devs fazem onboarding em horas, não semanas','ben3.l4':'Zero perda de conhecimento tribal quando o time muda','ben3.l5':'Todos os 12 agentes leem a KB antes de cada ação',
+'feat.lbl':'// capacidades','feat.title':'Features Nível Enterprise.<br>Zero Overhead.',
+'feat.gate.lbl':'quality gate','feat.gate.t':'Gate Story-Done Multi-Agente','feat.gate.d':'Cada story passa por 5 agentes especialistas em paralelo. QA, Segurança e Developer têm poder de veto. Um ❌ bloqueia a story — sem exceções.',
+'feat.agents.lbl':'agentes implantados','feat.agents.u':'Agentes Especializados','feat.agents.d':'Cada um com uma persona distinta, área de expertise e autoridade de aplicação. Orquestrados por Marcus Aurelius.',
+'feat.know.lbl':'knowledge-first · lei 01','feat.know.t':'Inteligência Persistente de Projeto','feat.know.d':'Todo agente lê a base de conhecimento antes de agir. Descartes faz um scan profundo do codebase no dia 1 e constrói memória institucional permanente.',
+'feat.laws.lbl':'governança','feat.laws.u':'Leis Imutáveis','feat.laws.d':'Knowledge First · Sem Silêncio · Anti-Duplicata · Sprint-a-Sprint · Honestidade Operacional · Build Sempre Passa.',
+'feat.team.lbl':'o time','feat.team.t':'12 Personas',
+'feat.stack.lbl':'multi-stack','feat.stack.t':'Detecta Sua Stack Automaticamente. Todos os 12 Agentes se Adaptam.','feat.stack.d':'O M3A escaneia linguagens, frameworks e ferramentas do seu projeto — sem configuração necessária.',
+'mc.sec':'Segurança','mc.arch':'Arquiteto','gate.pass':'✅ APROVADO → pode fechar','gate.block':'❌ BLOQUEADO → volta para o dev','tag.every':'CADA STORY','tag.noexc':'SEM EXCEÇÕES','tag.readb4':'LÊ ANTES DE CADA AÇÃO','kt.laws':'Leis',
+'how.lbl':'// do zero ao governado','how.title':'Um Comando.<br>Um Time AI Completo.','how.sub':'Do nada a uma força de trabalho AI governada em menos de 60 segundos. Sem serviços externos, sem assinaturas extras.',
+'s1.n':'PASSO_01','s1.t':'Instalar','s1.d':'Um comando bash implanta todos os 12 agentes na pasta .github/ do seu projeto. Tudo versionado e revisável via PR.',
+'s2.n':'PASSO_02','s2.t':'Ativar com /m3a-init','s2.d':'Personaliza todos os 12 agentes com a stack, convenções do time e contexto de domínio do seu projeto. Transforma agentes genéricos em especialistas do projeto.',
+'s3.n':'PASSO_03','s3.t':'Construir a Base de Conhecimento','s3.d':'Descartes faz um scan profundo, mapeia dependências, identifica dívida técnica e constrói uma base de conhecimento estruturada que todos os 12 agentes lêem antes de cada ação.',
+'s4.n':'PASSO_04','s4.t':'Criar o Primeiro Épico','s4.d':'Drucker conduz um brainstorm estruturado, verifica duplicatas e dispara uma revisão de 12 agentes. Nada avança sem consenso.',
+'s5.n':'PASSO_05','s5.t':'Governar Cada Story','s5.d':'Cada story passa pelo gate Story-Done antes de fechar. Sem exceções. Sem atalhos. Sem agentes silenciosos.',
+'rm.lbl':'// o que vem por aí','rm.title':'Roadmap','rm.sub':'O M3A Team evolui com o ecossistema de IA empresarial.',
+'rm.s':'✅ Entregue','rm.sp':'📋 Especificado','rm.d':'💬 Em Discussão','rm.e':'🧠 Explorando',
+'rs1':'Workflows de gate Story-Done & Epic-Done em paralelo','rs2':'Escala de Confiança 🟢🟡🔴 em todos os artefatos','rs3':'Prerequisite Guards antes de qualquer skill rodar','rs4':'Princípios comportamentais: Pense Antes de Codar','rs5':'Wizard de upgrade seguro /m3a-update-latest','rs6':'Diretivas globais Karpathy para todos os 12 agentes',
+'rsp1':'Monitoramento contínuo de métricas em todos os agentes e sprints','rsp2':'Pipeline de geração automática de relatórios executivos','rsp3':'Progressive Disclosure Skills (≤500 linhas)','rsp4':'Trimming de instruções de agentes — ≥30% de redução','rsp5':'Pipeline /m3a-specify + /m3a-clarify',
+'rd1':'M3A: Agente de Analytics — dashboard executivo de KPIs','rd2':'Hooks: JIRA, SonarQube, Azure DevOps','rd3':'APM — apm install minsait/m3a-team','rd4':'Agent Learning Loop — memória entre sessões','rd5':'M3A: ROI Agent — métricas de eficiência em tempo real',
+'re1':'Compatibilidade skills.sh — suporte a 35+ agentes','re2':'Raw Context Persistence — em conformidade com LGPD','re3':'Engenharia reversa de código em documentação técnica','re4':'Protocolo de troubleshooting baseado em evidências','re5':'/m3a-constitution — princípios aplicáveis',
+'rm.hl.t':'M3A: Agente de Analytics<br>Dashboard Executivo de KPIs','rm.hl.d':'Agente de monitoramento autônomo que rastreia KPIs em todos os sprints, gera dashboards executivos consolidados e alerta a liderança sobre gatilhos de risco em tempo real.',
+'inst.lbl':'// implantação','inst.title':'Pronto para Implantar<br>Seu Time AI?','inst.sub':'Um comando. 12 agentes. 13 leis. Zero serviços externos.',
+'inst.p1':'🖥️ VS Code + GitHub Copilot','inst.p2':'⚡ GitHub CLI — autenticado','inst.p3':'🔑 Assinatura do Copilot',
+'inst.tab1':'Linux / macOS','inst.tab2':'Windows PowerShell',
+'st1.t':'Ativar','st1.d':'Personaliza todos os 12 agentes com o contexto do projeto',
+'st2.t':'Aprender','st2.d':'Descartes escaneia o codebase e constrói a base de conhecimento',
+'st3.t':'Construir','st3.d':'Crie épicos, planeje sprints, governe cada story',
+'inst.gh':'Ver no GitHub',
+'ft.copy':'© 2026 Minsait (Uma empresa Indra) — Tecnologia para impacto','ft.main':'← Página Principal','ft.gh':'GitHub'
+},
+es:{
+'nav.pain':'Desafíos','nav.roi':'ROI','nav.feat':'Features','nav.how':'Cómo Funciona','nav.rm':'Roadmap','nav.cta':'Instalar Ahora →',
+'hero.badge':'⚡ M3A TEAM · v1.4.0 · 12 AGENTES · NATIVO EN VS CODE',
+'hero.h1a':'Tu Equipo de Ingeniería','hero.h1b':'Se Volvió Más Inteligente.',
+'hero.sub':'Una fuerza laboral AI completa con 12 agentes especializados — desde revisiones de arquitectura hasta auditorías de seguridad — desplegada en un comando, gobernada por 13 leyes inmutables.',
+'hero.btn1':'Un Comando. 12 Agentes. Empieza Ahora →','hero.btn2':'Un Comando. 12 Agentes. Empieza Ahora →',
+'t.agents':'Agentes Especializados','t.laws':'Leyes de Gobernanza','t.skills':'Skills de Automatización','t.wf':'Workflows Estructurados','t.gates':'Quality Gates','t.ext':'Servicios Externos','t.cmd':'Comando de Instalación',
+'pain.lbl':'// el problema','pain.title':'Los Equipos de Ingeniería<br>Enfrentan las Mismas Barreras.',
+'pain.sub':'M3A Team no sugiere soluciones — las aplica. Cada punto tiene un agente dedicado con autoridad para bloquear, aprobar o vetar.',
+'p1.n':'DOLOR_01','p1.t':'Code Reviews Son Inconsistentes','p1.d':'Los reviews dependen de quién está disponible. La calidad varía. Fallos de seguridad se filtran. Cada merge es una apuesta.','p1.f':'Gate Story-Done con 5 Agentes — paralelo, en cada merge',
+'p2.n':'DOLOR_02','p2.t':'Documentación Siempre Desactualizada','p2.d':'Nadie tiene tiempo para actualizar docs. Los nuevos devs pasan semanas entendiendo el sistema. El conocimiento vive en Slack.','p2.f':'Borges genera portales HTML con la marca Minsait automáticamente',
+'p3.n':'DOLOR_03','p3.t':'Seguridad Encontrada Demasiado Tarde','p3.d':'Vulnerabilidades en producción cuestan 10× más de corregir. La seguridad es un afterthought añadido en vez de incorporado.','p3.f':'Hobbes tiene poder de VETO en cada historia',
+'p4.n':'DOLOR_04','p4.t':'Decisiones de Arquitectura Sin Estructura','p4.d':'Sin ADRs. Sin revisión formal. El drift arquitectural se acumula hasta que la única salida es una reescritura completa.','p4.f':'Vitruvius genera ADRs, diagramas C4 y planes de migración',
+'p5.n':'DOLOR_05','p5.t':'Épicos Aprobados Sin Validación Técnica','p5.d':'Producto crea épicos sin revisión de ingeniería. Bloqueadores descubiertos durante implementación — demasiado tarde para cambiar.','p5.f':'Revisión multi-perspectiva de 12 agentes antes del sprint-1',
+'p6.n':'DOLOR_06','p6.t':'Conocimiento Tribal Domina el Sistema','p6.d':'Las decisiones viven en la cabeza de quienes ya se fueron. Sin onboarding. Cada nuevo dev reconstruye todo desde cero.','p6.f':'Descartes construye una base de conocimiento persistente y buscable',
+'p7.n':'DOLOR_07','p7.t':'Planificación de Sprint Es Caótica','p7.d':'Sprints sobrecargados. Historias sin criterios de aceptación. DoD no se aplica. Velocidad impredecible.','p7.f':'Deming planifica sprints con historias, ACs y DoD',
+'p8.n':'DOLOR_08','p8.t':'Uso de IA Sin Estructura','p8.d':'Los equipos usan IA de forma ad-hoc. Sin consistencia. Sin gobernanza. Cada dev obtiene diferente calidad de las mismas herramientas.','p8.f':'13 Leyes Inmutables gobiernan cada interacción con IA',
+'roi.lbl':'// impacto en el negocio','roi.title':'Los Números que<br>el Liderazgo Valora.',
+'roi.sub':'Impacto cuantificado en todo el ciclo de entrega de software.',
+'roi.tag1':'velocidad de code review','roi.d1':'Reviews más rápidos con el gate Story-Done de 5 agentes en paralelo — sin colas de espera.',
+'roi.tag2':'detección de seguridad','roi.d2':'Detección más temprana. Costo en tiempo de código vs. producción — la diferencia es de órdenes de magnitud.',
+'roi.tag3':'creación de historias','roi.big3':'2h → 20min','roi.d3':'Deming genera historias con criterios de aceptación en un comando. Artefactos listos para producción.',
+'roi.tag4':'registros de arquitectura','roi.d4':'Cobertura de ADR en todas las decisiones. Cada elección trazada y justificada por Vitruvius.',
+'ben1.t':'Aceleración de Entrega','ben1.l1':'5 agentes revisan cada historia en paralelo','ben1.l2':'Seguridad, QA, Dev, Arquitecto, Docs en un solo paso','ben1.l3':'Sin ida y vuelta por falta de ACs','ben1.l4':'Historias generadas con ACs en un comando','ben1.l5':'DoD del sprint aplicado antes de cerrar cualquier historia',
+'ben2.t':'Eliminación de Riesgos','ben2.l1':'VETO de Seguridad bloquea historias inseguras antes del merge','ben2.l2':'OWASP Top 10 verificado en cada revisión de épico','ben2.l3':'Auditoría de CVEs con planes de remediación automáticos','ben2.l4':'Drift de arquitectura detectado en fase de diseño','ben2.l5':'Epic-done: 9 agentes antes de marcar como completo',
+'ben3.t':'Memoria Institucional','ben3.l1':'Base de conocimiento desde el scan inicial del código','ben3.l2':'Cada decisión registrada con contexto y justificación','ben3.l3':'Nuevos devs hacen onboarding en horas, no semanas','ben3.l4':'Cero pérdida de conocimiento tribal al rotar el equipo','ben3.l5':'Los 12 agentes leen la KB antes de cada acción',
+'feat.lbl':'// capacidades','feat.title':'Features de Nivel Enterprise.<br>Cero Overhead.',
+'feat.gate.lbl':'quality gate','feat.gate.t':'Gate Story-Done Multi-Agente','feat.gate.d':'Cada historia pasa por 5 agentes especialistas en paralelo. QA, Seguridad y Developer tienen poder de veto. Un ❌ bloquea la historia — sin excepciones.',
+'feat.agents.lbl':'agentes desplegados','feat.agents.u':'Agentes Especializados','feat.agents.d':'Cada uno con una persona distinta, área de expertise y autoridad de aplicación. Orquestados por Marcus Aurelius.',
+'feat.know.lbl':'knowledge-first · ley 01','feat.know.t':'Inteligencia Persistente de Proyecto','feat.know.d':'Cada agente lee la base de conocimiento antes de actuar. Descartes escanea el código en profundidad el día 1 y construye memoria institucional permanente.',
+'feat.laws.lbl':'gobernanza','feat.laws.u':'Leyes Inmutables','feat.laws.d':'Knowledge First · Sin Silencio · Anti-Duplicado · Sprint-a-Sprint · Honestidad Operacional · Build Siempre Pasa.',
+'feat.team.lbl':'el equipo','feat.team.t':'12 Personas',
+'feat.stack.lbl':'multi-stack','feat.stack.t':'Detecta Tu Stack Automáticamente. Los 12 Agentes se Adaptan.','feat.stack.d':'M3A escanea lenguajes, frameworks y herramientas de tu proyecto — sin configuración necesaria.',
+'mc.sec':'Seguridad','mc.arch':'Arquitecto','gate.pass':'✅ APROBADO → puede cerrar','gate.block':'❌ BLOQUEADO → vuelve al dev','tag.every':'CADA HISTORIA','tag.noexc':'SIN EXCEPCIONES','tag.readb4':'LEE ANTES DE CADA ACCIÓN','kt.laws':'Leyes',
+'how.lbl':'// de cero a gobernado','how.title':'Un Comando.<br>Un Equipo AI Completo.','how.sub':'De nada a una fuerza laboral AI gobernada en menos de 60 segundos. Sin servicios externos, sin suscripciones adicionales.',
+'s1.n':'PASO_01','s1.t':'Instalar','s1.d':'Un comando bash despliega los 12 agentes en la carpeta .github/ de tu proyecto. Todo versionado y revisable vía PR.',
+'s2.n':'PASO_02','s2.t':'Activar con /m3a-init','s2.d':'Personaliza los 12 agentes con el stack, convenciones del equipo y contexto de dominio de tu proyecto. Transforma agentes genéricos en especialistas del proyecto.',
+'s3.n':'PASO_03','s3.t':'Construir la Base de Conocimiento','s3.d':'Descartes hace un scan profundo, mapea dependencias, identifica deuda técnica y construye una base de conocimiento estructurada que los 12 agentes leen antes de cada acción.',
+'s4.n':'PASO_04','s4.t':'Crear el Primer Épico','s4.d':'Drucker guía un brainstorm estructurado, verifica duplicados y dispara una revisión de 12 agentes. Nada avanza sin consenso.',
+'s5.n':'PASO_05','s5.t':'Gobernar Cada Historia','s5.d':'Cada historia pasa por el gate Story-Done antes de cerrar. Sin excepciones. Sin atajos. Sin agentes silenciosos.',
+'rm.lbl':'// lo que viene','rm.title':'Roadmap','rm.sub':'M3A Team evoluciona con el ecosistema de IA empresarial.',
+'rm.s':'✅ Entregado','rm.sp':'📋 Especificado','rm.d':'💬 En Discusión','rm.e':'🧠 Explorando',
+'rs1':'Workflows de gate Story-Done y Epic-Done en paralelo','rs2':'Escala de Confianza 🟢🟡🔴 en todos los artefactos','rs3':'Prerequisite Guards antes de ejecutar cualquier skill','rs4':'Principios conductuales: Piensa Antes de Codear','rs5':'Wizard de actualización segura /m3a-update-latest','rs6':'Directivas globales Karpathy para los 12 agentes',
+'rsp1':'Monitoreo continuo de métricas en todos los agentes y sprints','rsp2':'Pipeline de generación automática de informes ejecutivos','rsp3':'Progressive Disclosure Skills (≤500 líneas)','rsp4':'Trimming de instrucciones de agentes — ≥30% de reducción','rsp5':'Pipeline /m3a-specify + /m3a-clarify',
+'rd1':'M3A: Agente de Analytics — dashboard executivo de KPIs','rd2':'Hooks: JIRA, SonarQube, Azure DevOps','rd3':'APM — apm install minsait/m3a-team','rd4':'Agent Learning Loop — memoria entre sesiones','rd5':'M3A: ROI Agent — métricas de eficiencia en tiempo real',
+'re1':'Compatibilidad skills.sh — soporte para 35+ agentes','re2':'Persistencia de Contexto — en conformidad con LGPD','re3':'Ingeniería inversa de código en documentación técnica','re4':'Protocolo de troubleshooting basado en evidencias','re5':'/m3a-constitution — principios aplicables',
+'rm.hl.t':'M3A: Agente de Analytics<br>Dashboard Executivo de KPIs','rm.hl.d':'Agente de monitoreo autónomo que rastrea KPIs en todos los sprints, genera dashboards ejecutivos consolidados y alerta al liderazgo sobre disparadores de riesgo en tiempo real.',
+'inst.lbl':'// despliegue','inst.title':'¿Listo para Desplegar<br>Tu Equipo AI?','inst.sub':'Un comando. 12 agentes. 13 leyes. Cero servicios externos.',
+'inst.p1':'🖥️ VS Code + GitHub Copilot','inst.p2':'⚡ GitHub CLI — autenticado','inst.p3':'🔑 Suscripción de Copilot',
+'inst.tab1':'Linux / macOS','inst.tab2':'Windows PowerShell',
+'st1.t':'Activar','st1.d':'Personaliza los 12 agentes con el contexto del proyecto',
+'st2.t':'Aprender','st2.d':'Descartes escanea el código y construye la base de conocimiento',
+'st3.t':'Construir','st3.d':'Crea épicos, planifica sprints, gobierna cada historia',
+'inst.gh':'Ver en GitHub',
+'ft.copy':'© 2026 Minsait (Una empresa Indra) — Tecnología para impacto','ft.main':'← Página Principal','ft.gh':'GitHub'
+}};
+
+/* LANG FLAGS & CODES */
+const LINFO={en:{f:'<img class="flag-img" src="https://flagcdn.com/20x15/us.png" alt="US">',c:'EN'},pt:{f:'<img class="flag-img" src="https://flagcdn.com/20x15/br.png" alt="BR">',c:'BR'},es:{f:'<img class="flag-img" src="https://flagcdn.com/20x15/es.png" alt="ES">',c:'ES'}};
+
+function applyLang(code){
+  const d=T[code]||T.en;
+  document.documentElement.lang=code;
+  document.documentElement.dataset.lang=code;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.dataset.i18n,v=d[k]||T.en[k];
+    if(v!==undefined)el.innerHTML=v;
+  });
+  document.getElementById('lf').innerHTML=LINFO[code].f;
+  document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('cur',b.getAttribute('onclick').includes("'"+code+"'")));
+  buildMarquee(code);
+  localStorage.setItem('mma-lang',code);
+}
+function setLang(code){applyLang(code);closeLD();}
+
+/* LANG DROPDOWN */
+function toggleLD(){document.getElementById('ld').classList.toggle('open');}
+function closeLD(){document.getElementById('ld').classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('#ld'))closeLD();});
+
+/* MARQUEE BUILD */
+const MQ_KEYS={en:['STORY-DONE GATE','EPIC REVIEW','OWASP TOP 10 ENFORCED','KNOWLEDGE-FIRST','ADR GENERATION','SPRINT PLANNING','CVE AUDIT','C4 DIAGRAMS','EXECUTIVE DOCS','SECURITY VETO POWER','13 IMMUTABLE LAWS'],
+pt:['GATE STORY-DONE','REVISÃO DE ÉPICO','OWASP TOP 10 APLICADO','KNOWLEDGE-FIRST','GERAÇÃO DE ADR','PLANEJAMENTO DE SPRINT','AUDITORIA CVE','DIAGRAMAS C4','DOCS EXECUTIVOS','PODER DE VETO DE SEGURANÇA','13 LEIS IMUTÁVEIS'],
+es:['GATE STORY-DONE','REVISIÓN DE ÉPICO','OWASP TOP 10 APLICADO','KNOWLEDGE-FIRST','GENERACIÓN DE ADR','PLANIFICACIÓN DE SPRINT','AUDITORÍA CVE','DIAGRAMAS C4','DOCS EJECUTIVOS','PODER DE VETO DE SEGURIDAD','13 LEYES INMUTABLES']};
+function buildMarquee(lang){
+  const mq=document.getElementById('mq');
+  if(!mq)return;
+  const items=MQ_KEYS[lang]||MQ_KEYS.en;
+  const all=[...items,...items];
+  mq.innerHTML=all.map(t=>`<span class="mit">${t}</span><span class="mdot">·</span>`).join('');
+}
+
+/* PARTICLE FIELD */
+(function(){
+  const c=document.getElementById('bgc'),ctx=c.getContext('2d');
+  let W,H,pts=[],mx=-9999,my=-9999,raf;
+  const N=130,MR=140,MF=5,BS=0.35;
+  function init(){
+    W=c.width=innerWidth;H=c.height=innerHeight;
+    pts=Array.from({length:N},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      vx:(Math.random()-.5)*BS, vy:(Math.random()-.5)*BS,
+      r:Math.random()*1.4+.5,
+      o:Math.random()*.45+.2,
+      fc:Math.random()<.18
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      const dx=p.x-mx,dy=p.y-my,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<MR&&d>0){
+        const f=(MR-d)/MR*MF;
+        p.vx+=(dx/d)*f*.09; p.vy+=(dy/d)*f*.09;
+      }
+      p.vx*=.97; p.vy*=.97;
+      if(Math.abs(p.vx)<.04)p.vx+=(Math.random()-.5)*.025;
+      if(Math.abs(p.vy)<.04)p.vy+=(Math.random()-.5)*.025;
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<-5)p.x=W+5; if(p.x>W+5)p.x=-5;
+      if(p.y<-5)p.y=H+5; if(p.y>H+5)p.y=-5;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.fc?`rgba(255,60,110,${p.o})`:`rgba(220,220,240,${p.o})`;
+      ctx.fill();
+    });
+    raf=requestAnimationFrame(draw);
+  }
+  init();
+  addEventListener('resize',()=>{cancelAnimationFrame(raf);init();requestAnimationFrame(draw);});
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
+  requestAnimationFrame(draw);
+})();
+
+/* SPOTLIGHT */
+const spl=document.getElementById('spl');
+document.addEventListener('mousemove',e=>{spl.style.left=e.clientX+'px';spl.style.top=e.clientY+'px';},{passive:true});
+
+/* PAIN CARD SPOTLIGHT */
+document.querySelectorAll('[data-spt]').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    card.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  });
+});
+
+/* NAV SCROLL */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('solid',scrollY>60),{passive:true});
+
+/* SCROLL REVEAL */
+const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+
+/* COUNTER */
+function cnt(el,to,sf,dur){
+  let s=null;
+  function st(t){if(!s)s=t;const p=Math.min((t-s)/dur,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(e*to)+(sf||'');if(p<1)requestAnimationFrame(st);}
+  requestAnimationFrame(st);
+}
+const co=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(!e.isIntersecting)return;e.target.querySelectorAll('[data-count]').forEach(el=>cnt(el,+el.dataset.count,el.dataset.suffix||'',1500));co.unobserve(e.target);});
+},{threshold:.3});
+document.querySelectorAll('.rgrid,.bento').forEach(el=>co.observe(el));
+
+/* SHOOTING STARS */
+(function(){
+  const c=document.getElementById('sc');if(!c)return;
+  const ctx=c.getContext('2d');let W,H,stars=[];
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  function ns(){return{x:Math.random()*W,y:Math.random()*H*.45,vx:Math.random()*2+1.2,vy:Math.random()*.8+.4,len:Math.random()*110+50,life:0,max:Math.random()*80+55,w:Math.random()*1.4+.4};}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    if(Math.random()<.07)stars.push(ns());
+    stars=stars.filter(s=>s.life<s.max);
+    stars.forEach(s=>{s.life++;s.x+=s.vx;s.y+=s.vy;const p=s.life/s.max,a=(1-p)*.65;const g=ctx.createLinearGradient(s.x-s.vx*s.len/10,s.y-s.vy*s.len/10,s.x,s.y);g.addColorStop(0,'rgba(255,0,84,0)');g.addColorStop(1,`rgba(255,0,84,${a})`);ctx.beginPath();ctx.moveTo(s.x-s.vx*s.len/10,s.y-s.vy*s.len/10);ctx.lineTo(s.x,s.y);ctx.strokeStyle=g;ctx.lineWidth=s.w;ctx.stroke();});
+    requestAnimationFrame(draw);
+  }
+  resize();addEventListener('resize',resize);requestAnimationFrame(draw);
+})();
+
+/* CODE TABS + COPY */
+function switchTab(id,btn){document.querySelectorAll('.cbox').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.ctab').forEach(b=>b.classList.remove('on'));document.getElementById('tab-'+id).classList.add('on');btn.classList.add('on');}
+function cpCode(el){navigator.clipboard.writeText(el.querySelector('code').textContent).then(()=>{el.classList.add('cp');setTimeout(()=>el.classList.remove('cp'),2000);}).catch(()=>{});}
+
+/* ROADMAP DRAG */
+(function(){
+  const el=document.getElementById('rms');if(!el)return;
+  let dn=false,sx=0,sl=0;
+  el.addEventListener('mousedown',e=>{dn=true;sx=e.pageX-el.offsetLeft;sl=el.scrollLeft;});
+  el.addEventListener('mouseleave',()=>dn=false);
+  el.addEventListener('mouseup',()=>dn=false);
+  el.addEventListener('mousemove',e=>{if(!dn)return;e.preventDefault();el.scrollLeft=sl-(e.pageX-el.offsetLeft-sx)*1.2;});
+})();
+
+/* NAV ACTIVE */
+const nls=document.querySelectorAll('.nav-links a[href^="#"]');
+const nso=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){nls.forEach(a=>a.classList.remove('active'));const l=document.querySelector(`.nav-links a[href="#${e.target.id}"]`);if(l)l.classList.add('active');}});
+},{threshold:.35});
+[...nls].map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean).forEach(s=>nso.observe(s));
+
+/* SMOOTH SCROLL */
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}}));
+
+/* INIT */
+(function(){
+  const saved=localStorage.getItem('mma-lang')||navigator.language.slice(0,2);
+  const lang=['en','pt','es'].includes(saved)?saved:'en';
+  applyLang(lang);
+})();
+  // Ticker hover slow-down
+  const ttEl=document.getElementById('tt');
+  const hkEl=ttEl?.closest('.hticker');
+  if(hkEl){
+    hkEl.addEventListener('mouseenter',()=>{ttEl.style.animationDuration='180s'});
+    hkEl.addEventListener('mouseleave',()=>{ttEl.style.animationDuration=''});
+  }
+  // Tech marquee hover slow-down
+  document.querySelectorAll('.tmq').forEach(q=>{
+    q.addEventListener('mouseenter',()=>{
+      q.querySelectorAll('.tm-track').forEach(t=>t.style.animationPlayState='paused');
+    });
+    q.addEventListener('mouseleave',()=>{
+      q.querySelectorAll('.tm-track').forEach(t=>t.style.animationPlayState='');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+# Sprint Status — {{PROJECT_NAME}}
+# File: .github/mma/backlog/sprints/sprint-status.yaml
+# Description: Active sprint tracking. Managed by m3a-sm (Deming).
+# Template: m3a-team/templates/backlog/sprint-status.yaml
+# Version: 1.0.0
+# Law 8: Never detail beyond Sprint N+1
+
+version: "1.0.0"
+project: "{{PROJECT_CODE}}"
+generated: "{{DOC_DATE}}"
+last_updated: "{{DOC_DATE}}"
+
+# ─── Current Sprint ────────────────────────────────────────────────────────────
+
+current_sprint:
+  number: 1
+  name: "Sprint 1"
+  goal: "{{SPRINT_1_GOAL}}"
+  start_date: "{{DOC_DATE}}"
+  end_date: ""               # Set when sprint ends
+  velocity_target: 0         # Set after team baseline established
+  velocity_actual: 0         # Filled at sprint close
+  status: "planning"         # planning | active | review | closed
+
+  # Stories assigned to Sprint 1 (fully detailed — Law 8)
+  stories: []
+  # Stories format:
+  # - id: STORY-001
+  #   title: "Story title"
+  #   epic: "EPIC-001"
+  #   points: 5
+  #   status: backlog     # backlog | in-progress | review | done | cancelled
+  #   assignee: "m3a-dev"
+  #   ac_count: 3
+  #   ac_done: 0
+
+# ─── Next Sprint (N+1) ─────────────────────────────────────────────────────────
+# Law 8: Outline only — titles and dependencies, no full AC detail
+
+next_sprint:
+  number: 2
+  name: "Sprint 2"
+  goal: "{{SPRINT_2_GOAL}}"    # Tentative
+  status: "outline"            # outline | planning | active | review | closed
+
+  # Stories identified for Sprint 2 — outline only
+  stories_outline: []
+  # Outline format:
+  # - id: STORY-NNN
+  #   title: "Story title"
+  #   epic: "EPIC-NNN"
+  #   points_estimate: 0
+  #   dependencies: []
+
+# ─── Sprint N+2 and Beyond ─────────────────────────────────────────────────────
+# Law 8: Macro titles only — no sprint assignment, no AC detail
+
+backlog_preview:
+  # List epic IDs targeting future sprints
+  # Format: EPIC-NNN (no story detail)
+  - "See .github/mma/backlog/epics/ for future sprint planning"
+
+# ─── Completed Sprints ─────────────────────────────────────────────────────────
+
+completed_sprints: []
+# Completed sprint format:
+# - number: 0
+#   name: "Sprint 0"
+#   goal: "Project setup"
+#   start_date: ""
+#   end_date: ""
+#   velocity_planned: 0
+#   velocity_actual: 0
+#   stories_planned: 0
+#   stories_done: 0
+#   stories_cancelled: 0
+#   retrospective_notes: ""
+
+# ─── Team Capacity ─────────────────────────────────────────────────────────────
+
+capacity:
+  team_size: "{{TEAM_SIZE}}"          # solo | small | medium | large
+  sprint_length_days: 14              # 1-week, 2-week, or 3-week sprints
+  velocity_baseline: 0                # Established after 3 sprints; 0 = not yet known
+  velocity_trend: []                  # Last 3 sprint velocities for rolling average
+
+# ─── Cumulative Metrics ────────────────────────────────────────────────────────
+
+metrics:
+  sprints_completed: 0
+  total_stories_planned: 0
+  total_stories_done: 0
+  total_stories_cancelled: 0
+  total_points_done: 0
+  average_velocity: 0
+  completion_rate: 0                  # total_stories_done / total_stories_planned
+
+# ─── Epic Progress Summary ─────────────────────────────────────────────────────
+# Updated by m3a-pm at each sprint boundary
+
+epic_progress: []
+# Epic progress format:
+# - id: EPIC-001
+#   title: "Epic title"
+#   stories_total: 0
+#   stories_done: 0
+#   stories_in_progress: 0
+#   status: draft  # draft | in-review | approved | in-progress | done
+
+# ─── Blocked Items ─────────────────────────────────────────────────────────────
+
+blocked_items: []
+# Blocked item format:
+# - id: STORY-NNN
+#   blocked_by: "STORY-NNN | external dependency | decision needed"
+#   since: "YYYY-MM-DD"
+#   resolution_target: ""
+#   escalated: false

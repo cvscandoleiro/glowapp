@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planning 2.0 - Guia de Instalação</title>
+  <style>
+    :root {
+      --bg: #f7f3ef;
+      --surface: #ffffff;
+      --surface-2: #fff8f2;
+      --primary: #64183f;
+      --primary-2: #8b2456;
+      --text: #2a2430;
+      --muted: #6e6373;
+      --ok: #116b3a;
+      --warn: #8f5b00;
+      --line: #e6d7c8;
+      --mono: "Consolas", "Courier New", monospace;
+      --sans: "Segoe UI", "Tahoma", sans-serif;
+      --radius: 14px;
+      --shadow: 0 6px 20px rgba(64, 24, 47, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, #ffe7d6 0%, rgba(255, 231, 214, 0) 40%),
+        radial-gradient(circle at bottom left, #f0e8ff 0%, rgba(240, 232, 255, 0) 35%),
+        var(--bg);
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      background: linear-gradient(120deg, var(--primary), #4c0f2f 60%, #2a0819 100%);
+      color: #fff;
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -70px;
+      top: -90px;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.4rem, 2.2vw, 2rem);
+      letter-spacing: 0.4px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #f2dbe6;
+      max-width: 780px;
+    }
+
+    .meta {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.82rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .toc, .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .toc {
+      padding: 16px;
+      position: sticky;
+      top: 16px;
+      align-self: start;
+    }
+
+    .toc h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: var(--primary);
+    }
+
+    .toc a {
+      display: block;
+      color: var(--text);
+      text-decoration: none;
+      padding: 7px 9px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      font-size: 0.93rem;
+    }
+
+    .toc a:hover {
+      background: #f7ecef;
+      color: var(--primary);
+    }
+
+    .content {
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+
+    h3 {
+      margin: 14px 0 8px;
+      font-size: 1rem;
+      color: #3f0f29;
+    }
+
+    ul, ol { margin: 8px 0 0 18px; }
+    li { margin-bottom: 6px; }
+
+    .callout {
+      border-left: 5px solid var(--warn);
+      background: #fff8e9;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      color: #6b4d16;
+      font-size: 0.94rem;
+    }
+
+    .ok {
+      border-left-color: var(--ok);
+      background: #ebfff3;
+      color: #145235;
+    }
+
+    .code {
+      margin-top: 8px;
+      background: #1a1420;
+      color: #fcefff;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      overflow-x: auto;
+      border: 1px solid #39263f;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--line);
+    }
+
+    a:hover {
+      color: var(--primary-2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--surface-2);
+      color: #4b1732;
+    }
+
+    .footer {
+      margin: 16px 0 4px;
+      font-size: 0.84rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .toc { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <h1>Planning 2.0 - Guia de Instalação</h1>
+      <p>
+        Procedimento completo para instalar e configurar Planning 2.0 em uma nova máquina.
+        Arquitetura client-server com banco de dados compartilhado em rede.
+      </p>
+      <div class="meta">
+        <span class="chip">Stack: React + Vite + Express</span>
+        <span class="chip">Banco: Oracle compartilhado</span>
+        <span class="chip">Portas: 5173 e 5000</span>
+        <span class="chip">OS: Windows</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <nav class="toc" aria-label="Sumario">
+        <h2>Sumário</h2>
+        <a href="#premissas">1. Premissas</a>
+        <a href="#dependencias-sistema">2. Dependências do Sistema</a>
+        <a href="#instalacao-deps">3. Instalação de Dependências</a>
+        <a href="#setup-projeto">4. Setup do Projeto</a>
+        <a href="#configuracao-banco">5. Configuração do Banco</a>
+        <a href="#execucao">6. Execução Local</a>
+        <a href="#atalho">7. Atalho de Inicialização</a>
+        <a href="#troubleshooting">8. Troubleshooting</a>
+      </nav>
+
+      <main class="content">
+        <section class="panel" id="premissas">
+          <h2>1. Premissas</h2>
+          <ul>
+            <li>Usuario com permissao de instalacao local.</li>
+            <li>Acesso ao repositorio do projeto.</li>
+            <li>Acesso de rede ao servidor Oracle corporativo (10.129.181.131:1521).</li>
+            <li>VPN corporativa ativa quando necessario (faixa 10.108.110.x).</li>
+            <li>Portas locais 5173 (frontend) e 5000 (backend) disponiveis.</li>
+            <li>Credenciais Oracle fornecidas pela equipe de infraestrutura.</li>
+          </ul>
+          <div class="callout">
+            <strong>Nota importante:</strong> Planning 2.0 é uma aplicação client-server pura.
+            Não há dependência de arquivos locais (.xlsm, arquivos de configuração embarcados).
+            Todos os dados são consumidos da base compartilhada em rede.
+          </div>
+        </section>
+
+        <section class="panel" id="dependencias-sistema">
+          <h2>2. Dependências do Sistema</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Componente</th>
+                <th>Versão recomendada</th>
+                <th>Link de download</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Node.js</td>
+                <td>22 LTS</td>
+                <td><a href="https://nodejs.org/" target="_blank">nodejs.org</a></td>
+              </tr>
+              <tr>
+                <td>npm</td>
+                <td>10+</td>
+                <td>Incluído com Node.js</td>
+              </tr>
+              <tr>
+                <td>Git</td>
+                <td>Atual</td>
+                <td><a href="https://git-scm.com/" target="_blank">git-scm.com</a></td>
+              </tr>
+              <tr>
+                <td>Oracle Instant Client (opcional)</td>
+                <td>Compatível com seu Oracle</td>
+                <td><a href="https://www.oracle.com/database/technologies/instant-client/downloads.html" target="_blank">Oracle Downloads</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="panel" id="instalacao-deps">
+          <h2>3. Instalação de Dependências</h2>
+          <h3>3.1 Node.js e npm</h3>
+          <ol>
+            <li>Acessar <a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a></li>
+            <li>Baixar LTS (22.x)</li>
+            <li>Instalar seguindo o wizard padrão</li>
+            <li>Validar instalação no PowerShell:
+              <div class="code">node --version
+npm --version</div>
+            </li>
+          </ol>
+
+          <h3>3.2 Git</h3>
+          <ol>
+            <li>Acessar <a href="https://git-scm.com/" target="_blank">https://git-scm.com/</a></li>
+            <li>Baixar versão para Windows</li>
+            <li>Instalar com configurações padrão</li>
+            <li>Validar:
+              <div class="code">git --version</div>
+            </li>
+          </ol>
+
+          <h3>3.3 Oracle Instant Client (recomendado)</h3>
+          <ul>
+            <li>Visitar <a href="https://www.oracle.com/database/technologies/instant-client/downloads.html" target="_blank">Oracle Instant Client Downloads</a></li>
+            <li>Baixar versão x64 compatível com seu servidor Oracle</li>
+            <li>Descompactar em local sem espaços (ex: C:\Oracle\instantclient)</li>
+            <li>Adicionar ao PATH do Windows se desejar Thick Mode</li>
+          </ul>
+        </section>
+
+        <section class="panel" id="setup-projeto">
+          <h2>4. Setup do Projeto</h2>
+          <h3>4.1 Clonar repositório</h3>
+          <div class="code">git clone &lt;url-do-repositorio&gt;
+cd "Planning 2.0/portal"</div>
+
+          <h3>4.2 Instalar dependências npm</h3>
+          <div class="code">npm install</div>
+
+          <h3>4.3 Verificar scripts disponíveis</h3>
+          <div class="code">npm run</div>
+          <p>Esperado: <code>dev</code> e <code>server</code> como scripts principais.</p>
+        </section>
+
+        <section class="panel" id="configuracao-banco">
+          <h2>5. Configuração do Banco</h2>
+          <h3>5.1 Credenciais Oracle</h3>
+          <ul>
+            <li>Arquivo: <code>portal/server.js</code></li>
+            <li>Objeto: <code>ORACLE_CONFIG</code></li>
+            <li>Campos:
+              <ul>
+                <li><code>user</code> — usuário Oracle</li>
+                <li><code>password</code> — senha</li>
+                <li><code>connectString</code> — string de conexão ao servidor</li>
+              </ul>
+            </li>
+            <li>As credenciais padrão são fornecidas pela equipe de infraestrutura</li>
+          </ul>
+
+          <h3>5.2 Detecção automática de VPN</h3>
+          <ul>
+            <li>O backend detecta automaticamente IP VPN na faixa 10.108.110.x</li>
+            <li>Se conectado, usa IP local como <code>localAddress</code></li>
+            <li>Sem ação necessária do usuário</li>
+          </ul>
+
+          <h3>5.3 Teste de conectividade</h3>
+          <div class="code">npm run server</div>
+          <p>Verificar no console: "Oracle client Thick mode successfully enabled" ou "Thin mode fallback".</p>
+          <p>Acessar <code>http://localhost:5000/api/connection-status</code> para validar conexão ao banco.</p>
+        </section>
+
+        <section class="panel" id="execucao">
+          <h2>6. Execução Local</h2>
+          <h3>6.1 Terminal 1: Backend API</h3>
+          <div class="code">npm run server</div>
+          <p>Esperado: servidor Express rodando em <code>http://127.0.0.1:5000</code></p>
+
+          <h3>6.2 Terminal 2: Frontend (Vite)</h3>
+          <div class="code">npm run dev</div>
+          <p>Esperado: aplicação Vite rodando em <code>http://localhost:5173</code></p>
+
+          <h3>6.3 Acessar no navegador</h3>
+          <div class="code">http://localhost:5173</div>
+
+          <div class="callout ok">
+            Quando ambos estiverem ativos, a aplicação carregará dados diretamente do banco
+            compartilhado via API REST proxy.
+          </div>
+        </section>
+
+        <section class="panel" id="atalho">
+          <h2>7. Atalho de Inicialização</h2>
+          <p>
+            Um atalho operacional facilita o startup combinado. Localizado na raiz do projeto:
+          </p>
+          <ul>
+            <li><strong>Portal Gestao e Planejamento.lnk</strong> — atalho Windows</li>
+            <li><strong>Portal Gestao e Planejamento.cmd</strong> — launcher batch</li>
+            <li><strong>start-portal.ps1</strong> — script PowerShell de orquestração</li>
+          </ul>
+
+          <h3>Comportamento do atalho</h3>
+          <ol>
+            <li>Verifica se aplicação já está rodando na porta padrão (5173)</li>
+            <li>Procura por processos node em portas alternativas</li>
+            <li>Se encontrar ativa: abre navegador nela</li>
+            <li>Se não encontrar: inicia <code>npm run server</code> e <code>npm run dev</code></li>
+            <li>Aguarda inicialização (timeout 90s)</li>
+            <li>Abre navegador em <code>http://localhost:5173</code></li>
+          </ol>
+        </section>
+
+        <section class="panel" id="troubleshooting">
+          <h2>8. Troubleshooting</h2>
+          <h3>8.1 Erro ao conectar Oracle</h3>
+          <ul>
+            <li>Validar conectividade de rede: <code>ping 10.129.181.131</code></li>
+            <li>Confirmar VPN ativa se necessario</li>
+            <li>Revisar credenciais em <code>server.js</code></li>
+            <li>Verificar se Oracle Instant Client está instalado (se Thick Mode desejado)</li>
+          </ul>
+
+          <h3>8.2 Porta em uso</h3>
+          <div class="code">Get-NetTCPConnection -LocalPort 5000,5173 -State Listen</div>
+          <ul>
+            <li>Se portas estiverem ocupadas, encerrar processo conflitante</li>
+            <li>Ou ajustar variáveis no script <code>start-portal.ps1</code></li>
+          </ul>
+
+          <h3>8.3 npm install falha</h3>
+          <ul>
+            <li>Limpar cache: <code>npm cache clean --force</code></li>
+            <li>Deletar <code>node_modules</code> e <code>package-lock.json</code></li>
+            <li>Reinstalar: <code>npm install</code></li>
+          </ul>
+
+          <h3>8.4 Aplicação carrega mas sem dados</h3>
+          <ul>
+            <li>Verificar se backend está rodando: <code>http://localhost:5000/api/connection-status</code></li>
+            <li>Revisar console do navegador (F12) para erros CORS ou conexão</li>
+            <li>Confirmar que banco de dados está acessível da máquina</li>
+          </ul>
+        </section>
+      </main>
+    </div>
+
+    <div class="footer">
+      Planning 2.0 - Guia de Instalação | Versão 2.0 | Revisão 2026-06-17
+    </div>
+  </div>
+</body>
+</html>

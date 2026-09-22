@@ -1,0 +1,392 @@
+# M3A Team Workflows Registry
+# File: core/registry/workflows.registry.yaml
+# Description: Catalog of all multi-step orchestrated workflows
+# Version: 1.1.0
+# Author: Edimar Ferla de Almeida
+# Organization: Minsait (Indra Company)
+
+version: "1.1.0"
+
+# Workflows are multi-step orchestrated procedures that coordinate multiple agents.
+# They are heavier than skills and produce structured sets of artifacts.
+
+workflows:
+
+  # ─── Initialization Workflows ────────────────────────────────────────────────
+
+  m3a-init:
+    id: m3a-init
+    command: "/m3a-init"
+    file: "workflows/new-project.workflow.md"
+    description: >
+      Standard onboarding wizard. Asks 14 questions, generates .github/mma/config.yaml,
+      deploys agents, seeds knowledge base. Blocks all other commands until complete.
+    lead_agent: m3a-orchestrator
+    supporting_agents: [all]
+    preconditions:
+      - "M3A Team installed (project-level or user-level)"
+      - ".github/mma/config.yaml does NOT exist (first run), OR explicit re-init with confirmation"
+    blocks_until_complete: true
+    gate_commands_before: ["/m3a-help", "/m3a-about", "/m3a-doctor"]
+    outputs:
+      - ".github/mma/config.yaml"
+      - ".github/mma/knowledge/team-config.md"
+      - ".github/mma/knowledge/"
+      - ".github/mma/decisions/"
+      - ".github/mma/backlog/sprints/sprint-status.yaml"
+      - ".github/mma/workflows/config.yaml"
+      - ".github/mma/logs/m3a-init.log"
+      - ".github/agents/ (12 agent files)"
+      - ".github/prompts/ (all skill files)"
+      - ".github/copilot-instructions.md"
+    branches_to:
+      new: m3a-init-new-project
+      existing: m3a-init-existing-project
+      legacy: m3a-init-existing-project
+      docs: m3a-init-docs
+      assessment: m3a-assessment
+      migration: m3a-migration-planner
+    category: initialization
+
+  m3a-init-new-project:
+    id: m3a-init-new-project
+    command: "/m3a-init-new-project"
+    file: "workflows/new-project.workflow.md"
+    description: >
+      Greenfield project scaffold. PRD required before epics are created.
+      Generates: PRD template, C4 diagram skeleton, dev container scaffold,
+      initial epic structure.
+    lead_agent: m3a-orchestrator
+    supporting_agents: [m3a-pm, m3a-architect, m3a-devops]
+    preconditions:
+      - "/m3a-init complete"
+      - "project.type = new"
+    outputs:
+      - "docs/prd.md"
+      - "docs/architecture-c4.md"
+      - ".devcontainer/ scaffold"
+      - ".github/mma/backlog/epics/ scaffold"
+    gate: "PRD must be reviewed before epics are created"
+    category: initialization
+
+  m3a-init-existing-project:
+    id: m3a-init-existing-project
+    command: "/m3a-init-existing-project"
+    file: "workflows/existing-project.workflow.md"
+    description: >
+      Legacy/existing project onboarding. Performs AS-IS scan briefing,
+      knowledge base seeding from codebase exploration, CVE scan briefing,
+      and risk register skeleton.
+    lead_agent: m3a-orchestrator
+    supporting_agents: [m3a-analyst, m3a-architect, m3a-security]
+    preconditions:
+      - "/m3a-init complete"
+      - "project.type = existing OR legacy"
+    outputs:
+      - ".github/mma/knowledge/project-architecture.md"
+      - ".github/mma/knowledge/project-conventions.md"
+      - "docs/dependency-inventory.md (template)"
+      - "docs/risk-register.md (skeleton)"
+    triggers: [m3a-init-knowledge]
+    category: initialization
+
+  m3a-init-knowledge:
+    id: m3a-init-knowledge
+    command: "/m3a-init-knowledge"
+    file: "workflows/knowledge-bootstrap.workflow.md"
+    description: >
+      Deep codebase scan and knowledge base bootstrap. Requires codebase access.
+      Medium effort — produces comprehensive AS-IS technical knowledge base.
+    lead_agent: m3a-analyst
+    supporting_agents: [m3a-architect, m3a-security, m3a-dba]
+    preconditions:
+      - "/m3a-init complete"
+      - "Codebase accessible"
+    outputs:
+      - ".github/mma/knowledge/project-architecture.md (filled)"
+      - ".github/mma/knowledge/project-conventions.md (filled)"
+      - "docs/dependency-inventory.md (filled)"
+      - "docs/cve-summary.md"
+    category: initialization
+
+  m3a-init-docs:
+    id: m3a-init-docs
+    command: "/m3a-init-docs"
+    file: "workflows/docs-portal.workflow.md"
+    description: >
+      Documentation strategy activation and portal scaffold.
+      Generates HTML portal structure, navigation plan, content map.
+    lead_agent: m3a-docs
+    supporting_agents: [m3a-ux, m3a-architect]
+    preconditions:
+      - "/m3a-init complete OR project.type = docs"
+    outputs:
+      - "docs/portal/index.html"
+      - "docs/portal/navigation-plan.md"
+      - "docs/portal/content-map.md"
+    category: initialization
+
+  m3a-init-epic:
+    id: m3a-init-epic
+    command: "/m3a-init-epic"
+    file: "workflows/epic-planning.workflow.md"
+    description: >
+      Backlog structure standardization, epic templates enforcement,
+      story templates generation, sprint tracker HTML creation.
+    lead_agent: m3a-pm
+    supporting_agents: [m3a-sm, m3a-orchestrator]
+    preconditions:
+      - "/m3a-init complete"
+    outputs:
+      - ".github/mma/backlog/epics/ (structure)"
+      - ".github/mma/backlog/stories/ (structure)"
+      - "docs/html/epic-tracker.html"
+    category: initialization
+
+  # ─── Assessment & Architecture Workflows ─────────────────────────────────────
+
+  m3a-assessment:
+    id: m3a-assessment
+    command: "/m3a-assessment"
+    file: "workflows/knowledge-bootstrap.workflow.md"
+    description: >
+      Full technical diagnosis. Module inventory, technical debt map, CVE/EOL summary,
+      risk register, and modernization recommendations.
+      Layer 1: assessment-report.md. Layer 2: executive HTML summary.
+    lead_agent: m3a-analyst
+    supporting_agents: [m3a-architect, m3a-security, m3a-devops, m3a-dba]
+    preconditions:
+      - "/m3a-init complete OR project.type = assessment"
+      - "Codebase accessible"
+    outputs:
+      - "docs/assessment-report.md"
+      - "docs/html/assessment-executive.html"
+      - "docs/risk-register.md"
+    deliverable_layers: [Layer1, Layer2]
+    category: assessment
+
+  m3a-migration-planner:
+    id: m3a-migration-planner
+    command: "/m3a-migration-planner"
+    file: "workflows/migration-planner.workflow.md"
+    description: >
+      Stack migration planning. AS-IS baseline, TO-BE target, gap analysis, risk matrix,
+      phased roadmap, rollback strategy. Does NOT execute rewrites — produces plan only.
+      Human must approve plan before any execution begins.
+    lead_agent: m3a-architect
+    supporting_agents: [m3a-analyst, m3a-security, m3a-devops, m3a-dba]
+    preconditions:
+      - "/m3a-init complete"
+    outputs:
+      - "docs/migration-plan.md"
+      - "docs/risk-matrix.md"
+      - "docs/roadmap.md"
+    requires_human_approval: true
+    constraint: "No code rewriting without explicit human approval"
+    category: assessment
+
+  m3a-dependency-audit:
+    id: m3a-dependency-audit
+    command: "/m3a-dependency-audit"
+    file: "workflows/dependency-audit.workflow.md"
+    description: >
+      Dependency inventory, CVE severity scan summary, EOL calendar, recommended updates.
+      Outputs risk register updates and security ADR candidates.
+    lead_agent: m3a-security
+    supporting_agents: [m3a-analyst, m3a-dba]
+    preconditions:
+      - "/m3a-init complete"
+    outputs:
+      - "docs/dependency-inventory.md"
+      - "docs/cve-report.md"
+      - "docs/eol-calendar.md"
+    category: assessment
+
+  # ─── Governance Workflows ─────────────────────────────────────────────────────
+
+  m3a-adr:
+    id: m3a-adr
+    command: "/m3a-adr"
+    file: "workflows/release-cycle.workflow.md"
+    description: >
+      Generates Architecture Decision Records (ADR) from decision context.
+      ADR MUST include rejected alternatives. Stored in .github/mma/decisions/.
+    lead_agent: m3a-architect
+    supporting_agents: [m3a-orchestrator]
+    preconditions:
+      - "/m3a-init complete"
+    outputs:
+      - ".github/mma/decisions/ADR-NNN-slug.md"
+    output_format: "ADR-NNN-slug.md where NNN is auto-incremented"
+    gate: "ADR must include at least one rejected alternative"
+    category: governance
+
+  m3a-runbook:
+    id: m3a-runbook
+    command: "/m3a-runbook"
+    file: "workflows/release-cycle.workflow.md"
+    description: >
+      Generates operational runbooks for specific procedures.
+      Structure: prerequisites, step-by-step, verification, rollback, escalation.
+    lead_agent: m3a-devops
+    supporting_agents: [m3a-docs]
+    preconditions:
+      - "/m3a-init complete"
+    outputs:
+      - "docs/runbooks/runbook-[topic].md"
+    category: governance
+
+  m3a-release-notes:
+    id: m3a-release-notes
+    command: "/m3a-release-notes"
+    file: "workflows/release-cycle.workflow.md"
+    description: >
+      Generates release notes from version scope (git log, story list, or epic list).
+      Layer 1: CHANGELOG.md update. Layer 2: HTML executive release notes.
+    lead_agent: m3a-docs
+    supporting_agents: [m3a-pm, m3a-devops]
+    preconditions:
+      - "/m3a-init complete"
+    outputs:
+      - "CHANGELOG.md (updated)"
+      - "docs/html/release-notes-{{VERSION}}.html"
+    category: governance
+
+  m3a-risk-gates:
+    id: m3a-risk-gates
+    command: "/m3a-risk-gates"
+    file: "workflows/release-cycle.workflow.md"
+    description: >
+      Go/No-Go gate evaluation before major releases or migration phases.
+      Produces pass/fail report per criterion with recommendation.
+      ALWAYS requires explicit human approval to proceed. No agent may auto-approve.
+    lead_agent: m3a-orchestrator
+    supporting_agents: [m3a-security, m3a-architect, m3a-qa, m3a-devops]
+    preconditions:
+      - "/m3a-init complete"
+    outputs:
+      - "docs/risk-gate-report-[version].md"
+    requires_human_approval: true
+    gate: "Human must provide explicit go/no-go decision in writing"
+    category: governance
+
+  # ─── Operations Workflows ─────────────────────────────────────────────────────
+
+  m3a-incident:
+    id: m3a-incident
+    command: "/m3a-incident"
+    file: "workflows/incident-troubleshooting.workflow.md"
+    description: >
+      Incident War Room — all 12 agents in collaborative mode.
+      Produces: incident log, root cause analysis, mitigation steps, lessons learned.
+      MUST be triggered explicitly by a human. Law 5: War Room = Human Only.
+    lead_agent: m3a-orchestrator
+    supporting_agents: [all]
+    preconditions:
+      - "/m3a-init complete"
+      - "Explicit human activation — NEVER auto-triggered"
+    outputs:
+      - "docs/incidents/incident-[date]-[slug].md"
+      - ".github/mma/knowledge/ (lessons learned update)"
+    requires_human_approval: true
+    human_only_trigger: true
+    category: operations
+
+  # ─── Quality Gate Workflows ────────────────────────────────────────────────────
+
+  m3a-story-done:
+    id: m3a-story-done
+    command: "/m3a-story-done"
+    file: "workflows/story-done.workflow.md"
+    description: >
+      Story completion quality gate. Triggered automatically by M3A: Scrum Master
+      at story closure, or manually by the human. Coordinates QA, Security, Developer,
+      Architect and Docs in parallel. Blocks story closure if any veto is raised.
+      Conditional inclusion of DBA, DevOps, and UX based on story content.
+    lead_agent: m3a-orchestrator
+    supporting_agents: [m3a-qa, m3a-security, m3a-dev, m3a-architect, m3a-docs]
+    conditional_agents: [m3a-dba, m3a-devops, m3a-ux]
+    preconditions:
+      - "/m3a-init complete"
+      - "Story exists in .github/mma/backlog/stories/"
+      - "Story status is in-progress or review"
+    outputs:
+      - "sprint-status.yaml (story status updated to done — only if gate passes)"
+      - "story review result in chat"
+    requires_human_approval: false
+    blocks_story_closure: true
+    veto_agents: [m3a-qa, m3a-security, m3a-dev]
+    warning_agents: [m3a-architect, m3a-docs, m3a-dba, m3a-devops, m3a-ux]
+    category: quality-gate
+
+  m3a-epic-done:
+    id: m3a-epic-done
+    command: "/m3a-epic-done"
+    file: "workflows/epic-done.workflow.md"
+    description: >
+      Epic completion systemic quality gate. Triggered by M3A: Scrum Master at epic
+      closure. Requires ALL stories to be done first. Coordinates up to 9 agents in
+      parallel. Architect and DBA have elevated veto power (vs. story-done where they
+      only warn). Blocks epic closure if any veto is raised. Triggers executive
+      summary generation on success.
+    lead_agent: m3a-orchestrator
+    supporting_agents: [m3a-qa, m3a-security, m3a-dev, m3a-architect, m3a-docs, m3a-pm]
+    conditional_agents: [m3a-dba, m3a-devops, m3a-ux]
+    preconditions:
+      - "/m3a-init complete"
+      - "Epic exists in .github/mma/backlog/epics/"
+      - "ALL stories under epic have status: done"
+    outputs:
+      - "sprint-status.yaml (epic status updated to done \u2014 only if gate passes)"
+      - "epic-done executive summary (if docs.mode = portal or markdown+html)"
+      - "epic review result in chat"
+    requires_human_approval: false
+    blocks_epic_closure: true
+    veto_agents: [m3a-qa, m3a-security, m3a-dev, m3a-architect, m3a-dba]
+    warning_agents: [m3a-docs, m3a-devops, m3a-ux, m3a-pm]
+    depends_on: m3a-story-done
+    category: quality-gate
+
+  feature-development:
+    id: feature-development
+    file: "workflows/templates/feature-development.yaml"
+    type: collaboration-template
+    description: >
+      Collaboration template for new feature development. Pipeline: Architect →
+      (Developer + QA in parallel) → (Security + Docs in parallel).
+      Auto-selected when COMPLEX + feature/implement keywords. ~12% token savings.
+    agents: [m3a-architect, m3a-dev, m3a-qa, m3a-security, m3a-docs]
+    version: "1.0.0"
+
+  bug-fix:
+    id: bug-fix
+    file: "workflows/templates/bug-fix.yaml"
+    type: collaboration-template
+    description: >
+      Collaboration template for bug fixes. Minimal agent overhead: Developer → QA →
+      (Security if security-related). Auto-selected when bug/fix/hotfix keywords.
+      ~18% token savings vs. full gate.
+    agents: [m3a-dev, m3a-qa, m3a-security]
+    version: "1.0.0"
+
+  security-audit:
+    id: security-audit
+    file: "workflows/templates/security-audit.yaml"
+    type: collaboration-template
+    description: >
+      Collaboration template for security audits. Pipeline: Analyst → Security (elevated
+      veto) → Architect → Developer (conditional). Auto-selected when security/owasp/cve
+      keywords. ~10% token savings.
+    agents: [m3a-analyst, m3a-security, m3a-architect, m3a-dev]
+    version: "1.0.0"
+
+  refactoring:
+    id: refactoring
+    file: "workflows/templates/refactoring.yaml"
+    type: collaboration-template
+    description: >
+      Collaboration template for refactoring. Scope-bounded with mandatory human approval
+      before implementation (Law compliance). Pipeline: Architect → (Developer + QA) →
+      DBA (conditional). Auto-selected when refactor keywords. ~15% token savings.
+    agents: [m3a-architect, m3a-dev, m3a-qa, m3a-dba]
+    version: "1.0.0"

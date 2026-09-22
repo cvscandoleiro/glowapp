@@ -1,0 +1,79 @@
+# M3A Team — Tool Guardian Hook
+# File: .github/mma/hooks/tool-guardian.yaml
+# Purpose: Pre-execution blocking of dangerous operations (OWASP enforcement)
+# Installed to user projects via install.sh / install.ps1
+# Version: 1.0.0
+
+version: "1.0.0"
+
+tool_guardian:
+  enabled: true
+  mode: block  # block | warn | log
+
+  # Operations that are ALWAYS blocked — no override
+  blocked_patterns:
+    filesystem:
+      - pattern: "rm -rf"
+        reason: "Recursive deletion — irreversible"
+      - pattern: "rm -rf /"
+        reason: "System root deletion — critical"
+      - pattern: "sudo rm"
+        reason: "Privileged deletion — requires human confirmation"
+    git:
+      - pattern: "git push --force"
+        reason: "Force push overwrites remote history"
+      - pattern: "git push -f"
+        reason: "Force push overwrites remote history"
+      - pattern: "git reset --hard HEAD"
+        reason: "Destructive reset — requires human confirmation"
+      - pattern: "git clean -fd"
+        reason: "Removes untracked files irreversibly"
+    database:
+      - pattern: "DROP TABLE"
+        reason: "Irreversible table deletion"
+      - pattern: "DROP DATABASE"
+        reason: "Irreversible database deletion"
+      - pattern: "DROP SCHEMA"
+        reason: "Irreversible schema deletion"
+      - pattern: "TRUNCATE TABLE"
+        reason: "Irreversible data deletion"
+      - pattern: "DELETE FROM"
+        reason: "Bulk deletion — requires WHERE clause review"
+    infrastructure:
+      - pattern: "kubectl delete"
+        reason: "Kubernetes resource deletion — requires human confirmation"
+      - pattern: "terraform destroy"
+        reason: "Infrastructure destruction — requires human confirmation"
+
+  secrets_scanner:
+    enabled: true
+    patterns:
+      - label: "Generic API Key"
+        regex: "(?i)(api[_-]?key|apikey)\\s*[=:]\\s*['\"][a-zA-Z0-9_\\-]{20,}['\"]"
+      - label: "Generic Secret"
+        regex: "(?i)(secret|password|passwd|pwd)\\s*[=:]\\s*['\"][^'\"]{8,}['\"]"
+      - label: "AWS Access Key"
+        regex: "AKIA[0-9A-Z]{16}"
+      - label: "GitHub Token"
+        regex: "ghp_[a-zA-Z0-9]{36}"
+      - label: "Generic Bearer Token"
+        regex: "(?i)bearer\\s+[a-zA-Z0-9\\-._~+/]{20,}"
+    block_on_detection: true
+    message: "⚠️ Potential secret detected. Remove credentials before proceeding."
+
+  # Operations that trigger a WARNING but are not blocked
+  warn_patterns:
+    - pattern: "git push origin main"
+      reason: "Pushing to main — confirm this is intentional"
+    - pattern: "git push origin master"
+      reason: "Pushing to master — confirm this is intentional"
+    - pattern: "DROP INDEX"
+      reason: "Index deletion may affect performance"
+
+  # Paths that are NEVER written to by agents (project data)
+  protected_paths:
+    - ".github/mma/knowledge/"
+    - ".github/mma/backlog/"
+    - ".github/mma/logs/"
+    - ".github/mma/config.yaml"
+    - "copilot-instructions.md"

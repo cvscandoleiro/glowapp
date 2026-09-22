@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M3A Team — A História</title>
+<style>
+@font-face { font-family:'FF'; font-weight:300; src:url('../assets/fonts/Web Fonts/WOFF2/ForFutureSans-Light.woff2') format('woff2'); }
+@font-face { font-family:'FF'; font-weight:400; src:url('../assets/fonts/Web Fonts/WOFF2/ForFutureSans-Regular.woff2') format('woff2'); }
+@font-face { font-family:'FF'; font-weight:500; src:url('../assets/fonts/Web Fonts/WOFF2/ForFutureSans-Medium.woff2') format('woff2'); }
+@font-face { font-family:'FF'; font-weight:700; src:url('../assets/fonts/Web Fonts/WOFF2/ForFutureSans-Bold.woff2') format('woff2'); }
+@font-face { font-family:'FF'; font-weight:800; src:url('../assets/fonts/Web Fonts/WOFF2/ForFutureSans-Black.woff2') format('woff2'); }
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+:root {
+  --pruno: rgb(72,14,42);
+  --pruno-escuro: rgb(38,7,23);
+  --fucsia: #FF0054;
+  --ceramica: #E3E2DA;
+  --verde: #5dde8a;
+  --azul: #5bc0f8;
+  --amarelo: #ffd166;
+  --roxo: #c084fc;
+  --text-main: rgba(255,255,255,.88);
+  --text-sub: rgba(255,255,255,.55);
+  --text-muted: rgba(255,255,255,.3);
+  --border: rgba(255,255,255,.08);
+  --border-hover: rgba(255,0,84,.35);
+  --glow: 0 0 40px rgba(255,0,84,.25);
+}
+
+html, body { width:100%; height:100%; overflow:hidden; background:var(--pruno-escuro); }
+body { font-family:'FF', system-ui, sans-serif; color:var(--text-main); }
+
+/* CANVAS */
+#bgc { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+/* PROGRESS */
+#prog { position:fixed; top:0; left:0; height:3px; background:var(--fucsia); width:0; z-index:100; transition:width .45s ease; box-shadow:0 0 12px rgba(255,0,84,.6); }
+
+/* SLIDES WRAP */
+#sw { position:fixed; inset:0 0 52px 0; z-index:1; }
+
+/* SLIDE */
+.sl {
+  position:absolute; inset:0;
+  opacity:0; pointer-events:none;
+  transform:scale(.97) translateY(8px);
+  transition:opacity .45s ease, transform .45s ease;
+  overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.sl.on {
+  opacity:1; pointer-events:all;
+  transform:scale(1) translateY(0);
+}
+
+/* DARK SLIDE */
+.dark { background:var(--pruno-escuro); }
+.dark.sec { background:linear-gradient(135deg,var(--pruno-escuro) 0%,rgba(72,14,42,.6) 100%); }
+
+/* LIGHT SLIDE */
+.light { background:linear-gradient(160deg,#10030a 0%,#1a0515 100%); }
+
+/* CONTENT WRAPPER */
+.wrap {
+  flex:1; display:flex; flex-direction:column; justify-content:center;
+  padding:clamp(1.5rem,3vw,3rem) clamp(2rem,5vw,6rem);
+  max-width:1400px; margin:0 auto; width:100%;
+  position:relative; z-index:2;
+}
+
+/* TAG */
+.tag {
+  font-family:'FF',sans-serif; font-size:clamp(.6rem,.8vw,.78rem);
+  font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--fucsia); display:inline-block; margin-bottom:.65rem;
+}
+
+/* TITLES */
+.t1 { font-size:clamp(2.2rem,5vw,4.8rem); font-weight:800; line-height:1.05; letter-spacing:-.03em; margin-bottom:.55rem; }
+.t2 { font-size:clamp(1.4rem,3vw,3rem); font-weight:800; line-height:1.1; letter-spacing:-.025em; margin-bottom:.5rem; }
+.t3 { font-size:clamp(1.1rem,2vw,2rem); font-weight:700; line-height:1.15; }
+.sub { font-size:clamp(.85rem,1.1vw,1.05rem); font-weight:300; color:var(--text-sub); line-height:1.7; max-width:680px; margin-bottom:1.2rem; }
+.accent { color:var(--fucsia); }
+
+/* COVER DECO */
+.cover-bg-text {
+  position:absolute; bottom:-8%; left:-2%; font-size:clamp(10rem,30vw,28rem);
+  font-weight:800; color:rgba(255,255,255,.025); letter-spacing:-.05em;
+  line-height:1; pointer-events:none; z-index:0; user-select:none;
+}
+
+/* COVER META GRID */
+.meta-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:.65rem;
+  margin-top:1.5rem;
+}
+.meta-card {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:12px; padding:.85rem 1rem; text-align:center;
+  transition:border-color .25s, background .25s;
+}
+.meta-card:hover { border-color:var(--border-hover); background:rgba(255,0,84,.05); }
+.meta-val { font-size:clamp(1.8rem,4vw,3.5rem); font-weight:800; color:var(--fucsia); line-height:1; text-shadow:var(--glow); }
+.meta-lbl { font-size:clamp(.65rem,.85vw,.78rem); color:var(--text-sub); margin-top:.3rem; letter-spacing:.06em; }
+
+/* SECTION BREAK */
+.sec-num {
+  position:absolute; right:-2%; bottom:-10%;
+  font-size:clamp(8rem,22vw,22rem); font-weight:800;
+  color:rgba(255,255,255,.025); letter-spacing:-.05em;
+  line-height:1; pointer-events:none; z-index:0; user-select:none;
+}
+
+/* PAIN GRID */
+.pain-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
+.pain-card {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:14px; padding:1.4rem 1.5rem;
+  transition:all .25s; position:relative; overflow:hidden;
+}
+.pain-card::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 30% 30%,rgba(255,0,84,.06),transparent 65%);
+  opacity:0; transition:opacity .3s;
+}
+.pain-card:hover::before { opacity:1; }
+.pain-card:hover { border-color:rgba(255,0,84,.25); }
+.pain-icon { font-size:1.8rem; margin-bottom:.6rem; display:block; }
+.pain-title { font-size:clamp(.9rem,1.2vw,1.1rem); font-weight:700; margin-bottom:.4rem; }
+.pain-desc { font-size:clamp(.8rem,1vw,.9rem); color:var(--text-sub); line-height:1.6; }
+
+/* PILLAR GRID */
+.pillar-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:1rem; }
+.pillar-card {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:14px; padding:1.6rem 1.4rem;
+  transition:all .25s;
+}
+.pillar-card:hover { border-color:var(--border-hover); background:rgba(255,0,84,.04); transform:translateY(-3px); }
+.pillar-icon { font-size:2rem; margin-bottom:.75rem; display:block; }
+.pillar-title { font-size:clamp(.9rem,1.2vw,1.1rem); font-weight:700; margin-bottom:.45rem; color:var(--fucsia); }
+.pillar-desc { font-size:clamp(.78rem,.95vw,.9rem); color:var(--text-sub); line-height:1.65; }
+
+/* LAWS GRID */
+.laws-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin-top:.9rem; }
+.law-card {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:10px; padding:.75rem .85rem;
+  transition:all .2s;
+}
+.law-card:hover { border-color:var(--border-hover); background:rgba(255,0,84,.04); }
+.law-num { font-size:.65rem; font-weight:800; color:var(--fucsia); letter-spacing:.08em; margin-bottom:.25rem; }
+.law-title { font-size:clamp(.72rem,.88vw,.84rem); font-weight:700; margin-bottom:.2rem; }
+.law-desc { font-size:clamp(.62rem,.75vw,.72rem); color:var(--text-sub); line-height:1.45; }
+
+/* AGENT GRID */
+.agent-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin-top:.85rem; }
+.agent-card {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:10px; padding:.75rem .65rem; text-align:center;
+  transition:all .2s;
+}
+.agent-card:hover { border-color:var(--border-hover); background:rgba(255,0,84,.05); }
+.agent-icon { font-size:1.3rem; margin-bottom:.3rem; display:block; }
+.agent-name { font-size:clamp(.62rem,.78vw,.74rem); font-weight:700; color:var(--ceramica); }
+.agent-persona { font-size:clamp(.56rem,.7vw,.66rem); color:var(--fucsia); margin:.1rem 0; }
+.agent-domain { font-size:clamp(.54rem,.67vw,.63rem); color:var(--text-sub); line-height:1.35; }
+.veto-badge { display:inline-block; background:var(--fucsia); color:#fff; font-size:.52rem; font-weight:800; padding:.08rem .4rem; border-radius:4px; letter-spacing:.3px; text-transform:uppercase; margin-top:.18rem; }
+
+/* TWO COL */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; align-items:start; }
+.quote-wrap {
+  background:rgba(255,0,84,.06); border:1px solid rgba(255,0,84,.2);
+  border-radius:14px; padding:1.8rem 2rem; position:relative;
+}
+.quote-wrap::before { content:'"'; position:absolute; top:-1rem; left:1.2rem; font-size:5rem; color:var(--fucsia); opacity:.2; font-weight:800; line-height:1; }
+.quote-text { font-size:clamp(.9rem,1.2vw,1.1rem); font-style:italic; color:var(--text-sub); line-height:1.7; }
+.resp-list { display:flex; flex-direction:column; gap:.55rem; margin-top:.55rem; }
+.resp-item {
+  display:flex; align-items:flex-start; gap:.7rem;
+  padding:.65rem .8rem; background:rgba(255,255,255,.03);
+  border:1px solid var(--border); border-radius:9px;
+  font-size:clamp(.8rem,1vw,.9rem); color:var(--text-sub);
+  transition:all .2s;
+}
+.resp-item:hover { border-color:var(--border-hover); color:var(--text-main); }
+.resp-dot { width:6px; height:6px; border-radius:50%; background:var(--fucsia); flex-shrink:0; margin-top:.4rem; }
+
+/* TIMELINE */
+.tl { display:flex; gap:0; margin-top:1.2rem; position:relative; }
+.tl::before {
+  content:''; position:absolute; left:0; right:0; top:20px;
+  height:2px; background:linear-gradient(90deg,var(--fucsia),rgba(255,0,84,.15));
+  z-index:0;
+}
+.tl-step { flex:1; display:flex; flex-direction:column; align-items:center; position:relative; z-index:1; padding:0 .4rem; }
+.tl-dot { width:14px; height:14px; border-radius:50%; background:var(--fucsia); box-shadow:0 0 12px rgba(255,0,84,.5); border:2px solid var(--pruno-escuro); margin-bottom:.8rem; flex-shrink:0; }
+.tl-num { font-size:.6rem; font-weight:800; color:var(--fucsia); letter-spacing:.1em; margin-bottom:.3rem; }
+.tl-icon { font-size:1.4rem; margin-bottom:.4rem; }
+.tl-label { font-size:clamp(.7rem,.88vw,.83rem); font-weight:700; text-align:center; margin-bottom:.25rem; }
+.tl-sub { font-size:clamp(.6rem,.75vw,.72rem); color:var(--text-sub); text-align:center; line-height:1.45; }
+
+/* EPIC FLOW */
+.epic-flow { display:flex; flex-direction:column; gap:.5rem; margin-top:.85rem; }
+.ef-step {
+  display:flex; align-items:center; gap:1rem;
+  padding:.7rem 1rem; background:rgba(255,255,255,.03);
+  border:1px solid var(--border); border-radius:10px;
+  transition:all .2s;
+}
+.ef-step:hover { border-color:var(--border-hover); background:rgba(255,0,84,.04); }
+.ef-icon { width:32px; height:32px; border-radius:8px; background:rgba(255,0,84,.12); border:1px solid rgba(255,0,84,.25); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+.ef-text { flex:1; }
+.ef-label { font-size:clamp(.78rem,.95vw,.9rem); font-weight:700; }
+.ef-desc { font-size:clamp(.66rem,.8vw,.77rem); color:var(--text-sub); }
+
+/* WAR ROOM */
+.wr-center {
+  width:clamp(100px,14vw,160px); height:clamp(100px,14vw,160px);
+  border-radius:50%; background:linear-gradient(135deg,rgba(255,0,84,.2),rgba(192,132,252,.1));
+  border:2px solid rgba(255,0,84,.4); box-shadow:0 0 40px rgba(255,0,84,.15);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-weight:800; font-size:clamp(.9rem,1.3vw,1.2rem); text-align:center;
+  letter-spacing:-.01em;
+}
+.wr-layout { display:flex; align-items:center; gap:2.5rem; margin-top:1rem; }
+.wr-agents { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+.wr-agent { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:8px; padding:.5rem .6rem; text-align:center; font-size:clamp(.6rem,.76vw,.72rem); }
+.wr-agent-icon { font-size:1rem; display:block; margin-bottom:.15rem; }
+.wr-conditions { display:flex; flex-direction:column; gap:.5rem; margin-top:.8rem; }
+.wr-cond { display:flex; align-items:center; gap:.6rem; padding:.5rem .75rem; background:rgba(255,0,84,.06); border:1px solid rgba(255,0,84,.15); border-radius:8px; font-size:clamp(.72rem,.88vw,.84rem); color:var(--text-sub); }
+
+/* KPI GRID */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.85rem; margin-top:1rem; }
+.kpi-card {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:14px; padding:1.4rem 1rem; text-align:center;
+  transition:all .25s;
+}
+.kpi-card:hover { border-color:var(--border-hover); background:rgba(255,0,84,.05); transform:translateY(-3px); }
+.kpi-val { font-size:clamp(2.5rem,6vw,5.5rem); font-weight:800; color:var(--fucsia); line-height:1; text-shadow:var(--glow); }
+.kpi-lbl { font-size:clamp(.65rem,.82vw,.78rem); color:var(--text-sub); margin-top:.35rem; line-height:1.4; }
+
+/* BENEFIT GRID */
+.benefit-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.85rem; margin-top:1rem; }
+.benefit-card {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:12px; padding:1.2rem 1.1rem;
+  transition:all .25s;
+}
+.benefit-card:hover { border-color:var(--border-hover); transform:translateY(-2px); }
+.benefit-icon { font-size:1.5rem; margin-bottom:.5rem; display:block; }
+.benefit-title { font-size:clamp(.82rem,1vw,.95rem); font-weight:700; margin-bottom:.35rem; color:var(--fucsia); }
+.benefit-desc { font-size:clamp(.72rem,.88vw,.84rem); color:var(--text-sub); line-height:1.6; }
+
+/* STEPS */
+.steps { display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:1rem; }
+.step-card {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:14px; padding:1.4rem 1.2rem; text-align:center;
+  transition:all .25s;
+}
+.step-card:hover { border-color:var(--border-hover); transform:translateY(-3px); }
+.step-num { width:36px; height:36px; border-radius:50%; background:var(--fucsia); color:#fff; font-size:.85rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto .7rem; }
+.step-title { font-size:clamp(.82rem,1vw,.95rem); font-weight:700; margin-bottom:.35rem; }
+.step-code { font-family:'Courier New',monospace; font-size:clamp(.6rem,.78vw,.74rem); background:rgba(0,0,0,.4); border:1px solid var(--border); border-radius:5px; padding:.3rem .6rem; color:var(--fucsia); margin-top:.4rem; display:inline-block; word-break:break-all; }
+.note-box {
+  background:rgba(93,222,138,.06); border:1px solid rgba(93,222,138,.2);
+  border-radius:10px; padding:.8rem 1.1rem; margin-top:.85rem;
+  font-size:clamp(.75rem,.92vw,.88rem); color:rgba(93,222,138,.9);
+  display:flex; align-items:center; gap:.6rem;
+}
+
+/* CLOSING */
+.close-wrap { text-align:center; align-items:center; }
+.close-quote { font-size:clamp(1.1rem,2.2vw,2rem); font-weight:700; line-height:1.4; max-width:800px; margin:1.4rem auto; }
+.close-tagline { font-size:clamp(.7rem,.9vw,.85rem); color:var(--text-muted); letter-spacing:.1em; text-transform:uppercase; margin-top:.6rem; }
+.qa-pill { display:inline-block; background:var(--fucsia); color:#fff; padding:.65rem 2.4rem; border-radius:30px; font-size:clamp(.78rem,1vw,.92rem); font-weight:700; letter-spacing:.08em; margin-top:1.4rem; }
+.close-logo { height:28px; opacity:.55; margin:0 auto 1rem; display:block; }
+
+/* LAMP EFFECT ON COVER */
+.lamp {
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:900px; height:400px;
+  background:radial-gradient(ellipse 50% 100% at 50% 0%,rgba(255,0,84,.12) 0%,rgba(255,0,84,.04) 50%,transparent 75%);
+  pointer-events:none; z-index:1;
+}
+
+/* NAV BAR */
+#nav {
+  position:fixed; bottom:0; left:0; right:0; height:52px; z-index:100;
+  background:rgba(38,7,23,.95); backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.4rem; gap:.8rem;
+}
+.nav-logo { height:18px; opacity:.6; flex-shrink:0; }
+.nav-btn {
+  background:rgba(255,255,255,.06); border:1px solid var(--border);
+  color:var(--text-sub); border-radius:8px; padding:.35rem .75rem;
+  cursor:pointer; font-family:'FF',sans-serif; font-size:.72rem; font-weight:700;
+  transition:all .2s; display:flex; align-items:center; gap:.35rem; letter-spacing:.04em;
+}
+.nav-btn:hover { background:rgba(255,0,84,.12); border-color:rgba(255,0,84,.35); color:var(--fucsia); }
+#sc { color:var(--text-muted); font-size:.72rem; font-weight:700; letter-spacing:.1em; min-width:60px; text-align:center; }
+.lang-wrap { display:flex; gap:.3rem; }
+.lang-btn {
+  background:transparent; border:1px solid var(--border); color:var(--text-muted);
+  border-radius:6px; padding:.25rem .55rem; cursor:pointer;
+  font-family:'FF',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:.06em;
+  transition:all .2s;
+}
+.lang-btn.on { background:rgba(255,0,84,.15); border-color:rgba(255,0,84,.45); color:var(--fucsia); }
+.lang-btn:hover { color:var(--text-main); border-color:rgba(255,255,255,.2); }
+.fs-btn {
+  background:rgba(255,255,255,.05); border:1px solid var(--border); color:var(--text-muted);
+  border-radius:7px; padding:.3rem .55rem; cursor:pointer;
+  font-size:.85rem; transition:all .2s;
+}
+.fs-btn:hover { color:var(--fucsia); border-color:var(--border-hover); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+@keyframes pulse { 0%,100%{opacity:.45} 50%{opacity:.8} }
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .meta-grid,.laws-grid,.agent-grid,.kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .pillar-grid,.benefit-grid,.steps { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr; }
+  .pain-grid { grid-template-columns:1fr; }
+  .wr-layout { flex-direction:column; }
+}
+@media(max-width:600px){
+  .meta-grid,.laws-grid,.agent-grid,.kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .tl { overflow-x:auto; padding-bottom:.5rem; }
+  .wrap { padding:1rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgc"></canvas>
+<div id="prog"></div>
+
+<div id="sw">
+
+<!-- ==================== SLIDE 1: COVER ==================== -->
+<div class="sl dark on" id="s1">
+  <div class="lamp"></div>
+  <div class="cover-bg-text">M3A</div>
+  <div class="wrap close-wrap" style="justify-content:center;padding-top:3rem;">
+    <img src="../assets/AF_MINSAIT_LOG_NEG.png" class="close-logo" alt="Minsait" style="height:22px;margin-bottom:1.6rem;">
+    <span class="tag" data-i18n="cover.badge">Framework de IA Minsait</span>
+    <h1 class="t1" style="font-size:clamp(3rem,9vw,8rem);letter-spacing:-.05em;text-align:center;">M3A Team</h1>
+    <p class="sub" style="max-width:600px;text-align:center;font-size:clamp(.9rem,1.3vw,1.2rem);" data-i18n="cover.sub">Acelerador de Modernização Multi-Agente</p>
+    <p style="font-size:clamp(.78rem,1.1vw,1rem);color:var(--text-muted);text-align:center;max-width:560px;" data-i18n="cover.tagline">12 agentes especializados. 13 leis invioláveis. Um único ponto de entrada.</p>
+    <div class="meta-grid" style="max-width:640px;width:100%;margin-top:2rem;">
+      <div class="meta-card"><div class="meta-val">12</div><div class="meta-lbl" data-i18n="cover.m1">Agentes Especializados</div></div>
+      <div class="meta-card"><div class="meta-val">13</div><div class="meta-lbl" data-i18n="cover.m2">Leis Invioláveis</div></div>
+      <div class="meta-card"><div class="meta-val">1</div><div class="meta-lbl" data-i18n="cover.m3">Ponto de Entrada</div></div>
+      <div class="meta-card"><div class="meta-val" style="font-size:clamp(2rem,4.5vw,4.5rem);">∞</div><div class="meta-lbl" data-i18n="cover.m4">Escalabilidade</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 2: O PROBLEMA ==================== -->
+<div class="sl dark" id="s2">
+  <div class="wrap" style="padding-top:2rem;padding-bottom:1rem;">
+    <span class="tag" data-i18n="prob.tag">Ato 1 — O Problema</span>
+    <h2 class="t2" data-i18n="prob.title">O Desenvolvimento de Software Tem um Problema Antigo</h2>
+    <p class="sub" style="margin-bottom:.5rem;" data-i18n="prob.sub">Times modernos enfrentam desafios que ferramentas tradicionais não resolvem.</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <span class="pain-icon">🕸️</span>
+        <div class="pain-title" data-i18n="prob.p1t">Dívida Técnica Invisível</div>
+        <div class="pain-desc" data-i18n="prob.p1d">Componentes sem análise, CVEs ocultos, dependências esquecidas. Ninguém tem o quadro completo.</div>
+      </div>
+      <div class="pain-card">
+        <span class="pain-icon">🔄</span>
+        <div class="pain-title" data-i18n="prob.p2t">Coordenação Manual Exaustiva</div>
+        <div class="pain-desc" data-i18n="prob.p2d">Desenvolvedores alternando entre arquiteto, QA e especialista de segurança. Contexto dividido, qualidade comprometida.</div>
+      </div>
+      <div class="pain-card">
+        <span class="pain-icon">📋</span>
+        <div class="pain-title" data-i18n="prob.p3t">Contexto Perdido Entre Sprints</div>
+        <div class="pain-desc" data-i18n="prob.p3d">Cada sprint começa do zero. Decisões arquiteturais se perdem. O conhecimento some quando alguém sai do time.</div>
+      </div>
+      <div class="pain-card">
+        <span class="pain-icon">⚠️</span>
+        <div class="pain-title" data-i18n="prob.p4t">Risco Silencioso</div>
+        <div class="pain-desc" data-i18n="prob.p4d">Problemas de segurança e arquitetura que ninguém detecta até ser tarde. Sem revisão multi-perspectiva, o risco acumula.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 3: SECTION BREAK — A SOLUÇÃO ==================== -->
+<div class="sl dark sec" id="s3">
+  <div class="sec-num">02</div>
+  <div class="wrap close-wrap">
+    <span class="tag" data-i18n="sol.act">Ato 2 — A Solução</span>
+    <h2 class="t1" style="text-align:center;" data-i18n="sol.title">A Solução</h2>
+    <p style="font-size:clamp(.9rem,1.4vw,1.3rem);color:var(--text-sub);text-align:center;max-width:600px;margin-top:.6rem;" data-i18n="sol.sub">Uma equipe de 12 agentes de IA, governada por 13 leis, trabalhando em paralelo — para você.</p>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 4: O QUE É O M3A ==================== -->
+<div class="sl light" id="s4">
+  <div class="wrap" style="padding-top:2rem;">
+    <span class="tag" data-i18n="what.tag">O Que é o M3A?</span>
+    <h2 class="t2" data-i18n="what.title">Uma Equipe de IA para Modernização de Software</h2>
+    <p class="sub" data-i18n="what.sub">Doze agentes especializados com personas históricas, governados por 13 leis invioláveis, orquestrados por Marcus Aurelius.</p>
+    <div class="pillar-grid">
+      <div class="pillar-card">
+        <span class="pillar-icon">🧠</span>
+        <div class="pillar-title" data-i18n="what.p1t">Inteligência Coletiva</div>
+        <div class="pillar-desc" data-i18n="what.p1d">12 agentes com domínios exclusivos trabalham em paralelo. Cada revisão é multi-perspectiva — arquitetura, segurança, QA, DBA — simultaneamente.</div>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-icon">📜</span>
+        <div class="pillar-title" data-i18n="what.p2t">Governança Robusta</div>
+        <div class="pillar-desc" data-i18n="what.p2d">13 Leis Invioláveis garantem consistência, rastreabilidade e qualidade em cada ação. Nenhuma decisão se perde — tudo documentado automaticamente.</div>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-icon">⚡</span>
+        <div class="pillar-title" data-i18n="what.p3t">Fluxo Acelerado</div>
+        <div class="pillar-desc" data-i18n="what.p3d">Do backlog ao código — guiado, revisado e entregue com qualidade garantida. Cada sprint aproveita o contexto acumulado de todos os anteriores.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 5: AS 13 LEIS ==================== -->
+<div class="sl dark" id="s5">
+  <div class="wrap" style="padding-top:1.5rem;padding-bottom:1rem;">
+    <span class="tag" data-i18n="laws.tag">As 13 Leis Invioláveis</span>
+    <h2 class="t2" data-i18n="laws.title">Governança que Não Negocia</h2>
+    <div class="laws-grid">
+      <div class="law-card"><div class="law-num">LEI 1</div><div class="law-title" data-i18n="l1t">Knowledge First</div><div class="law-desc" data-i18n="l1d">Todo agente lê a base antes de agir.</div></div>
+      <div class="law-card"><div class="law-num">LEI 2</div><div class="law-title" data-i18n="l2t">Minimal Chat</div><div class="law-desc" data-i18n="l2d">Apenas formatos aprovados no chat — zero narrativa.</div></div>
+      <div class="law-card"><div class="law-num">LEI 3</div><div class="law-title" data-i18n="l3t">Anti-Duplicação</div><div class="law-desc" data-i18n="l3d">Checar duplicatas antes de criar qualquer artefato.</div></div>
+      <div class="law-card"><div class="law-num">LEI 4</div><div class="law-title" data-i18n="l4t">Aprendizado Contínuo</div><div class="law-desc" data-i18n="l4d">Novo conhecimento atualiza arquivos — nunca se perde.</div></div>
+      <div class="law-card"><div class="law-num">LEI 5</div><div class="law-title" data-i18n="l5t">War Room = Humano</div><div class="law-desc" data-i18n="l5d">Nenhum agente ativa War Room sozinho — apenas o humano.</div></div>
+      <div class="law-card"><div class="law-num">LEI 6</div><div class="law-title" data-i18n="l6t">Sem Silêncio em Reviews</div><div class="law-desc" data-i18n="l6d">Todo agente avalia toda epic — N/A exige justificativa.</div></div>
+      <div class="law-card"><div class="law-num">LEI 7</div><div class="law-title" data-i18n="l7t">Consenso Obrigatório</div><div class="law-desc" data-i18n="l7d">Divergência → evidências → 2 rodadas → escalada.</div></div>
+      <div class="law-card"><div class="law-num">LEI 8</div><div class="law-title" data-i18n="l8t">Sprint-by-Sprint</div><div class="law-desc" data-i18n="l8d">Nunca detalhar além do Sprint N+1.</div></div>
+      <div class="law-card"><div class="law-num">LEI 9</div><div class="law-title" data-i18n="l9t">Aprovação Multi-Agente</div><div class="law-desc" data-i18n="l9d">1 bloqueio = epic congelada até resolução documentada.</div></div>
+      <div class="law-card"><div class="law-num">LEI 10</div><div class="law-title" data-i18n="l10t">Duas Camadas de Output</div><div class="law-desc" data-i18n="l10d">Operacional (interno) e Executivo (externo) separados.</div></div>
+      <div class="law-card"><div class="law-num">LEI 11</div><div class="law-title" data-i18n="l11t">Versionamento Obrigatório</div><div class="law-desc" data-i18n="l11d">Toda mudança em agente tem versão semântica registrada.</div></div>
+      <div class="law-card"><div class="law-num">LEI 12</div><div class="law-title" data-i18n="l12t">Build Sempre Passa</div><div class="law-desc" data-i18n="l12d">Story done = build verde com evidência.</div></div>
+      <div class="law-card" style="border-color:rgba(255,0,84,.25);background:rgba(255,0,84,.06);"><div class="law-num">LEI 13</div><div class="law-title" data-i18n="l13t">Honestidade Operacional</div><div class="law-desc" data-i18n="l13d">Desvio de ativação obrigatória deve ser declarado ativamente.</div></div>
+      <div class="law-card" style="background:rgba(255,255,255,.02);border-style:dashed;display:flex;align-items:center;justify-content:center;">
+        <div style="text-align:center;"><div style="font-size:.62rem;color:var(--fucsia);font-weight:700;letter-spacing:.06em;margin-bottom:.2rem;" data-i18n="laws.footer1">FRAMEWORK</div><div style="font-size:.6rem;color:var(--text-muted);" data-i18n="laws.footer2">M3A Team v1.0+</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 6: SECTION BREAK — O TIME ==================== -->
+<div class="sl dark sec" id="s6">
+  <div class="sec-num">03</div>
+  <div class="wrap close-wrap">
+    <span class="tag" data-i18n="team.act">Ato 3 — O Time</span>
+    <h2 class="t1" style="text-align:center;" data-i18n="team.title">O Time</h2>
+    <p style="font-size:clamp(.9rem,1.4vw,1.3rem);color:var(--text-sub);text-align:center;max-width:600px;margin-top:.6rem;" data-i18n="team.sub">Doze personas históricas. Doze domínios exclusivos. Uma única missão.</p>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 7: OS 12 AGENTES ==================== -->
+<div class="sl dark" id="s7">
+  <div class="wrap" style="padding-top:1.5rem;padding-bottom:1rem;">
+    <span class="tag" data-i18n="agents.tag">12 Especialistas</span>
+    <h2 class="t2" data-i18n="agents.title">Personas Históricas. Domínios Reais.</h2>
+    <div class="agent-grid">
+      <div class="agent-card"><span class="agent-icon">⚡</span><div class="agent-name">M3A: Orchestrator</div><div class="agent-persona">Marcus Aurelius</div><div class="agent-domain" data-i18n="ag1">Roteamento, Leis, Governança</div></div>
+      <div class="agent-card"><span class="agent-icon">📊</span><div class="agent-name">M3A: Analyst</div><div class="agent-persona">Descartes</div><div class="agent-domain" data-i18n="ag2">AS-IS, CVEs, Inventário</div></div>
+      <div class="agent-card"><span class="agent-icon">🏗️</span><div class="agent-name">M3A: Architect</div><div class="agent-persona">Vitruvius</div><div class="agent-domain" data-i18n="ag3">TO-BE, ADRs, C4</div></div>
+      <div class="agent-card"><span class="agent-icon">📋</span><div class="agent-name">M3A: PM</div><div class="agent-persona">Drucker</div><div class="agent-domain" data-i18n="ag4">Epics, Roadmap, PRD</div></div>
+      <div class="agent-card"><span class="agent-icon">🏃</span><div class="agent-name">M3A: Scrum Master</div><div class="agent-persona">Deming</div><div class="agent-domain" data-i18n="ag5">Sprints, Stories, DoD</div></div>
+      <div class="agent-card"><span class="agent-icon">💻</span><div class="agent-name">M3A: Developer</div><div class="agent-persona">Knuth</div><div class="agent-domain" data-i18n="ag6">Implementação, Code Review</div></div>
+      <div class="agent-card"><span class="agent-icon">🔍</span><div class="agent-name">M3A: QA</div><div class="agent-persona">Popper</div><div class="agent-domain" data-i18n="ag7">Qualidade, Testes, DoD</div></div>
+      <div class="agent-card" style="border-color:rgba(255,0,84,.3);background:rgba(255,0,84,.07);">
+        <span class="agent-icon">🔒</span>
+        <div class="agent-name" style="color:var(--fucsia);">M3A: Security</div>
+        <div class="agent-persona">Hobbes</div>
+        <div class="agent-domain" data-i18n="ag8">CVEs, OWASP, Hardening</div>
+        <div class="veto-badge">VETO ❌</div>
+      </div>
+      <div class="agent-card"><span class="agent-icon">☁️</span><div class="agent-name">M3A: DevOps</div><div class="agent-persona">Atlas</div><div class="agent-domain" data-i18n="ag9">Docker, K8s, CI/CD</div></div>
+      <div class="agent-card"><span class="agent-icon">📄</span><div class="agent-name">M3A: Docs</div><div class="agent-persona">Borges</div><div class="agent-domain" data-i18n="ag10">Documentação, Portal, HTML</div></div>
+      <div class="agent-card"><span class="agent-icon">🎨</span><div class="agent-name">M3A: UX</div><div class="agent-persona">Norman</div><div class="agent-domain" data-i18n="ag11">UX/UI, WCAG, Design System</div></div>
+      <div class="agent-card"><span class="agent-icon">🗄️</span><div class="agent-name">M3A: DBA</div><div class="agent-persona">Codd</div><div class="agent-domain" data-i18n="ag12">Banco de Dados, SQL, Migrações</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 8: MARCUS AURELIUS ==================== -->
+<div class="sl dark" id="s8">
+  <div class="wrap" style="padding-top:2rem;">
+    <span class="tag" data-i18n="ma.tag">O Maestro</span>
+    <h2 class="t2" style="margin-bottom:1.2rem;">Marcus Aurelius — M3A: Orchestrator</h2>
+    <div class="two-col">
+      <div>
+        <div class="quote-wrap">
+          <p class="quote-text" data-i18n="ma.quote">"Ele governa sem executar diretamente — tomando decisões sob pressão extrema com racionalidade e visão de longo prazo. Disciplina foi o método."</p>
+          <p style="margin-top:.85rem;font-size:.72rem;color:var(--fucsia);font-weight:700;letter-spacing:.06em;">— PERSONA DO AGENTE ORQUESTRADOR</p>
+        </div>
+        <div style="margin-top:1rem;padding:.8rem 1rem;background:rgba(255,0,84,.06);border:1px solid rgba(255,0,84,.2);border-radius:10px;">
+          <p style="font-size:.75rem;font-weight:700;color:var(--fucsia);letter-spacing:.06em;margin-bottom:.4rem;" data-i18n="ma.rg">REGRA DE OURO</p>
+          <p style="font-size:.85rem;color:var(--text-sub);" data-i18n="ma.rgd">Delegar ou Responder Diretamente. Nunca executa — sempre orquestra.</p>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:.72rem;font-weight:700;color:var(--fucsia);letter-spacing:.06em;margin-bottom:.55rem;" data-i18n="ma.excl">RESPONSABILIDADES EXCLUSIVAS</p>
+        <div class="resp-list">
+          <div class="resp-item"><div class="resp-dot"></div><span data-i18n="ma.r1">Roteador inteligente de todas as requisições</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span data-i18n="ma.r2">Anti-Duplicate Master — nada se cria duas vezes</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span data-i18n="ma.r3">Consolidador de reviews multi-agente</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span data-i18n="ma.r4">Guardião das 13 Leis Invioláveis</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span data-i18n="ma.r5">Registrador de decisões do projeto</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span data-i18n="ma.r6">Escalador de War Room — somente se autorizado</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 9: SECTION BREAK — EM AÇÃO ==================== -->
+<div class="sl dark sec" id="s9">
+  <div class="sec-num">04</div>
+  <div class="wrap close-wrap">
+    <span class="tag" data-i18n="act.act">Ato 4 — Em Ação</span>
+    <h2 class="t1" style="text-align:center;" data-i18n="act.title">Em Ação</h2>
+    <p style="font-size:clamp(.9rem,1.4vw,1.3rem);color:var(--text-sub);text-align:center;max-width:600px;margin-top:.6rem;" data-i18n="act.sub">Como o M3A transforma uma ideia em código aprovado e entregue.</p>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 10: WORKFLOW ==================== -->
+<div class="sl light" id="s10">
+  <div class="wrap" style="padding-top:2rem;">
+    <span class="tag" data-i18n="wf.tag">O Fluxo</span>
+    <h2 class="t2" data-i18n="wf.title">Do Backlog ao Código com Qualidade</h2>
+    <p class="sub" style="margin-bottom:1rem;" data-i18n="wf.sub">Cinco etapas que garantem que nenhum detalhe seja esquecido — da ideia ao deploy.</p>
+    <div class="tl">
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-num">01</div><div class="tl-icon">🎯</div><div class="tl-label" data-i18n="wf.s1t">Brainstorm</div><div class="tl-sub" data-i18n="wf.s1d">PM analisa e cria a Epic em rascunho</div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-num">02</div><div class="tl-icon">🔍</div><div class="tl-label" data-i18n="wf.s2t">Review Paralelo</div><div class="tl-sub" data-i18n="wf.s2d">12 agentes avaliam simultaneamente</div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-num">03</div><div class="tl-icon">✅</div><div class="tl-label" data-i18n="wf.s3t">Aprovação</div><div class="tl-sub" data-i18n="wf.s3d">Consenso → Epic aprovada e versionada</div></div>
+      <div class="tl-step"><div class="tl-dot"></div><div class="tl-num">04</div><div class="tl-icon">🏃</div><div class="tl-label" data-i18n="wf.s4t">Sprint</div><div class="tl-sub" data-i18n="wf.s4d">SM cria Stories e planeja o sprint</div></div>
+      <div class="tl-step"><div class="tl-dot" style="background:var(--verde);box-shadow:0 0 12px rgba(93,222,138,.5);"></div><div class="tl-num" style="color:var(--verde);">05</div><div class="tl-icon">🚀</div><div class="tl-label" data-i18n="wf.s5t">Entrega</div><div class="tl-sub" data-i18n="wf.s5d">Dev implementa + QA valida + Build verde</div></div>
+    </div>
+    <div style="margin-top:1.6rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;">
+      <div style="padding:.8rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;text-align:center;">
+        <div style="font-size:1.1rem;margin-bottom:.3rem;">🔒</div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--fucsia);" data-i18n="wf.g1t">Segurança Embutida</div>
+        <div style="font-size:.65rem;color:var(--text-sub);margin-top:.2rem;" data-i18n="wf.g1d">Hobbes com poder de veto em toda epic</div>
+      </div>
+      <div style="padding:.8rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;text-align:center;">
+        <div style="font-size:1.1rem;margin-bottom:.3rem;">📚</div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--fucsia);" data-i18n="wf.g2t">Conhecimento Persistente</div>
+        <div style="font-size:.65rem;color:var(--text-sub);margin-top:.2rem;" data-i18n="wf.g2d">Base atualizada a cada sprint automaticamente</div>
+      </div>
+      <div style="padding:.8rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;text-align:center;">
+        <div style="font-size:1.1rem;margin-bottom:.3rem;">📈</div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--fucsia);" data-i18n="wf.g3t">Rastreabilidade Total</div>
+        <div style="font-size:.65rem;color:var(--text-sub);margin-top:.2rem;" data-i18n="wf.g3d">Cada decisão registrada no log do projeto</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 11: CRIAÇÃO DE EPIC ==================== -->
+<div class="sl dark" id="s11">
+  <div class="wrap" style="padding-top:2rem;padding-bottom:1rem;">
+    <span class="tag" data-i18n="epic.tag">Ciclo de Epic</span>
+    <h2 class="t2" data-i18n="epic.title">Aprovação que Não Passa Nada em Branco</h2>
+    <div class="epic-flow">
+      <div class="ef-step"><div class="ef-icon">📋</div><div class="ef-text"><div class="ef-label" data-i18n="ep1l">PM (Drucker) cria a Epic com brainstorm</div><div class="ef-desc" data-i18n="ep1d">Análise de necessidade, impacto, dependências e critérios de aceitação</div></div></div>
+      <div class="ef-step"><div class="ef-icon">🔎</div><div class="ef-text"><div class="ef-label" data-i18n="ep2l">Anti-Duplicate Check obrigatório</div><div class="ef-desc" data-i18n="ep2d">Orchestrator verifica backlog, stories ativas e base de conhecimento antes de continuar</div></div></div>
+      <div class="ef-step"><div class="ef-icon">📤</div><div class="ef-text"><div class="ef-label" data-i18n="ep3l">Distribuição para todos os 12 agentes</div><div class="ef-desc" data-i18n="ep3d">Cada agente recebe a epic e avalia pela lente do seu domínio especializado</div></div></div>
+      <div class="ef-step"><div class="ef-icon" style="background:rgba(255,209,102,.1);border-color:rgba(255,209,102,.3);">⚖️</div><div class="ef-text"><div class="ef-label" data-i18n="ep4l">Veredito de cada agente: ✅ / ⚠️ / ❌</div><div class="ef-desc" data-i18n="ep4d">Qualquer bloqueio congela a epic. Qualquer aviso é registrado e reportado ao humano.</div></div></div>
+      <div class="ef-step" style="border-color:rgba(93,222,138,.25);background:rgba(93,222,138,.05);"><div class="ef-icon" style="background:rgba(93,222,138,.1);border-color:rgba(93,222,138,.3);">🚀</div><div class="ef-text"><div class="ef-label" style="color:var(--verde);" data-i18n="ep5l">Todos ✅ → status: approved</div><div class="ef-desc" data-i18n="ep5d">SM (Deming) planeja o sprint. Knuth implementa. Popper valida. Build verde = story done.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 12: WAR ROOM ==================== -->
+<div class="sl dark" id="s12">
+  <div class="wrap" style="padding-top:2rem;">
+    <span class="tag" data-i18n="wr.tag">Protocolo Excepcional</span>
+    <h2 class="t2" data-i18n="wr.title">War Room — Quando Tudo Importa</h2>
+    <div class="wr-layout">
+      <div style="flex:1;">
+        <p style="font-size:clamp(.82rem,1.05vw,.96rem);color:var(--text-sub);margin-bottom:.85rem;" data-i18n="wr.desc">Reunião virtual de todos os 12 agentes para decisões críticas e irreversíveis. Ativação exclusiva do humano.</p>
+        <p style="font-size:.68rem;font-weight:700;color:var(--fucsia);letter-spacing:.06em;margin-bottom:.4rem;" data-i18n="wr.when">QUANDO ACIONAR</p>
+        <div class="wr-conditions">
+          <div class="wr-cond">🔴 <span data-i18n="wr.c1">Decisão técnica irreversível com impacto sistêmico</span></div>
+          <div class="wr-cond">🔴 <span data-i18n="wr.c2">Conflito entre epics aprovadas</span></div>
+          <div class="wr-cond">🔴 <span data-i18n="wr.c3">Refatoração maior ou migração de stack</span></div>
+          <div class="wr-cond">🔴 <span data-i18n="wr.c4">Proposta de novo agente no ecossistema</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;flex-shrink:0;">
+        <div class="wr-center"><span style="font-size:1.4rem;">⚔️</span><span style="font-size:.75rem;margin-top:.2rem;color:var(--fucsia);font-weight:800;letter-spacing:.04em;">WAR ROOM</span></div>
+        <div class="wr-agents">
+          <div class="wr-agent"><span class="wr-agent-icon">⚡</span>Orch.</div>
+          <div class="wr-agent"><span class="wr-agent-icon">📊</span>Analyst</div>
+          <div class="wr-agent"><span class="wr-agent-icon">🏗️</span>Arch.</div>
+          <div class="wr-agent"><span class="wr-agent-icon">📋</span>PM</div>
+          <div class="wr-agent"><span class="wr-agent-icon">🏃</span>SM</div>
+          <div class="wr-agent"><span class="wr-agent-icon">💻</span>Dev</div>
+          <div class="wr-agent"><span class="wr-agent-icon">🔍</span>QA</div>
+          <div class="wr-agent" style="border-color:rgba(255,0,84,.3);background:rgba(255,0,84,.08);"><span class="wr-agent-icon">🔒</span>Sec.</div>
+          <div class="wr-agent"><span class="wr-agent-icon">☁️</span>DevOps</div>
+        </div>
+        <p style="font-size:.62rem;color:var(--text-muted);text-align:center;" data-i18n="wr.note">+ Docs, UX, DBA</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 13: SECTION BREAK — O IMPACTO ==================== -->
+<div class="sl dark sec" id="s13">
+  <div class="sec-num">05</div>
+  <div class="wrap close-wrap">
+    <span class="tag" data-i18n="imp.act">Ato 5 — O Impacto</span>
+    <h2 class="t1" style="text-align:center;" data-i18n="imp.title">O Impacto</h2>
+    <p style="font-size:clamp(.9rem,1.4vw,1.3rem);color:var(--text-sub);text-align:center;max-width:600px;margin-top:.6rem;" data-i18n="imp.sub">O que muda quando você tem 12 especialistas trabalhando em cada decisão.</p>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 14: MÉTRICAS ==================== -->
+<div class="sl dark" id="s14">
+  <div class="wrap" style="padding-top:2rem;padding-bottom:1rem;">
+    <span class="tag" data-i18n="kpi.tag">Por Que M3A?</span>
+    <h2 class="t2" data-i18n="kpi.title">O Que Muda Quando Você Usa M3A</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-val">12x</div><div class="kpi-lbl" data-i18n="k1">Agentes trabalhando em paralelo em cada epic</div></div>
+      <div class="kpi-card"><div class="kpi-val">13</div><div class="kpi-lbl" data-i18n="k2">Leis que garantem consistência e qualidade</div></div>
+      <div class="kpi-card"><div class="kpi-val">100%</div><div class="kpi-lbl" data-i18n="k3">Rastreabilidade de decisões do projeto</div></div>
+      <div class="kpi-card"><div class="kpi-val">0</div><div class="kpi-lbl" data-i18n="k4">Conhecimento perdido entre sprints</div></div>
+    </div>
+    <div class="benefit-grid" style="margin-top:.85rem;">
+      <div class="benefit-card">
+        <span class="benefit-icon">🧠</span>
+        <div class="benefit-title" data-i18n="b1t">Conhecimento Acumulado</div>
+        <div class="benefit-desc" data-i18n="b1d">Base de conhecimento persistente — cada descoberta atualiza os arquivos automaticamente. O time que chega depois lê o que foi aprendido hoje.</div>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-icon">🔒</span>
+        <div class="benefit-title" data-i18n="b2t">Segurança Embutida</div>
+        <div class="benefit-desc" data-i18n="b2d">Hobbes tem poder de veto absoluto. Segurança não é camada adicional — é revisão obrigatória em todo ciclo de desenvolvimento.</div>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-icon">📈</span>
+        <div class="benefit-title" data-i18n="b3t">Velocidade Crescente</div>
+        <div class="benefit-desc" data-i18n="b3d">Cada sprint aproveita o contexto acumulado de todos os anteriores. Quanto mais você usa, mais rápido e preciso o time se torna.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 15: COMEÇANDO ==================== -->
+<div class="sl light" id="s15">
+  <div class="wrap" style="padding-top:2rem;">
+    <span class="tag" data-i18n="inst.tag">Instalação</span>
+    <h2 class="t2" data-i18n="inst.title">Pronto em 3 Passos</h2>
+    <p class="sub" data-i18n="inst.sub">Configure o M3A Team no seu projeto em minutos. Funciona com VS Code e GitHub Copilot.</p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-title" data-i18n="st1t">Clone o Repositório</div>
+        <p style="font-size:.78rem;color:var(--text-sub);margin:.35rem 0;" data-i18n="st1d">Obtenha o framework M3A Team do GitHub</p>
+        <div class="step-code">git clone https://github.com/<br>edimar-almeida/m3a-team</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-title" data-i18n="st2t">Execute o Installer</div>
+        <p style="font-size:.78rem;color:var(--text-sub);margin:.35rem 0;" data-i18n="st2d">Script de instalação automática no seu projeto</p>
+        <div class="step-code">bash scripts/install.sh<br>/caminho/do/projeto</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-title" data-i18n="st3t">Inicie com o Orchestrator</div>
+        <p style="font-size:.78rem;color:var(--text-sub);margin:.35rem 0;" data-i18n="st3d">Marcus Aurelius irá guiar o onboarding</p>
+        <div class="step-code">@m3a-orchestrator /m3a-init</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <span style="font-size:1.1rem;">✅</span>
+      <span data-i18n="inst.note">Compatível com VS Code + GitHub Copilot Agent Mode. Suporte a modelos Claude, GPT-4o, e outros.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 16: CLOSING ==================== -->
+<div class="sl dark sec" id="s16">
+  <div class="lamp"></div>
+  <div class="cover-bg-text" style="bottom:-5%;font-size:clamp(6rem,20vw,18rem);opacity:.018;">M3A</div>
+  <div class="wrap close-wrap">
+    <img src="../assets/AF_MINSAIT_LOG_NEG.png" class="close-logo" alt="Minsait" style="height:26px;">
+    <div class="close-quote accent" data-i18n="close.q"></div>
+    <p style="font-size:clamp(.8rem,1.1vw,1rem);color:var(--text-sub);text-align:center;max-width:580px;" data-i18n="close.sub">Modernize com inteligência. Escale com governança. Entregue com confiança.</p>
+    <div class="qa-pill" data-i18n="close.qa">Q&amp;A</div>
+    <div class="close-tagline">M3A Team — Minsait Multi-Agent Modernization Framework</div>
+    <p style="font-size:.6rem;color:var(--text-muted);margin-top:1.2rem;letter-spacing:.06em;">© 2025 INDRA SISTEMAS DE TECNOLOGIA DO BRASIL S.A. — MINSAIT</p>
+  </div>
+</div>
+
+</div><!-- #sw -->
+
+<!-- NAV BAR -->
+<div id="nav">
+  <img src="../assets/AF_MINSAIT_LOG_NEG.png" class="nav-logo" alt="Minsait">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← <span data-i18n="nav.prev">Anterior</span></button>
+  <div id="sc">1 / 16</div>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)"><span data-i18n="nav.next">Próximo</span> →</button>
+  <div class="lang-wrap">
+    <button class="lang-btn on" onclick="setLang('pt')">PT</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+  </div>
+  <button class="fs-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
+</div>
+
+<script>
+// ── TRANSLATIONS ──────────────────────────────────────────────────────────
+const T = {
+  pt: {
+    "cover.badge":"Framework de IA Minsait","cover.sub":"Acelerador de Modernização Multi-Agente",
+    "cover.tagline":"12 agentes especializados. 13 leis invioláveis. Um único ponto de entrada.",
+    "cover.m1":"Agentes Especializados","cover.m2":"Leis Invioláveis","cover.m3":"Ponto de Entrada","cover.m4":"Escalabilidade",
+    "prob.tag":"Ato 1 — O Problema","prob.title":"O Desenvolvimento de Software Tem um Problema Antigo",
+    "prob.sub":"Times modernos enfrentam desafios que ferramentas tradicionais não resolvem.",
+    "prob.p1t":"Dívida Técnica Invisível","prob.p1d":"Componentes sem análise, CVEs ocultos, dependências esquecidas. Ninguém tem o quadro completo.",
+    "prob.p2t":"Coordenação Manual Exaustiva","prob.p2d":"Desenvolvedores alternando entre arquiteto, QA e especialista de segurança. Contexto dividido, qualidade comprometida.",
+    "prob.p3t":"Contexto Perdido Entre Sprints","prob.p3d":"Cada sprint começa do zero. Decisões arquiteturais se perdem. O conhecimento some quando alguém sai do time.",
+    "prob.p4t":"Risco Silencioso","prob.p4d":"Problemas de segurança e arquitetura que ninguém detecta até ser tarde. Sem revisão multi-perspectiva, o risco acumula.",
+    "sol.act":"Ato 2 — A Solução","sol.title":"A Solução","sol.sub":"Uma equipe de 12 agentes de IA, governada por 13 leis, trabalhando em paralelo — para você.",
+    "what.tag":"O Que é o M3A?","what.title":"Uma Equipe de IA para Modernização de Software",
+    "what.sub":"Doze agentes especializados com personas históricas, governados por 13 leis invioláveis, orquestrados por Marcus Aurelius.",
+    "what.p1t":"Inteligência Coletiva","what.p1d":"12 agentes com domínios exclusivos trabalham em paralelo. Cada revisão é multi-perspectiva — arquitetura, segurança, QA, DBA — simultaneamente.",
+    "what.p2t":"Governança Robusta","what.p2d":"13 Leis Invioláveis garantem consistência, rastreabilidade e qualidade em cada ação. Nenhuma decisão se perde.",
+    "what.p3t":"Fluxo Acelerado","what.p3d":"Do backlog ao código — guiado, revisado e entregue com qualidade garantida. Cada sprint aproveita o contexto acumulado.",
+    "laws.tag":"As 13 Leis Invioláveis","laws.title":"Governança que Não Negocia",
+    "l1t":"Knowledge First","l1d":"Todo agente lê a base antes de agir.",
+    "l2t":"Minimal Chat","l2d":"Apenas formatos aprovados no chat — zero narrativa.",
+    "l3t":"Anti-Duplicação","l3d":"Checar duplicatas antes de criar qualquer artefato.",
+    "l4t":"Aprendizado Contínuo","l4d":"Novo conhecimento atualiza arquivos — nunca se perde.",
+    "l5t":"War Room = Humano","l5d":"Nenhum agente ativa War Room sozinho.",
+    "l6t":"Sem Silêncio em Reviews","l6d":"Todo agente avalia toda epic — N/A exige justificativa.",
+    "l7t":"Consenso Obrigatório","l7d":"Divergência → evidências → 2 rodadas → escalada.",
+    "l8t":"Sprint-by-Sprint","l8d":"Nunca detalhar além do Sprint N+1.",
+    "l9t":"Aprovação Multi-Agente","l9d":"1 bloqueio = epic congelada até resolução.",
+    "l10t":"Duas Camadas de Output","l10d":"Operacional (interno) e Executivo (externo).",
+    "l11t":"Versionamento Obrigatório","l11d":"Toda mudança em agente tem versão semântica.",
+    "l12t":"Build Sempre Passa","l12d":"Story done = build verde com evidência.",
+    "l13t":"Honestidade Operacional","l13d":"Desvio de ativação deve ser declarado ativamente.",
+    "laws.footer1":"FRAMEWORK","laws.footer2":"M3A Team v1.0+",
+    "team.act":"Ato 3 — O Time","team.title":"O Time","team.sub":"Doze personas históricas. Doze domínios exclusivos. Uma única missão.",
+    "agents.tag":"12 Especialistas","agents.title":"Personas Históricas. Domínios Reais.",
+    "ag1":"Roteamento, Leis, Governança","ag2":"AS-IS, CVEs, Inventário","ag3":"TO-BE, ADRs, C4",
+    "ag4":"Epics, Roadmap, PRD","ag5":"Sprints, Stories, DoD","ag6":"Implementação, Code Review",
+    "ag7":"Qualidade, Testes, DoD","ag8":"CVEs, OWASP, Hardening","ag9":"Docker, K8s, CI/CD",
+    "ag10":"Documentação, Portal, HTML","ag11":"UX/UI, WCAG, Design System","ag12":"Banco de Dados, SQL, Migrações",
+    "ma.tag":"O Maestro","ma.quote":'"Ele governa sem executar diretamente — tomando decisões sob pressão extrema com racionalidade e visão de longo prazo. Disciplina foi o método."',
+    "ma.rg":"REGRA DE OURO","ma.rgd":"Delegar ou Responder Diretamente. Nunca executa — sempre orquestra.",
+    "ma.excl":"RESPONSABILIDADES EXCLUSIVAS","ma.r1":"Roteador inteligente de todas as requisições",
+    "ma.r2":"Anti-Duplicate Master — nada se cria duas vezes","ma.r3":"Consolidador de reviews multi-agente",
+    "ma.r4":"Guardião das 13 Leis Invioláveis","ma.r5":"Registrador de decisões do projeto",
+    "ma.r6":"Escalador de War Room — somente se autorizado",
+    "act.act":"Ato 4 — Em Ação","act.title":"Em Ação","act.sub":"Como o M3A transforma uma ideia em código aprovado e entregue.",
+    "wf.tag":"O Fluxo","wf.title":"Do Backlog ao Código com Qualidade",
+    "wf.sub":"Cinco etapas que garantem que nenhum detalhe seja esquecido — da ideia ao deploy.",
+    "wf.s1t":"Brainstorm","wf.s1d":"PM analisa e cria a Epic em rascunho",
+    "wf.s2t":"Review Paralelo","wf.s2d":"12 agentes avaliam simultaneamente",
+    "wf.s3t":"Aprovação","wf.s3d":"Consenso → Epic aprovada e versionada",
+    "wf.s4t":"Sprint","wf.s4d":"SM cria Stories e planeja o sprint",
+    "wf.s5t":"Entrega","wf.s5d":"Dev implementa + QA valida + Build verde",
+    "wf.g1t":"Segurança Embutida","wf.g1d":"Hobbes com poder de veto em toda epic",
+    "wf.g2t":"Conhecimento Persistente","wf.g2d":"Base atualizada a cada sprint automaticamente",
+    "wf.g3t":"Rastreabilidade Total","wf.g3d":"Cada decisão registrada no log do projeto",
+    "epic.tag":"Ciclo de Epic","epic.title":"Aprovação que Não Passa Nada em Branco",
+    "ep1l":"PM (Drucker) cria a Epic com brainstorm","ep1d":"Análise de necessidade, impacto, dependências e critérios de aceitação",
+    "ep2l":"Anti-Duplicate Check obrigatório","ep2d":"Orchestrator verifica backlog, stories ativas e base de conhecimento",
+    "ep3l":"Distribuição para todos os 12 agentes","ep3d":"Cada agente avalia pela lente do seu domínio especializado",
+    "ep4l":"Veredito de cada agente: ✅ / ⚠️ / ❌","ep4d":"Qualquer bloqueio congela a epic. Qualquer aviso é registrado e reportado.",
+    "ep5l":"Todos ✅ → status: approved","ep5d":"SM (Deming) planeja o sprint. Knuth implementa. Popper valida. Build verde = story done.",
+    "wr.tag":"Protocolo Excepcional","wr.title":"War Room — Quando Tudo Importa",
+    "wr.desc":"Reunião virtual de todos os 12 agentes para decisões críticas e irreversíveis. Ativação exclusiva do humano.",
+    "wr.when":"QUANDO ACIONAR",
+    "wr.c1":"Decisão técnica irreversível com impacto sistêmico","wr.c2":"Conflito entre epics aprovadas",
+    "wr.c3":"Refatoração maior ou migração de stack","wr.c4":"Proposta de novo agente no ecossistema",
+    "wr.note":"+ Docs, UX, DBA",
+    "imp.act":"Ato 5 — O Impacto","imp.title":"O Impacto","imp.sub":"O que muda quando você tem 12 especialistas trabalhando em cada decisão.",
+    "kpi.tag":"Por Que M3A?","kpi.title":"O Que Muda Quando Você Usa M3A",
+    "k1":"Agentes trabalhando em paralelo em cada epic","k2":"Leis que garantem consistência e qualidade",
+    "k3":"Rastreabilidade de decisões do projeto","k4":"Conhecimento perdido entre sprints",
+    "b1t":"Conhecimento Acumulado","b1d":"Base de conhecimento persistente — cada descoberta atualiza os arquivos automaticamente.",
+    "b2t":"Segurança Embutida","b2d":"Hobbes tem poder de veto absoluto. Segurança não é camada adicional — é revisão obrigatória em todo ciclo.",
+    "b3t":"Velocidade Crescente","b3d":"Cada sprint aproveita o contexto acumulado. Quanto mais você usa, mais rápido o time se torna.",
+    "inst.tag":"Instalação","inst.title":"Pronto em 3 Passos",
+    "inst.sub":"Configure o M3A Team no seu projeto em minutos. Funciona com VS Code e GitHub Copilot.",
+    "st1t":"Clone o Repositório","st1d":"Obtenha o framework M3A Team do GitHub",
+    "st2t":"Execute o Installer","st2d":"Script de instalação automática no seu projeto",
+    "st3t":"Inicie com o Orchestrator","st3d":"Marcus Aurelius irá guiar o onboarding",
+    "inst.note":"Compatível com VS Code + GitHub Copilot Agent Mode. Suporte a modelos Claude, GPT-4o, e outros.",
+    "close.q":"Modernize com inteligência.\nEscale com governança.\nEntregue com confiança.",
+    "close.sub":"Modernize com inteligência. Escale com governança. Entregue com confiança.",
+    "close.qa":"Perguntas & Respostas",
+    "nav.prev":"Anterior","nav.next":"Próximo"
+  },
+  en: {
+    "cover.badge":"Minsait AI Framework","cover.sub":"Multi-Agent Modernization Accelerator",
+    "cover.tagline":"12 specialized agents. 13 inviolable laws. A single entry point.",
+    "cover.m1":"Specialized Agents","cover.m2":"Inviolable Laws","cover.m3":"Entry Point","cover.m4":"Scalability",
+    "prob.tag":"Act 1 — The Problem","prob.title":"Software Development Has an Old Problem",
+    "prob.sub":"Modern teams face challenges that traditional tools don't solve.",
+    "prob.p1t":"Invisible Technical Debt","prob.p1d":"Components without analysis, hidden CVEs, forgotten dependencies. No one has the full picture.",
+    "prob.p2t":"Exhausting Manual Coordination","prob.p2d":"Developers switching between architect, QA and security specialist. Divided context, compromised quality.",
+    "prob.p3t":"Context Lost Between Sprints","prob.p3d":"Every sprint starts from zero. Architectural decisions disappear. Knowledge vanishes when someone leaves the team.",
+    "prob.p4t":"Silent Risk","prob.p4d":"Security and architecture issues no one detects until it's too late. Without multi-perspective review, risk accumulates.",
+    "sol.act":"Act 2 — The Solution","sol.title":"The Solution","sol.sub":"A team of 12 AI agents, governed by 13 laws, working in parallel — for you.",
+    "what.tag":"What is M3A?","what.title":"An AI Team for Software Modernization",
+    "what.sub":"Twelve specialized agents with historical personas, governed by 13 inviolable laws, orchestrated by Marcus Aurelius.",
+    "what.p1t":"Collective Intelligence","what.p1d":"12 agents with exclusive domains work in parallel. Every review is multi-perspective — architecture, security, QA, DBA — simultaneously.",
+    "what.p2t":"Robust Governance","what.p2d":"13 Inviolable Laws guarantee consistency, traceability and quality in every action. No decision is lost.",
+    "what.p3t":"Accelerated Flow","what.p3d":"From backlog to code — guided, reviewed and delivered with guaranteed quality. Each sprint leverages accumulated context.",
+    "laws.tag":"The 13 Inviolable Laws","laws.title":"Governance That Doesn't Negotiate",
+    "l1t":"Knowledge First","l1d":"Every agent reads the knowledge base before acting.",
+    "l2t":"Minimal Chat","l2d":"Only approved formats in chat — zero narration.",
+    "l3t":"Anti-Duplication","l3d":"Check for duplicates before creating any artifact.",
+    "l4t":"Continuous Learning","l4d":"New knowledge updates files — never lost.",
+    "l5t":"War Room = Human Only","l5d":"No agent activates War Room alone.",
+    "l6t":"No Silence in Reviews","l6d":"Every agent evaluates every epic — N/A requires justification.",
+    "l7t":"Mandatory Consensus","l7d":"Divergence → evidence → 2 rounds → escalation.",
+    "l8t":"Sprint-by-Sprint","l8d":"Never detail beyond Sprint N+1.",
+    "l9t":"Multi-Agent Approval","l9d":"1 block = epic frozen until documented resolution.",
+    "l10t":"Two Output Layers","l10d":"Operational (internal) and Executive (external).",
+    "l11t":"Mandatory Versioning","l11d":"Every agent change has semantic version registered.",
+    "l12t":"Build Always Passes","l12d":"Story done = green build with evidence.",
+    "l13t":"Operational Honesty","l13d":"Activation deviation must be actively declared.",
+    "laws.footer1":"FRAMEWORK","laws.footer2":"M3A Team v1.0+",
+    "team.act":"Act 3 — The Team","team.title":"The Team","team.sub":"Twelve historical personas. Twelve exclusive domains. One single mission.",
+    "agents.tag":"12 Specialists","agents.title":"Historic Personas. Real Domains.",
+    "ag1":"Routing, Laws, Governance","ag2":"AS-IS, CVEs, Inventory","ag3":"TO-BE, ADRs, C4",
+    "ag4":"Epics, Roadmap, PRD","ag5":"Sprints, Stories, DoD","ag6":"Implementation, Code Review",
+    "ag7":"Quality, Testing, DoD","ag8":"CVEs, OWASP, Hardening","ag9":"Docker, K8s, CI/CD",
+    "ag10":"Documentation, Portal, HTML","ag11":"UX/UI, WCAG, Design System","ag12":"Database, SQL, Migrations",
+    "ma.tag":"The Conductor","ma.quote":'"He governs without executing directly — making decisions under extreme pressure with rationality and long-term vision. Discipline was the method."',
+    "ma.rg":"GOLDEN RULE","ma.rgd":"Delegate or Respond Directly. Never executes — always orchestrates.",
+    "ma.excl":"EXCLUSIVE RESPONSIBILITIES","ma.r1":"Intelligent router for all requests",
+    "ma.r2":"Anti-Duplicate Master — nothing created twice","ma.r3":"Multi-agent review consolidator",
+    "ma.r4":"Guardian of the 13 Inviolable Laws","ma.r5":"Project decisions recorder",
+    "ma.r6":"War Room escalator — only if authorized",
+    "act.act":"Act 4 — In Action","act.title":"In Action","act.sub":"How M3A transforms an idea into approved and delivered code.",
+    "wf.tag":"The Workflow","wf.title":"From Backlog to Code with Quality",
+    "wf.sub":"Five steps that ensure no detail is missed — from idea to deploy.",
+    "wf.s1t":"Brainstorm","wf.s1d":"PM analyzes and creates the Epic as draft",
+    "wf.s2t":"Parallel Review","wf.s2d":"12 agents evaluate simultaneously",
+    "wf.s3t":"Approval","wf.s3d":"Consensus → Epic approved and versioned",
+    "wf.s4t":"Sprint","wf.s4d":"SM creates Stories and plans the sprint",
+    "wf.s5t":"Delivery","wf.s5d":"Dev implements + QA validates + Green build",
+    "wf.g1t":"Embedded Security","wf.g1d":"Hobbes with veto power on every epic",
+    "wf.g2t":"Persistent Knowledge","wf.g2d":"Knowledge base updated each sprint automatically",
+    "wf.g3t":"Full Traceability","wf.g3d":"Every decision recorded in project log",
+    "epic.tag":"Epic Lifecycle","epic.title":"Approval That Misses Nothing",
+    "ep1l":"PM (Drucker) creates the Epic with brainstorm","ep1d":"Need analysis, impact, dependencies and acceptance criteria",
+    "ep2l":"Mandatory Anti-Duplicate Check","ep2d":"Orchestrator checks backlog, active stories and knowledge base",
+    "ep3l":"Distribution to all 12 agents","ep3d":"Each agent evaluates through the lens of their specialized domain",
+    "ep4l":"Each agent's verdict: ✅ / ⚠️ / ❌","ep4d":"Any block freezes the epic. Any warning is recorded and reported.",
+    "ep5l":"All ✅ → status: approved","ep5d":"SM (Deming) plans sprint. Knuth implements. Popper validates. Green build = story done.",
+    "wr.tag":"Exceptional Protocol","wr.title":"War Room — When Everything Matters",
+    "wr.desc":"Virtual meeting of all 12 agents for critical and irreversible decisions. Human-only activation.",
+    "wr.when":"WHEN TO TRIGGER",
+    "wr.c1":"Irreversible technical decision with systemic impact","wr.c2":"Conflict between approved epics",
+    "wr.c3":"Major refactoring or stack migration","wr.c4":"Proposal for a new agent in the ecosystem",
+    "wr.note":"+ Docs, UX, DBA",
+    "imp.act":"Act 5 — The Impact","imp.title":"The Impact","imp.sub":"What changes when you have 12 specialists working on every decision.",
+    "kpi.tag":"Why M3A?","kpi.title":"What Changes When You Use M3A",
+    "k1":"Agents working in parallel on every epic","k2":"Laws guaranteeing consistency and quality",
+    "k3":"Traceability of project decisions","k4":"Knowledge lost between sprints",
+    "b1t":"Accumulated Knowledge","b1d":"Persistent knowledge base — every discovery updates files automatically.",
+    "b2t":"Embedded Security","b2d":"Hobbes has absolute veto power. Security is not an add-on — it's mandatory review in every cycle.",
+    "b3t":"Growing Velocity","b3d":"Each sprint leverages accumulated context. The more you use it, the faster the team becomes.",
+    "inst.tag":"Getting Started","inst.title":"Ready in 3 Steps",
+    "inst.sub":"Set up M3A Team in your project in minutes. Works with VS Code and GitHub Copilot.",
+    "st1t":"Clone the Repository","st1d":"Get the M3A Team framework from GitHub",
+    "st2t":"Run the Installer","st2d":"Automatic installation script for your project",
+    "st3t":"Start with the Orchestrator","st3d":"Marcus Aurelius will guide the onboarding",
+    "inst.note":"Compatible with VS Code + GitHub Copilot Agent Mode. Supports Claude, GPT-4o, and other models.",
+    "close.q":"Modernize with intelligence.\nScale with governance.\nDeliver with confidence.",
+    "close.sub":"Modernize with intelligence. Scale with governance. Deliver with confidence.",
+    "close.qa":"Q&A",
+    "nav.prev":"Previous","nav.next":"Next"
+  },
+  es: {
+    "cover.badge":"Framework de IA Minsait","cover.sub":"Acelerador de Modernización Multi-Agente",
+    "cover.tagline":"12 agentes especializados. 13 leyes inviolables. Un único punto de entrada.",
+    "cover.m1":"Agentes Especializados","cover.m2":"Leyes Inviolables","cover.m3":"Punto de Entrada","cover.m4":"Escalabilidad",
+    "prob.tag":"Acto 1 — El Problema","prob.title":"El Desarrollo de Software Tiene un Problema Antiguo",
+    "prob.sub":"Los equipos modernos enfrentan desafíos que las herramientas tradicionales no resuelven.",
+    "prob.p1t":"Deuda Técnica Invisible","prob.p1d":"Componentes sin análisis, CVEs ocultos, dependencias olvidadas. Nadie tiene el cuadro completo.",
+    "prob.p2t":"Coordinación Manual Agotadora","prob.p2d":"Desarrolladores alternando entre arquitecto, QA y especialista en seguridad. Contexto dividido, calidad comprometida.",
+    "prob.p3t":"Contexto Perdido Entre Sprints","prob.p3d":"Cada sprint comienza de cero. Las decisiones arquitectónicas desaparecen. El conocimiento se pierde cuando alguien sale del equipo.",
+    "prob.p4t":"Riesgo Silencioso","prob.p4d":"Problemas de seguridad y arquitectura que nadie detecta hasta que es tarde. Sin revisión multi-perspectiva, el riesgo se acumula.",
+    "sol.act":"Acto 2 — La Solución","sol.title":"La Solución","sol.sub":"Un equipo de 12 agentes de IA, gobernado por 13 leyes, trabajando en paralelo — para ti.",
+    "what.tag":"¿Qué es M3A?","what.title":"Un Equipo de IA para Modernización de Software",
+    "what.sub":"Doce agentes especializados con personas históricas, gobernados por 13 leyes inviolables, orquestrados por Marco Aurelio.",
+    "what.p1t":"Inteligencia Colectiva","what.p1d":"12 agentes con dominios exclusivos trabajan en paralelo. Cada revisión es multi-perspectiva — arquitectura, seguridad, QA, DBA — simultáneamente.",
+    "what.p2t":"Gobernanza Robusta","what.p2d":"13 Leyes Inviolables garantizan consistencia, trazabilidad y calidad en cada acción. Ninguna decisión se pierde.",
+    "what.p3t":"Flujo Acelerado","what.p3d":"Del backlog al código — guiado, revisado y entregado con calidad garantizada. Cada sprint aprovecha el contexto acumulado.",
+    "laws.tag":"Las 13 Leyes Inviolables","laws.title":"Gobernanza que No Negocia",
+    "l1t":"Knowledge First","l1d":"Todo agente lee la base antes de actuar.",
+    "l2t":"Chat Mínimo","l2d":"Solo formatos aprobados en el chat — cero narrativa.",
+    "l3t":"Anti-Duplicación","l3d":"Verificar duplicados antes de crear cualquier artefacto.",
+    "l4t":"Aprendizaje Continuo","l4d":"Nuevo conocimiento actualiza archivos — nunca se pierde.",
+    "l5t":"War Room = Humano","l5d":"Ningún agente activa War Room solo.",
+    "l6t":"Sin Silencio en Reviews","l6d":"Todo agente evalúa toda epic — N/A requiere justificación.",
+    "l7t":"Consenso Obligatorio","l7d":"Divergencia → evidencias → 2 rondas → escalada.",
+    "l8t":"Sprint-by-Sprint","l8d":"Nunca detallar más allá del Sprint N+1.",
+    "l9t":"Aprobación Multi-Agente","l9d":"1 bloqueo = epic congelada hasta resolución documentada.",
+    "l10t":"Dos Capas de Output","l10d":"Operacional (interno) y Ejecutivo (externo).",
+    "l11t":"Versionado Obligatorio","l11d":"Todo cambio en agente tiene versión semántica registrada.",
+    "l12t":"Build Siempre Pasa","l12d":"Story done = build verde con evidencia.",
+    "l13t":"Honestidad Operacional","l13d":"Desviación de activación debe declararse activamente.",
+    "laws.footer1":"FRAMEWORK","laws.footer2":"M3A Team v1.0+",
+    "team.act":"Acto 3 — El Equipo","team.title":"El Equipo","team.sub":"Doce personas históricas. Doce dominios exclusivos. Una única misión.",
+    "agents.tag":"12 Especialistas","agents.title":"Personas Históricas. Dominios Reales.",
+    "ag1":"Enrutamiento, Leyes, Gobernanza","ag2":"AS-IS, CVEs, Inventario","ag3":"TO-BE, ADRs, C4",
+    "ag4":"Epics, Roadmap, PRD","ag5":"Sprints, Stories, DoD","ag6":"Implementación, Code Review",
+    "ag7":"Calidad, Tests, DoD","ag8":"CVEs, OWASP, Hardening","ag9":"Docker, K8s, CI/CD",
+    "ag10":"Documentación, Portal, HTML","ag11":"UX/UI, WCAG, Design System","ag12":"Base de Datos, SQL, Migraciones",
+    "ma.tag":"El Conductor","ma.quote":'"Gobierna sin ejecutar directamente — tomando decisiones bajo presión extrema con racionalidad y visión a largo plazo. La disciplina fue el método."',
+    "ma.rg":"REGLA DE ORO","ma.rgd":"Delegar o Responder Directamente. Nunca ejecuta — siempre orquesta.",
+    "ma.excl":"RESPONSABILIDADES EXCLUSIVAS","ma.r1":"Enrutador inteligente de todas las solicitudes",
+    "ma.r2":"Anti-Duplicate Master — nada se crea dos veces","ma.r3":"Consolidador de reviews multi-agente",
+    "ma.r4":"Guardián de las 13 Leyes Inviolables","ma.r5":"Registrador de decisiones del proyecto",
+    "ma.r6":"Escalador de War Room — solo si está autorizado",
+    "act.act":"Acto 4 — En Acción","act.title":"En Acción","act.sub":"Cómo M3A transforma una idea en código aprobado y entregado.",
+    "wf.tag":"El Flujo","wf.title":"Del Backlog al Código con Calidad",
+    "wf.sub":"Cinco etapas que garantizan que no se pierda ningún detalle — de la idea al deploy.",
+    "wf.s1t":"Brainstorm","wf.s1d":"PM analiza y crea la Epic en borrador",
+    "wf.s2t":"Review Paralelo","wf.s2d":"12 agentes evalúan simultáneamente",
+    "wf.s3t":"Aprobación","wf.s3d":"Consenso → Epic aprobada y versionada",
+    "wf.s4t":"Sprint","wf.s4d":"SM crea Stories y planifica el sprint",
+    "wf.s5t":"Entrega","wf.s5d":"Dev implementa + QA valida + Build verde",
+    "wf.g1t":"Seguridad Integrada","wf.g1d":"Hobbes con poder de veto en toda epic",
+    "wf.g2t":"Conocimiento Persistente","wf.g2d":"Base actualizada en cada sprint automáticamente",
+    "wf.g3t":"Trazabilidad Total","wf.g3d":"Cada decisión registrada en el log del proyecto",
+    "epic.tag":"Ciclo de Epic","epic.title":"Aprobación que No Pasa Nada por Alto",
+    "ep1l":"PM (Drucker) crea la Epic con brainstorm","ep1d":"Análisis de necesidad, impacto, dependencias y criterios de aceptación",
+    "ep2l":"Anti-Duplicate Check obligatorio","ep2d":"Orchestrator verifica backlog, stories activas y base de conocimiento",
+    "ep3l":"Distribución a los 12 agentes","ep3d":"Cada agente evalúa desde la perspectiva de su dominio especializado",
+    "ep4l":"Veredicto de cada agente: ✅ / ⚠️ / ❌","ep4d":"Cualquier bloqueo congela la epic. Cualquier aviso se registra y reporta.",
+    "ep5l":"Todos ✅ → status: approved","ep5d":"SM (Deming) planifica sprint. Knuth implementa. Popper valida. Build verde = story done.",
+    "wr.tag":"Protocolo Excepcional","wr.title":"War Room — Cuando Todo Importa",
+    "wr.desc":"Reunión virtual de los 12 agentes para decisiones críticas e irreversibles. Activación exclusiva del humano.",
+    "wr.when":"CUÁNDO ACTIVAR",
+    "wr.c1":"Decisión técnica irreversible con impacto sistémico","wr.c2":"Conflicto entre epics aprobadas",
+    "wr.c3":"Refactorización mayor o migración de stack","wr.c4":"Propuesta de nuevo agente en el ecosistema",
+    "wr.note":"+ Docs, UX, DBA",
+    "imp.act":"Acto 5 — El Impacto","imp.title":"El Impacto","imp.sub":"Qué cambia cuando tienes 12 especialistas trabajando en cada decisión.",
+    "kpi.tag":"¿Por Qué M3A?","kpi.title":"Lo que Cambia Cuando Usas M3A",
+    "k1":"Agentes trabajando en paralelo en cada epic","k2":"Leyes que garantizan consistencia y calidad",
+    "k3":"Trazabilidad de decisiones del proyecto","k4":"Conocimiento perdido entre sprints",
+    "b1t":"Conocimiento Acumulado","b1d":"Base de conocimiento persistente — cada descubrimiento actualiza los archivos automáticamente.",
+    "b2t":"Seguridad Integrada","b2d":"Hobbes tiene poder de veto absoluto. La seguridad no es opcional — es revisión obligatoria en cada ciclo.",
+    "b3t":"Velocidad Creciente","b3d":"Cada sprint aprovecha el contexto acumulado. Cuanto más lo usas, más rápido se vuelve el equipo.",
+    "inst.tag":"Instalación","inst.title":"Listo en 3 Pasos",
+    "inst.sub":"Configura M3A Team en tu proyecto en minutos. Funciona con VS Code y GitHub Copilot.",
+    "st1t":"Clona el Repositorio","st1d":"Obtén el framework M3A Team de GitHub",
+    "st2t":"Ejecuta el Installer","st2d":"Script de instalación automática en tu proyecto",
+    "st3t":"Inicia con el Orchestrator","st3d":"Marco Aurelio guiará el onboarding",
+    "inst.note":"Compatible con VS Code + GitHub Copilot Agent Mode. Soporte para modelos Claude, GPT-4o y otros.",
+    "close.q":"Moderniza con inteligencia.\nEscala con gobernanza.\nEntrega con confianza.",
+    "close.sub":"Moderniza con inteligencia. Escala con gobernanza. Entrega con confianza.",
+    "close.qa":"Preguntas & Respuestas",
+    "nav.prev":"Anterior","nav.next":"Siguiente"
+  }
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let cur = 1, total = 16, lang = 'pt';
+const slides = Array.from(document.querySelectorAll('.sl'));
+
+// ── NAVIGATE ──────────────────────────────────────────────────────────────
+function navigate(d) {
+  const next = Math.max(1, Math.min(total, cur + d));
+  if (next === cur) return;
+  slides[cur-1].classList.remove('on');
+  cur = next;
+  slides[cur-1].classList.add('on');
+  document.getElementById('sc').textContent = cur + ' / ' + total;
+  document.getElementById('prog').style.width = ((cur/total)*100) + '%';
+}
+
+// ── KEYBOARD ──────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); navigate(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); navigate(-1); }
+  if (e.key === 'Escape') toggleFullscreen();
+});
+
+// ── TOUCH / SWIPE ─────────────────────────────────────────────────────────
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 40) navigate(dx < 0 ? 1 : -1);
+}, {passive:true});
+
+// ── FULLSCREEN ────────────────────────────────────────────────────────────
+function toggleFullscreen() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen().catch(()=>{});
+}
+
+// ── I18N ──────────────────────────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  document.documentElement.lang = l === 'pt' ? 'pt-BR' : l;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('on', b.textContent.toLowerCase() === l);
+  });
+  const d = T[l] || T.pt;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (d[k] !== undefined) {
+      if (el.tagName === 'INPUT') el.value = d[k];
+      else el.innerHTML = d[k].replace(/\n/g,'<br>');
+    }
+  });
+}
+
+// init progress
+document.getElementById('prog').style.width = ((1/total)*100) + '%';
+
+// ── CANVAS PARTICLES ──────────────────────────────────────────────────────
+(function() {
+  const cv = document.getElementById('bgc');
+  const ctx = cv.getContext('2d');
+  let W, H, pts = [];
+
+  function resize() {
+    W = cv.width = window.innerWidth;
+    H = cv.height = window.innerHeight;
+  }
+
+  function mkPt() {
+    return {
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-.5)*.35, vy: (Math.random()-.5)*.35,
+      r: Math.random()*1.6+.4,
+      c: Math.random() > .6 ? 'rgba(255,0,84,' : 'rgba(192,132,252,'
+    };
+  }
+
+  function init() { pts = Array.from({length:70}, mkPt); }
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.c + '0.55)';
+      ctx.fill();
+    });
+    // connect nearby
+    for (let i=0; i<pts.length; i++) {
+      for (let j=i+1; j<pts.length; j++) {
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if (d < 100) {
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle = 'rgba(255,0,84,'+(0.04*(1-d/100))+')';
+          ctx.lineWidth = .6;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); });
+  resize(); init(); draw();
+})();
+</script>
+</body>
+</html>

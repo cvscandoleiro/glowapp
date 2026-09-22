@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<!--
+    M3A Team — GitHub Pages Public Portal
+    Status: v1.4.0
+    © 2026 Minsait (An Indra Company) — Tech for impact
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="M3A Team — Minsait Multi-Agent AI Framework for VS Code. 12 specialized agents for enterprise software projects.">
+    <meta name="author" content="Minsait - An Indra Company">
+    <meta name="keywords" content="M3A Team, multi-agent, AI framework, Minsait, GitHub Copilot, VS Code, Indra">
+    <title>M3A Team | Minsait Multi-Agent AI Framework</title>
+    <link rel="icon" href="../assets/AF_MINSAIT_SIM_POS.png" type="image/png">
+
+    <style>
+        /* ═══════════════════════════════════════════════
+           Typography — Minsait ForFutureSans
+        ═══════════════════════════════════════════════ */
+        @font-face { font-family: 'ForFutureSans'; src: url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'ForFutureSans'; src: url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'ForFutureSans'; src: url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'ForFutureSans'; src: url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'ForFutureSans'; src: url('../assets/fonts/Web%20Fonts/WOFF2/ForFutureSans-Black.woff2') format('woff2'); font-weight: 800; font-style: normal; font-display: block; }
+
+        /* ═══════════════════════════════════════════════
+           Minsait Brand Variables
+        ═══════════════════════════════════════════════ */
+        :root {
+            --minsait-pruno:          rgb(72, 14, 42);
+            --minsait-fucsia:         rgb(255, 0, 84);
+            --minsait-pruno-oscuro:   rgb(38, 7, 23);
+            --minsait-gris-ceramica:  rgb(227, 226, 218);
+            --minsait-blanco:         rgb(255, 255, 255);
+        }
+
+        /* ═══════════════════════════════════════════════
+           Reset & Base
+        ═══════════════════════════════════════════════ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body {
+            font-family: 'ForFutureSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--minsait-blanco);
+            color: #2a2a2a;
+            line-height: 1.7;
+            font-weight: 400;
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Header
+        ═══════════════════════════════════════════════ */
+        .site-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; height: 70px;
+            background: transparent;
+            transition: background 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease;
+        }
+        .site-header.scrolled {
+            background: rgba(38, 7, 23, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
+        }
+        .header-logo { height: 32px; opacity: 0.95; transition: opacity 0.2s; }
+        .header-logo:hover { opacity: 1; }
+
+        .header-nav { display: flex; gap: 0.25rem; }
+        .header-nav a {
+            color: rgba(255, 255, 255, 0.8); text-decoration: none;
+            font-size: 0.88rem; font-weight: 500; padding: 0.5rem 0.9rem;
+            border-radius: 8px; transition: all 0.2s;
+        }
+        .header-nav a:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
+
+        .lang-switcher { display: flex; gap: 0.4rem; }
+        .lang-btn {
+            display: flex; align-items: center; gap: 0.35rem;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.65); padding: 0.35rem 0.7rem; border-radius: 20px;
+            cursor: pointer; font-family: inherit; font-size: 0.8rem; font-weight: 500;
+            transition: all 0.25s ease;
+        }
+        .lang-btn:hover { background: rgba(255, 255, 255, 0.18); color: #fff; border-color: rgba(255, 255, 255, 0.3); }
+        .lang-btn.active { background: var(--minsait-fucsia); border-color: var(--minsait-fucsia); color: #fff; }
+        .lang-btn .flag { font-size: 1.05rem; line-height: 1; }
+        .lang-label { letter-spacing: 0.03em; }
+
+        .mobile-toggle {
+            display: none; background: none; border: none; color: #fff;
+            font-size: 1.5rem; cursor: pointer; padding: 0.5rem;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Hero
+        ═══════════════════════════════════════════════ */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            background: linear-gradient(160deg, rgba(38,7,23,0.48) 0%, rgba(72,14,42,0.38) 50%, rgba(92,20,55,0.45) 100%), url('../assets/images/BF_IA_Trabajo_Planeta.png');
+            background-size: cover; background-position: center;
+            color: #fff; padding: 6rem 2rem 4rem; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(255, 0, 84, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.03) 0%, transparent 40%);
+            animation: heroGlow 15s ease-in-out infinite alternate;
+        }
+        @keyframes heroGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-3%, 2%) scale(1.05); }
+        }
+        .hero-content { position: relative; z-index: 1; max-width: 800px; }
+        .hero-badge {
+            display: inline-block; padding: 0.35rem 1rem; border-radius: 20px;
+            background: rgba(255, 0, 84, 0.15); border: 1px solid rgba(255, 0, 84, 0.4);
+            color: var(--minsait-fucsia); font-size: 0.82rem; font-weight: 600;
+            letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.5rem;
+            animation: fadeInDown 0.8s ease both;
+        }
+        .hero h1 {
+            font-family: 'ForFutureSans', sans-serif; font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 800;
+            letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 1rem;
+            animation: fadeInDown 0.8s ease 0.15s both;
+        }
+        .hero-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: 300;
+            color: rgba(255, 255, 255, 0.8); max-width: 640px; margin: 0 auto 2.5rem;
+            line-height: 1.6; animation: fadeInDown 0.8s ease 0.3s both;
+        }
+        .hero-stats {
+            display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
+            margin-bottom: 2.5rem; animation: fadeInUp 0.8s ease 0.5s both;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat-number {
+            font-size: 2.5rem; font-weight: 800; color: var(--minsait-fucsia);
+            line-height: 1.1;
+        }
+        .hero-stat-label { font-size: 0.82rem; color: rgba(255, 255, 255, 0.65); font-weight: 400; margin-top: 0.25rem; }
+        .hero-cta {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.9rem 2.2rem; border-radius: 12px; border: none;
+            background: var(--minsait-fucsia); color: #fff;
+            font-family: inherit; font-size: 1rem; font-weight: 600;
+            cursor: pointer; text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.8s ease 0.65s both;
+        }
+        .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 0, 84, 0.35); }
+        .hero-cta svg { width: 18px; height: 18px; }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ═══════════════════════════════════════════════
+           Sections — Shared
+        ═══════════════════════════════════════════════ */
+        .section { padding: 6rem 2rem; }
+        .section-inner { max-width: 1140px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 3.5rem; }
+        .section-header h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 700;
+            color: var(--minsait-pruno-oscuro); margin-bottom: 0.75rem;
+        }
+        .section-header p {
+            font-size: 1.05rem; color: #666; max-width: 640px;
+            margin: 0 auto; font-weight: 300;
+        }
+        .section-alt { background: linear-gradient(180deg, #f9f8f6 0%, #f3f2ee 100%); }
+        .section-dark {
+            background: linear-gradient(160deg, var(--minsait-pruno-oscuro) 0%, var(--minsait-pruno) 100%);
+            color: #fff;
+        }
+        #install {
+            background-image: linear-gradient(160deg, rgba(38,7,23,0.93) 0%, rgba(72,14,42,0.92) 100%), url('../assets/images/BF_IA_Cloud.png');
+            background-size: cover;
+            background-position: center right;
+        }
+        .section-dark .section-header h2 { color: #fff; }
+        .section-dark .section-header p { color: rgba(255, 255, 255, 0.7); }
+
+        /* ═══════════════════════════════════════════════
+           Scroll Reveal
+        ═══════════════════════════════════════════════ */
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* ═══════════════════════════════════════════════
+           About
+        ═══════════════════════════════════════════════ */
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .about-text h2 {
+            font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700;
+            color: var(--minsait-pruno-oscuro); margin-bottom: 1.25rem;
+        }
+        .about-text p { color: #555; margin-bottom: 1rem; font-size: 1.02rem; }
+        .about-highlights { display: grid; gap: 1.25rem; margin-top: 2rem; }
+        .about-highlight {
+            display: flex; gap: 1rem; align-items: flex-start;
+            padding: 1.25rem; border-radius: 14px;
+            background: rgba(72, 14, 42, 0.03); border: 1px solid rgba(72, 14, 42, 0.06);
+            transition: all 0.3s ease;
+        }
+        .about-highlight:hover { background: rgba(72, 14, 42, 0.06); border-color: rgba(72, 14, 42, 0.12); }
+        .about-highlight-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--minsait-pruno) 0%, var(--minsait-fucsia) 100%);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.2rem; flex-shrink: 0;
+        }
+        .about-highlight h4 { font-size: 0.95rem; font-weight: 600; color: var(--minsait-pruno-oscuro); margin-bottom: 0.25rem; }
+        .about-highlight p { font-size: 0.88rem; color: #777; margin-bottom: 0; }
+        .about-visual {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+            align-content: start;
+        }
+        .about-agent-mini {
+            border-radius: 16px; padding: 1.75rem 0.75rem;
+            background: linear-gradient(135deg, rgba(72,14,42,0.05) 0%, rgba(255,0,84,0.03) 100%);
+            border: 1px solid rgba(72,14,42,0.09);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.7rem; transition: all 0.3s ease; cursor: default;
+        }
+        .about-agent-mini:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(72,14,42,0.14); border-color: var(--minsait-fucsia); background: linear-gradient(135deg, rgba(72,14,42,0.09) 0%, rgba(255,0,84,0.06) 100%); }
+        .about-agent-mini .agent-mini-icon {
+            width: 64px; height: 64px; border-radius: 16px;
+            background: linear-gradient(135deg, var(--minsait-pruno-oscuro), var(--minsait-pruno));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; box-shadow: 0 4px 14px rgba(72,14,42,0.25);
+        }
+        .about-agent-mini span { font-size: 0.8rem; font-weight: 700; color: var(--minsait-pruno); letter-spacing: 0.04em; text-transform: uppercase; }
+
+        /* ═══════════════════════════════════════════════
+           Agents
+        ═══════════════════════════════════════════════ */
+        .agents-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .agent-card {
+            background: var(--minsait-blanco); border-radius: 18px;
+            border: 1px solid rgba(72, 14, 42, 0.08);
+            padding: 1.75rem; cursor: pointer; position: relative; overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .agent-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--minsait-pruno), var(--minsait-fucsia));
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .agent-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(72, 14, 42, 0.12); }
+        .agent-card:hover::before { opacity: 1; }
+        .agent-card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+        .agent-icon {
+            width: 50px; height: 50px; border-radius: 14px;
+            background: linear-gradient(135deg, var(--minsait-pruno-oscuro), var(--minsait-pruno));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; flex-shrink: 0;
+        }
+        .agent-role { font-size: 1.05rem; font-weight: 700; color: var(--minsait-pruno-oscuro); }
+        .agent-persona { font-size: 0.82rem; color: var(--minsait-fucsia); font-weight: 500; }
+        .agent-motto {
+            font-size: 0.88rem; color: #888; font-style: italic;
+            padding: 0.75rem 0; border-top: 1px solid rgba(0,0,0,0.06);
+            margin-top: 0.5rem; line-height: 1.5;
+        }
+        .agent-capabilities {
+            list-style: none; padding: 0; margin-top: 0.75rem;
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            opacity: 0;
+        }
+        .agent-card.expanded .agent-capabilities { max-height: 500px; opacity: 1; }
+        .agent-capabilities li {
+            font-size: 0.86rem; color: #555; padding: 0.4rem 0 0.4rem 1.25rem;
+            position: relative; line-height: 1.5;
+        }
+        .agent-capabilities li::before {
+            content: ''; position: absolute; left: 0; top: 0.75rem;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--minsait-fucsia);
+        }
+        .agent-expand-hint {
+            font-size: 0.75rem; color: #bbb; text-align: center;
+            margin-top: 0.5rem; transition: opacity 0.2s;
+        }
+        .agent-card.expanded .agent-expand-hint { opacity: 0; }
+
+        /* ═══════════════════════════════════════════════
+           Features
+        ═══════════════════════════════════════════════ */
+        .feature-block { margin-bottom: 4rem; }
+        .feature-block:last-child { margin-bottom: 0; }
+
+        /* Bootstrap timeline */
+        .feature-timeline { display: flex; flex-direction: column; gap: 0; position: relative; padding-left: 2rem; }
+        .feature-timeline::before {
+            content: ''; position: absolute; left: 11px; top: 12px; bottom: 12px;
+            width: 2px; background: linear-gradient(180deg, var(--minsait-fucsia) 0%, var(--minsait-pruno) 100%);
+        }
+        .timeline-step {
+            display: flex; align-items: flex-start; gap: 1rem;
+            padding: 0.75rem 0; position: relative;
+        }
+        .timeline-dot {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: var(--minsait-fucsia); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+            position: absolute; left: -2rem; box-shadow: 0 0 0 4px rgba(255, 0, 84, 0.15);
+        }
+        .timeline-step p { font-size: 0.95rem; color: #555; line-height: 1.5; }
+        .feature-agents-tag {
+            display: inline-block; padding: 0.4rem 1rem; border-radius: 8px;
+            background: rgba(72, 14, 42, 0.06); color: var(--minsait-pruno);
+            font-size: 0.82rem; font-weight: 500; margin-top: 1rem;
+        }
+
+        /* Quality gates comparison */
+        .gates-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .gate-card {
+            background: var(--minsait-blanco); border-radius: 18px;
+            border: 1px solid rgba(72, 14, 42, 0.08); padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        .gate-card:hover { box-shadow: 0 12px 36px rgba(72, 14, 42, 0.1); }
+        .gate-card h4 { font-size: 1.15rem; font-weight: 700; color: var(--minsait-pruno-oscuro); margin-bottom: 0.75rem; }
+        .gate-card p { font-size: 0.92rem; color: #666; margin-bottom: 1rem; line-height: 1.6; }
+        .gate-agents-list { font-size: 0.85rem; color: var(--minsait-pruno); font-weight: 500; }
+        .gate-badge {
+            display: inline-block; padding: 0.25rem 0.6rem; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 600; margin-right: 0.5rem; margin-bottom: 0.4rem;
+        }
+        .gate-badge.veto { background: rgba(255, 0, 84, 0.1); color: var(--minsait-fucsia); }
+        .gate-badge.warning { background: rgba(255, 170, 0, 0.12); color: #b87900; }
+
+        /* Feature cards */
+        .features-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .feature-card {
+            background: var(--minsait-blanco); border-radius: 18px;
+            border: 1px solid rgba(72, 14, 42, 0.08); padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover { box-shadow: 0 12px 36px rgba(72, 14, 42, 0.1); transform: translateY(-4px); }
+        .feature-card-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .feature-card h4 { font-size: 1.1rem; font-weight: 700; color: var(--minsait-pruno-oscuro); margin-bottom: 0.5rem; }
+        .feature-card p { font-size: 0.92rem; color: #666; line-height: 1.6; margin-bottom: 0.75rem; }
+        .feature-card ul { list-style: none; padding: 0; }
+        .feature-card ul li {
+            font-size: 0.86rem; color: #555; padding: 0.3rem 0 0.3rem 1.1rem;
+            position: relative;
+        }
+        .feature-card ul li::before {
+            content: ''; position: absolute; left: 0; top: 0.65rem;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--minsait-fucsia);
+        }
+
+        /* ═══════════════════════════════════════════════
+           Commands
+        ═══════════════════════════════════════════════ */
+        .commands-table-wrap {
+            background: var(--minsait-blanco); border-radius: 18px;
+            border: 1px solid rgba(72, 14, 42, 0.08); overflow: hidden;
+        }
+        .commands-table { width: 100%; border-collapse: collapse; }
+        .commands-table th {
+            text-align: left; padding: 0.9rem 1.25rem; font-size: 0.85rem;
+            font-weight: 600; color: var(--minsait-pruno-oscuro);
+            background: rgba(72, 14, 42, 0.03); border-bottom: 1px solid rgba(72, 14, 42, 0.1);
+        }
+        .commands-table td { padding: 0.7rem 1.25rem; font-size: 0.88rem; border-bottom: 1px solid rgba(0, 0, 0, 0.04); }
+        .commands-table tr:last-child td { border-bottom: none; }
+        .commands-table .cmd-name { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 0.82rem; color: var(--minsait-fucsia); font-weight: 500; white-space: nowrap; }
+        .commands-table .cmd-desc { color: #555; }
+        .commands-table .cat-row td {
+            background: linear-gradient(90deg, var(--minsait-pruno-oscuro), var(--minsait-pruno));
+            color: #fff; font-weight: 600; font-size: 0.85rem; padding: 0.6rem 1.25rem;
+            letter-spacing: 0.04em;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Install
+        ═══════════════════════════════════════════════ */
+        .install-prereqs {
+            margin-bottom: 3rem;
+        }
+        .install-prereqs-heading {
+            text-align: center; margin-bottom: 0.5rem;
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--minsait-fucsia);
+        }
+        .install-prereqs-desc {
+            text-align: center; margin-bottom: 1.25rem;
+            font-size: 0.88rem; color: rgba(255,255,255,0.55);
+        }
+        .install-prereqs-pills {
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            justify-content: center;
+        }
+        .install-prereq {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.7rem 1.2rem; border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 0.9rem; color: rgba(255, 255, 255, 0.85);
+            text-decoration: none; transition: all 0.25s ease;
+        }
+        a.install-prereq:hover {
+            background: rgba(255, 255, 255, 0.14); border-color: rgba(255,0,84,0.45);
+            color: #fff; transform: translateY(-2px);
+        }
+        a.install-prereq .install-prereq-arrow { font-size: 0.75rem; opacity: 0.5; margin-left: 0.25rem; transition: opacity 0.2s; }
+        a.install-prereq:hover .install-prereq-arrow { opacity: 1; }
+        .install-prereq-icon { font-size: 1.2rem; }
+        /* Feature split layout */
+        .feature-split { display: grid; grid-template-columns: 1fr 380px; gap: 3rem; align-items: center; }
+        .feature-split-reverse { grid-template-columns: 380px 1fr; }
+        .feature-split-reverse .feature-split-content { order: 2; }
+        .feature-split-reverse .feature-split-image { order: 1; }
+        .feature-split-image { border-radius: 18px; overflow: hidden; box-shadow: 0 16px 48px rgba(72,14,42,0.15); }
+        .feature-split-image img { width: 100%; height: 280px; object-fit: cover; display: block; }
+
+        /* Install mandatory badge */
+        .install-mandatory {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.4rem 0.85rem; border-radius: 8px; margin-bottom: 0.75rem;
+            background: rgba(255,0,84,0.15); border: 1px solid rgba(255,0,84,0.4);
+            color: var(--minsait-fucsia); font-size: 0.8rem; font-weight: 700;
+            letter-spacing: 0.04em; text-transform: uppercase;
+        }
+        .install-mandatory-callout {
+            font-size: 0.8rem; color: rgba(255,255,255,0.5);
+            margin-top: 0.75rem; line-height: 1.5;
+            padding: 0.6rem 0.85rem; border-left: 2px solid rgba(255,0,84,0.4);
+        }
+
+        .install-steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .install-step {
+            background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px; padding: 2rem; text-align: center;
+            transition: all 0.3s ease;
+        }
+        .install-step:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+        .install-step-number {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--minsait-fucsia); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: 700; margin: 0 auto 1.25rem;
+        }
+        .install-step h4 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; color: #fff; }
+        .install-step p { font-size: 0.88rem; color: rgba(255, 255, 255, 0.65); margin-bottom: 1rem; }
+
+        .code-tabs { display: flex; gap: 0; margin-bottom: 0; }
+        .code-tab {
+            padding: 0.5rem 1rem; border: none; background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.5); font-family: inherit; font-size: 0.78rem;
+            font-weight: 500; cursor: pointer; border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+        }
+        .code-tab.active { background: rgba(0, 0, 0, 0.4); color: var(--minsait-fucsia); }
+        .code-block {
+            background: rgba(0, 0, 0, 0.4); border-radius: 0 12px 12px 12px;
+            padding: 1rem; overflow-x: auto; display: none;
+            cursor: pointer; position: relative; transition: background 0.2s;
+        }
+        .code-block:hover { background: rgba(0, 0, 0, 0.55); }
+        .code-block.active { display: block; }
+        .code-block::after {
+            content: '📋'; position: absolute; top: 0.6rem; right: 0.75rem;
+            font-size: 0.9rem; opacity: 0.35; transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .code-block:hover::after { opacity: 0.75; }
+        .code-block.copied { background: rgba(0, 120, 60, 0.45); }
+        .code-block.copied::after { content: '✅'; opacity: 1; }
+        .code-block code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.75rem; color: rgba(255, 255, 255, 0.85); line-height: 1.6;
+            white-space: pre-wrap; word-break: break-all;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Footer
+        ═══════════════════════════════════════════════ */
+        .site-footer {
+            background: var(--minsait-pruno-oscuro);
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center; padding: 3rem 2rem;
+        }
+        .footer-logo { height: 28px; opacity: 0.5; margin-bottom: 1rem; }
+        .site-footer p { font-size: 0.85rem; margin-bottom: 0.3rem; }
+        .footer-link {
+            color: var(--minsait-fucsia); text-decoration: none;
+            font-size: 0.85rem; font-weight: 500;
+        }
+        .footer-link:hover { text-decoration: underline; }
+
+        /* ═══════════════════════════════════════════════
+           Skills
+        ═══════════════════════════════════════════════ */
+        .skills-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; }
+        .skill-card {
+            background: var(--minsait-blanco); border-radius: 16px;
+            border: 1px solid rgba(72, 14, 42, 0.08); padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .skill-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(72, 14, 42, 0.1); border-color: rgba(255,0,84,0.2); }
+        .skill-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+        .skill-name { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.82rem; color: var(--minsait-fucsia); font-weight: 600; margin-bottom: 0.5rem; }
+        .skill-desc { font-size: 0.86rem; color: #666; line-height: 1.5; }
+
+        /* ═══════════════════════════════════════════════
+           Workflows
+        ═══════════════════════════════════════════════ */
+        .workflows-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .workflow-card {
+            background: var(--minsait-blanco); border-radius: 18px;
+            border: 1px solid rgba(72, 14, 42, 0.08); padding: 1.75rem;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .workflow-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--minsait-pruno), var(--minsait-fucsia));
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .workflow-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(72, 14, 42, 0.1); }
+        .workflow-card:hover::after { opacity: 1; }
+        .workflow-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .workflow-name { font-size: 1.05rem; font-weight: 700; color: var(--minsait-pruno-oscuro); margin-bottom: 0.5rem; }
+        .workflow-desc { font-size: 0.9rem; color: #666; line-height: 1.6; margin-bottom: 0.75rem; }
+        .workflow-agents { font-size: 0.8rem; color: var(--minsait-pruno); font-weight: 500; padding: 0.35rem 0.75rem; background: rgba(72,14,42,0.06); border-radius: 8px; display: inline-block; }
+
+        /* ═══════════════════════════════════════════════
+           Laws
+        ═══════════════════════════════════════════════ */
+        .laws-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+        .law-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 1.5rem; transition: all 0.3s ease;
+        }
+        .law-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,0,84,0.35); transform: translateY(-3px); }
+        .law-number { font-size: 1.8rem; font-weight: 800; color: var(--minsait-fucsia); opacity: 0.5; line-height: 1; margin-bottom: 0.5rem; }
+        .law-name { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem; }
+        .law-desc { font-size: 0.82rem; color: rgba(255,255,255,0.55); line-height: 1.5; }
+
+        /* ═══════════════════════════════════════════════
+           Responsive
+        ═══════════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .agents-grid { grid-template-columns: repeat(2, 1fr); }
+            .features-cards { grid-template-columns: 1fr; }
+            .skills-grid { grid-template-columns: repeat(2, 1fr); }
+            .workflows-grid { grid-template-columns: repeat(2, 1fr); }
+            .laws-grid { grid-template-columns: repeat(2, 1fr); }
+            .feature-split, .feature-split-reverse { grid-template-columns: 1fr; }
+            .feature-split-reverse .feature-split-content { order: 1; }
+            .feature-split-reverse .feature-split-image { order: 2; }
+            .feature-split-image img { height: 220px; }
+        }
+        @media (max-width: 768px) {
+            .header-nav { display: none; }
+            .mobile-toggle { display: block; }
+            .site-header.mobile-open .header-nav {
+                display: flex; flex-direction: column;
+                position: absolute; top: 70px; left: 0; right: 0;
+                background: rgba(38, 7, 23, 0.98); backdrop-filter: blur(12px);
+                padding: 1rem; gap: 0.25rem;
+            }
+            .about-grid { grid-template-columns: 1fr; }
+            .about-visual { order: -1; }
+            .agents-grid { grid-template-columns: 1fr; }
+            .gates-grid { grid-template-columns: 1fr; }
+            .install-steps { grid-template-columns: 1fr; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .workflows-grid { grid-template-columns: 1fr; }
+            .laws-grid { grid-template-columns: 1fr; }
+            .hero-stats { gap: 1.25rem; }
+            .hero-stat-number { font-size: 2rem; }
+            .lang-switcher { gap: 0.25rem; }
+            .lang-btn { padding: 0.3rem 0.55rem; font-size: 0.75rem; }
+        }
+        @media (max-width: 480px) {
+            .section { padding: 3.5rem 1.25rem; }
+            .hero { padding: 5rem 1.25rem 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════ HEADER ═══════════════ -->
+    <header class="site-header" id="siteHeader">
+        <a href="#hero">
+            <img src="../assets/AF_MINSAIT_LOG_NEG.png" alt="Minsait" class="header-logo">
+        </a>
+        <nav class="header-nav" id="headerNav">
+            <a href="#about" data-i18n="nav.about">About</a>
+            <a href="#agents" data-i18n="nav.agents">Agents</a>
+            <a href="#features" data-i18n="nav.features">Features</a>
+            <a href="#skills" data-i18n="nav.skills">Skills</a>
+            <a href="#workflows" data-i18n="nav.workflows">Workflows</a>
+            <a href="#laws" data-i18n="nav.laws">Laws</a>
+            <a href="#commands" data-i18n="nav.commands">Commands</a>
+            <a href="#install" data-i18n="nav.install">Install</a>
+        </nav>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="en" onclick="switchLang('en')" title="English">
+                    <span class="flag">🇺🇸</span><span class="lang-label">EN</span>
+                </button>
+                <button class="lang-btn" data-lang="pt-br" onclick="switchLang('pt-br')" title="Português">
+                    <span class="flag">🇧🇷</span><span class="lang-label">PT</span>
+                </button>
+                <button class="lang-btn" data-lang="es" onclick="switchLang('es')" title="Español">
+                    <span class="flag">🇪🇸</span><span class="lang-label">ES</span>
+                </button>
+            </div>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">☰</button>
+        </div>
+    </header>
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-badge" data-i18n="hero.version">v1.4.0</div>
+            <h1 data-i18n="hero.title">M3A Team</h1>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">Minsait Multi-Agent AI Framework — specialized agents orchestrated inside VS Code, with GitHub Copilot</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-number">12</div>
+                    <div class="hero-stat-label" data-i18n="hero.stat_agents">Specialized Agents</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">2</div>
+                    <div class="hero-stat-label" data-i18n="hero.stat_gates">Quality Gates</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">30+</div>
+                    <div class="hero-stat-label" data-i18n="hero.stat_commands">Commands</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">27</div>
+                    <div class="hero-stat-label" data-i18n="hero.stat_skills">Skills</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">11</div>
+                    <div class="hero-stat-label" data-i18n="hero.stat_workflows">Workflows</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">13</div>
+                    <div class="hero-stat-label" data-i18n="hero.stat_laws">Laws</div>
+                </div>
+            </div>
+            <a href="#install" class="hero-cta" data-i18n="hero.cta">Get Started</a>
+        </div>
+    </section>
+
+    <!-- ═══════════════ ABOUT ═══════════════ -->
+    <section class="section" id="about">
+        <div class="section-inner">
+            <div class="about-grid">
+                <div class="about-text reveal">
+                    <h2 data-i18n="about.heading">What is M3A Team?</h2>
+                    <p data-i18n="about.p1">M3A Team (Minsait Multi Agents Team) is an enterprise-grade, reusable multi-agent AI ecosystem designed for any Minsait project — new or existing, any stack, any domain.</p>
+                    <p data-i18n="about.p2">It provides a team of 12 specialized AI agents, each with a distinct persona inspired by historical and intellectual figures. Agents collaborate on quality gates, enforce architectural decisions, and produce executive-grade documentation — all within VS Code using GitHub Copilot Agent mode.</p>
+                    <p data-i18n="about.p3">No external services, no cloud subscriptions beyond Copilot. Install with one command, activate with /m3a-init, and your entire team gains a structured AI workforce governed by 13 immutable laws.</p>
+                    <div class="about-highlights">
+                        <div class="about-highlight">
+                            <div class="about-highlight-icon">💻</div>
+                            <div>
+                                <h4 data-i18n="about.highlight1_title">Works Inside VS Code</h4>
+                                <p data-i18n="about.highlight1_desc">No external tools or platforms. Agents run as Copilot agent modes directly in your editor.</p>
+                            </div>
+                        </div>
+                        <div class="about-highlight">
+                            <div class="about-highlight-icon">🔗</div>
+                            <div>
+                                <h4 data-i18n="about.highlight2_title">Zero Cloud Dependencies</h4>
+                                <p data-i18n="about.highlight2_desc">Everything lives in your repository under .github/ — fully version-controlled and reviewable via PR.</p>
+                            </div>
+                        </div>
+                        <div class="about-highlight">
+                            <div class="about-highlight-icon">⚖️</div>
+                            <div>
+                                <h4 data-i18n="about.highlight3_title">13 Immutable Laws</h4>
+                                <p data-i18n="about.highlight3_desc">Governance baked into every agent: knowledge-first, no silence in reviews, mandatory consensus, operational honesty.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual reveal reveal-delay-2">
+                    <div class="about-agent-mini"><div class="agent-mini-icon">⚡</div><span>Orchestrator</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">📊</div><span>Analyst</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">🏗️</div><span>Architect</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">📋</div><span>PM</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">🏃</div><span>Scrum</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">💻</div><span>Dev</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">🔍</div><span>QA</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">🔒</div><span>Security</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">☁️</div><span>DevOps</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">📄</div><span>Docs</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">🎨</div><span>UX</span></div>
+                    <div class="about-agent-mini"><div class="agent-mini-icon">🗄️</div><span>DBA</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ AGENTS ═══════════════ -->
+    <section class="section section-alt" id="agents">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2 data-i18n="agents.heading">The Agent Roster</h2>
+                <p data-i18n="agents.description">12 specialized agents, each with a distinct persona and area of expertise. Click any card to see full capabilities.</p>
+            </div>
+            <div class="agents-grid" id="agentsGrid">
+                <!-- Agents are rendered via JS from i18n data -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ FEATURES ═══════════════ -->
+    <section class="section" id="features">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2 data-i18n="features.heading">Key Features</h2>
+                <p data-i18n="features.description">A comprehensive AI-powered engineering workflow — from idea to production.</p>
+            </div>
+
+            <!-- Feature 1: Bootstrap -->
+            <div class="feature-block reveal">
+                <div class="feature-split">
+                    <div class="feature-split-content">
+                        <h3 style="font-size:1.3rem;font-weight:700;color:var(--minsait-pruno-oscuro);margin-bottom:0.5rem;" data-i18n="features.bootstrap.title">New Product Bootstrap</h3>
+                        <p style="font-size:0.95rem;color:#666;margin-bottom:1.5rem;max-width:600px;" data-i18n="features.bootstrap.description">Go from a product idea to your first sprint in a structured, agent-guided process.</p>
+                        <div class="feature-timeline" id="bootstrapTimeline">
+                            <!-- Rendered via JS -->
+                        </div>
+                        <div class="feature-agents-tag" data-i18n="features.bootstrap.agents_involved">Drucker → Vitruvius → Atlas → Descartes → Deming</div>
+                    </div>
+                    <div class="feature-split-image">
+                        <img src="../assets/images/Fotografia_3_2.png" alt="New Project Bootstrap" loading="lazy">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 1b: Existing Projects -->
+            <div class="feature-block reveal">
+                <div class="feature-split feature-split-reverse">
+                    <div class="feature-split-content">
+                        <h3 style="font-size:1.3rem;font-weight:700;color:var(--minsait-pruno-oscuro);margin-bottom:0.5rem;" data-i18n="features.existing_project.title">Existing Projects &amp; Modernization</h3>
+                        <p style="font-size:0.95rem;color:#666;margin-bottom:1.5rem;max-width:600px;" data-i18n="features.existing_project.description">Start from an existing codebase — legacy, monolith, or partial refactoring. M3A maps the AS-IS state and builds a structured modernization roadmap.</p>
+                        <div class="feature-timeline" id="existingProjectTimeline">
+                            <!-- Rendered via JS -->
+                        </div>
+                        <div class="feature-agents-tag" data-i18n="features.existing_project.agents_involved">Descartes → Vitruvius → Hobbes → Drucker → Deming</div>
+                    </div>
+                    <div class="feature-split-image">
+                        <img src="../assets/images/BF_IA_Tablet.png" alt="Existing Projects Modernization" loading="lazy">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2: Quality Gates -->
+            <div class="feature-block reveal">
+                <h3 style="font-size:1.3rem;font-weight:700;color:var(--minsait-pruno-oscuro);margin-bottom:1.5rem;" data-i18n="features.quality_gates.title">Quality Gates</h3>
+                <div class="gates-grid">
+                    <div class="gate-card">
+                        <div class="feature-card-icon">✅</div>
+                        <h4 data-i18n="features.quality_gates.story_title">Story Done Gate</h4>
+                        <p data-i18n="features.quality_gates.story_desc">5 agents perform a surgical review of every completed story. QA, Security, and Developer hold veto power — one rejection blocks the story.</p>
+                        <div>
+                            <span class="gate-badge veto" data-i18n="features.quality_gates.veto_label">Veto Power</span>
+                        </div>
+                        <div class="gate-agents-list" data-i18n="features.quality_gates.story_agents">QA · Security · Developer · Architect · Docs</div>
+                    </div>
+                    <div class="gate-card">
+                        <div class="feature-card-icon">🏆</div>
+                        <h4 data-i18n="features.quality_gates.epic_title">Epic Done Gate</h4>
+                        <p data-i18n="features.quality_gates.epic_desc">Up to 9 agents perform a systemic review of the entire epic. Architect and DBA gain elevated veto power. No agent may remain silent.</p>
+                        <div>
+                            <span class="gate-badge veto" data-i18n="features.quality_gates.veto_label">Veto Power</span>
+                            <span class="gate-badge warning" data-i18n="features.quality_gates.warning_label">Advisory Role</span>
+                        </div>
+                        <div class="gate-agents-list" data-i18n="features.quality_gates.epic_agents">QA · Security · Developer · Architect · Docs · PM + DBA · DevOps · UX</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features 3-6 as cards -->
+            <div class="feature-block reveal" style="margin-bottom:1rem;">
+                <h3 style="font-size:1.3rem;font-weight:700;color:var(--minsait-pruno-oscuro);margin-bottom:1.5rem;" data-i18n="features.platform_title">Platform Features</h3>
+            </div>
+            <div class="features-cards reveal">
+                <div class="feature-card">
+                    <div class="feature-card-icon">🧠</div>
+                    <h4 data-i18n="features.knowledge.title">Knowledge-Driven</h4>
+                    <p data-i18n="features.knowledge.description">Every decision, convention, and architectural choice is recorded in a structured knowledge base that grows with your project.</p>
+                    <ul data-i18n-html="features.knowledge.points"></ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🌐</div>
+                    <h4 data-i18n="features.multistack.title">Multi-Stack Support</h4>
+                    <p data-i18n="features.multistack.description">Works on any technology stack. M3A auto-detects your project's languages, frameworks, and tools — then adapts all 12 agents accordingly.</p>
+                    <p style="font-size:0.85rem;color:var(--minsait-fucsia);font-weight:500;margin-top:0.5rem;" data-i18n="features.multistack.stacks">Java · .NET · Python · Node.js · Go · Angular · React · Vue · and more</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📊</div>
+                    <h4 data-i18n="features.executive_docs.title">Executive Documentation</h4>
+                    <p data-i18n="features.executive_docs.description">Borges translates technical analysis into executive-grade reports with Minsait branding.</p>
+                    <ul data-i18n-html="features.executive_docs.points"></ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🛡️</div>
+                    <h4 data-i18n="features.security_first.title">Security First</h4>
+                    <p data-i18n="features.security_first.description">Hobbes has absolute VETO power — no unsafe epic or story passes review. Security is not an afterthought, it's enforced at every gate.</p>
+                    <ul data-i18n-html="features.security_first.points"></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ SKILLS ═══════════════ -->
+    <section class="section section-alt" id="skills">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2 data-i18n="skills.heading">Skills</h2>
+                <p data-i18n="skills.description">27 specialized prompt skills — automation routines that agents use to execute complex, multi-step operations.</p>
+            </div>
+            <div class="skills-grid" id="skillsGrid">
+                <!-- Rendered via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ WORKFLOWS ═══════════════ -->
+    <section class="section" id="workflows">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2 data-i18n="workflows.heading">Workflows</h2>
+                <p data-i18n="workflows.description">11 structured multi-agent processes — end-to-end coordination protocols from project bootstrap to quality gates.</p>
+            </div>
+            <div class="workflows-grid" id="workflowsGrid">
+                <!-- Rendered via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ LAWS ═══════════════ -->
+    <section class="section section-dark" id="laws">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2 data-i18n="laws.heading">13 Immutable Laws</h2>
+                <p data-i18n="laws.description">Governance baked into every agent. Absolute, inviolable, applied at every interaction.</p>
+            </div>
+            <div class="laws-grid" id="lawsGrid">
+                <!-- Rendered via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ COM3ANDS ═══════════════ -->
+    <section class="section section-alt" id="commands">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2 data-i18n="commands.heading">Available Commands</h2>
+                <p data-i18n="commands.description">All /m3a-* commands available after installation. Run them in VS Code Copilot Chat.</p>
+            </div>
+            <div class="commands-table-wrap reveal">
+                <table class="commands-table" id="commandsTable">
+                    <thead>
+                        <tr>
+                            <th data-i18n="commands.col_command">Command</th>
+                            <th data-i18n="commands.col_description">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="commandsBody">
+                        <!-- Rendered via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ INSTALL ═══════════════ -->
+    <section class="section section-dark" id="install">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <h2 data-i18n="install.heading">Install M3A Team</h2>
+                <p data-i18n="install.description">One command installs all 12 agents into any VS Code project with GitHub Copilot.</p>
+            </div>
+
+            <div class="install-prereqs reveal">
+                <p class="install-prereqs-heading" data-i18n="install.prereq_heading">⚠️ Prerequisites — Required before installing</p>
+                <p class="install-prereqs-desc" data-i18n="install.prereq_desc">Make sure you have all three before running the install script.</p>
+                <div class="install-prereqs-pills">
+                <a class="install-prereq" href="https://code.visualstudio.com/" target="_blank" rel="noopener">
+                    <span class="install-prereq-icon">💻</span>
+                    <span data-i18n="install.prereq_vscode">VS Code with GitHub Copilot extension</span>
+                    <span class="install-prereq-arrow">↗</span>
+                </a>
+                <a class="install-prereq" href="https://cli.github.com/" target="_blank" rel="noopener">
+                    <span class="install-prereq-icon">🔧</span>
+                    <span data-i18n="install.prereq_cli">GitHub CLI (gh) — installed and authenticated</span>
+                    <span class="install-prereq-arrow">↗</span>
+                </a>
+                <a class="install-prereq" href="https://github.com/features/copilot" target="_blank" rel="noopener">
+                    <span class="install-prereq-icon">🤖</span>
+                    <span data-i18n="install.prereq_copilot">GitHub Copilot subscription (Chat + Agent mode)</span>
+                    <span class="install-prereq-arrow">↗</span>
+                </a>
+                </div>
+            </div>
+
+            <div class="install-steps reveal">
+                <!-- Step 1 -->
+                <div class="install-step">
+                    <div class="install-step-number">1</div>
+                    <h4 data-i18n="install.step1_title">Run the install script</h4>
+                    <p data-i18n="install.step1_desc">Execute from your project root (where .git/ lives)</p>
+                    <div class="code-tabs">
+                        <button class="code-tab active" onclick="switchTab(this, 'win1')"><span data-i18n="install.windows_label">Windows PowerShell</span></button>
+                        <button class="code-tab" onclick="switchTab(this, 'lin1')"><span data-i18n="install.linux_label">Linux / macOS</span></button>
+                    </div>
+                    <div class="code-block active" id="win1">
+                        <code>$tag=$(gh api repos/ealmeidaf_indra/m3a-team/releases/latest --jq '.tag_name'); $t="$env:TEMP\m3a-$(Get-Random)"; gh repo clone ealmeidaf_indra/m3a-team $t -- --depth 1 -b $tag -q -c advice.detachedHead=false; if($LASTEXITCODE -eq 0){ &amp; "$t\scripts\install.ps1" -Mode project }else{ Write-Host "[ERR] Clone failed. Run 'gh auth login' and retry." -ForegroundColor Red }; if(Test-Path $t){ Remove-Item -Recurse -Force $t }</code>
+                    </div>
+                    <div class="code-block" id="lin1">
+                        <code>tag=$(gh api repos/ealmeidaf_indra/m3a-team/releases/latest --jq '.tag_name') &amp;&amp; t=$(mktemp -d) &amp;&amp; gh repo clone ealmeidaf_indra/m3a-team "$t" -- --depth 1 -b "$tag" -q -c advice.detachedHead=false &amp;&amp; bash "$t/scripts/install.sh" --mode=project &amp;&amp; rm -rf "$t"</code>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="install-step">
+                    <div class="install-step-number">2</div>
+                    <div class="install-mandatory" data-i18n="install.mandatory_label">⚡ Mandatory — Run First</div>
+                    <h4 data-i18n="install.step2_title">Activate with /m3a-init</h4>
+                    <p data-i18n="install.step2_desc">Personalizes config and activates all 12 agents for your project</p>
+                    <div class="code-block active" style="border-radius:12px;">
+                        <code>/m3a-init</code>
+                    </div>
+                    <div class="install-mandatory-callout" data-i18n="install.step2_callout">Required before any other command. /m3a-init configures agents with your project's stack, team, and context. Without it, agents operate without project knowledge.</div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="install-step">
+                    <div class="install-step-number">3</div>
+                    <h4 data-i18n="install.step3_title">Initialize knowledge base</h4>
+                    <p data-i18n="install.step3_desc">Recommended for existing projects — runs a deep codebase scan</p>
+                    <div class="code-block active" style="border-radius:12px;">
+                        <code>/m3a-init-knowledge</code>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="install-step">
+                    <div class="install-step-number">4</div>
+                    <h4 data-i18n="install.step4_title">Start using commands</h4>
+                    <p data-i18n="install.step4_desc">All /m3a-* commands are now available in Copilot Chat</p>
+                    <div class="code-block active no-copy" style="border-radius:12px;">
+                        <code>/m3a-init-knowledge
+/m3a-assessment
+/m3a-story-done STORY-001</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer class="site-footer">
+        <img src="../assets/AF_MINSAIT_LOG_NEG.png" alt="Minsait" class="footer-logo">
+        <p data-i18n="footer.tagline">Tech for impact</p>
+        <p data-i18n="footer.copyright">© 2026 Minsait (An Indra Company) — All rights reserved</p>
+        <p style="margin-top:0.5rem;">
+            <a href="https://github.com/ealmeidaf_indra/m3a-team" class="footer-link" data-i18n="footer.github">View on GitHub</a>
+        </p>
+        <p style="margin-top:1.5rem; font-size:0.75rem; color:rgba(255,255,255,0.2); letter-spacing:0.06em;">
+            ⚡ Developed by <a href="https://github.com/ealmeidaf_indra/m3a-team" style="color:rgba(255,255,255,0.3); text-decoration:none; font-weight:600;" onmouseover="this.style.color='rgba(255,0,84,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">M3A Team</a> — Minsait Multi-Agent AI Framework
+        </p>
+    </footer>
+
+    <!-- ═══════════════ SCRIPTS ═══════════════ -->
+    <script>
+    /* ═══════════════════════════════════════════════
+       i18n — Inline data (works with file:// and http://)
+    ═══════════════════════════════════════════════ */
+    const i18nCache = {
+    "en": {"lang":"en","nav":{"about":"About","agents":"Agents","features":"Features","skills":"Skills","workflows":"Workflows","laws":"Laws","commands":"Commands","install":"Install"},"hero":{"title":"M3A Team","subtitle":"Minsait Multi-Agent AI Framework — specialized agents orchestrated inside VS Code, with GitHub Copilot","cta":"Get Started","version":"v2.6.0","stat_agents":"Specialized Agents","stat_gates":"Quality Gates","stat_commands":"Commands","stat_skills":"Skills","stat_workflows":"Workflows","stat_laws":"Laws"},"about":{"heading":"What is M3A Team?","p1":"M3A Team (Minsait Multi Agents Team) is an enterprise-grade, reusable multi-agent AI ecosystem designed for any Minsait project — new or existing, any stack, any domain.","p2":"It provides a team of 12 specialized AI agents, each with a distinct persona inspired by historical and intellectual figures. Agents collaborate on quality gates, enforce architectural decisions, and produce executive-grade documentation — all within VS Code using GitHub Copilot Agent mode.","p3":"No external services, no cloud subscriptions beyond Copilot. Install with one command, activate with /m3a-init, and your entire team gains a structured AI workforce governed by 13 immutable laws.","highlight1_title":"Works Inside VS Code","highlight1_desc":"No external tools or platforms. Agents run as Copilot agent modes directly in your editor.","highlight2_title":"Zero Cloud Dependencies","highlight2_desc":"Everything lives in your repository under .github/ — fully version-controlled and reviewable via PR.","highlight3_title":"13 Immutable Laws","highlight3_desc":"Governance baked into every agent: knowledge-first, no silence in reviews, mandatory consensus, operational honesty."},"agents":{"heading":"The Agent Roster","description":"12 specialized agents, each with a distinct persona and area of expertise. Click any card to see full capabilities.","orchestrator":{"icon":"⚡","role":"Orchestrator","persona":"Marcus Aurelius","motto":"Governs without executing — decisions under pressure with rationality and long-term vision.","capabilities":["Routes requests to the correct specialized agent","Coordinates multi-agent review sessions","Enforces the 13 immutable governance laws","Manages epic creation and approval flow","Consolidates review verdicts from all agents","Records all project decisions in the knowledge base"]},"analyst":{"icon":"📊","role":"Analyst","persona":"Descartes","motto":"Decompose each problem into parts until nothing remains unexplained.","capabilities":["AS-IS analysis and module decomposition","CVE auditing and dependency inventory","Shallow, intermediate, and deep component analysis","Compatibility and technical impact assessment","EOL verification and technology lifecycle mapping","Knowledge base construction from codebase scanning"]},"architect":{"icon":"🏗️","role":"Architect","persona":"Vitruvius","motto":"Firmitas, Utilitas, Venustas — good architecture serves purpose, is robust, and survives through time.","capabilities":["TO-BE architecture design and migration planning","Architecture Decision Record (ADR) creation","C4 diagrams (Context, Container, Component)","Technical feasibility analysis for epics","Stack migration gap analysis (AS-IS → TO-BE)","Epic risk assessment with elevated veto power"]},"pm":{"icon":"📋","role":"Product Manager","persona":"Drucker","motto":"Effectiveness is doing the right things. What generates no value does not exist.","capabilities":["Epic creation with structured brainstorm process","Anti-duplicate checking across the backlog","Backlog prioritization and roadmap planning","PRD (Product Requirements Document) creation","Acceptance criteria definition and refinement","Modernization roadmap for legacy projects"]},"sm":{"icon":"🏃","role":"Scrum Master","persona":"Deming","motto":"Good results come from good systems, not heroes.","capabilities":["Sprint planning (never beyond Sprint N+1)","Story creation and decomposition from epics","Sprint status tracking and management","Reviews, retrospectives, and velocity tracking","Definition of Ready / Definition of Done enforcement","Team cadence and process improvement"]},"dev":{"icon":"💻","role":"Developer","persona":"Knuth","motto":"Premature optimization is the root of all evil. Code must survive decades.","capabilities":["Story implementation using Red-Green-Refactor","Code review and structured refactoring","Multi-stack support (Java, .NET, Python, Node, etc.)","Technical specification proposals","Module-level analysis for implementation planning","DevContainer generation for reproducible environments"]},"qa":{"icon":"🔍","role":"QA Engineer","persona":"Popper","motto":"Only what can be falsified can be validated.","capabilities":["Test strategy and planning per story/epic","Acceptance criteria validation and testability review","Definition of Done enforcement at quality gates","Test coverage strategy and gap analysis","Story-done and epic-done gate participation","Quality metrics tracking and reporting"]},"security":{"icon":"🔒","role":"Security Engineer","persona":"Hobbes","motto":"Without adequate security, systems are solitary, poor, nasty, brutish, and short.","capabilities":["OWASP Top 10 audit and compliance checking","CVE dependency scanning and remediation plans","System hardening recommendations","Attack surface analysis and threat modeling","VETO power — blocks any unsafe epic or story","Security baseline and hardening checklists"]},"devops":{"icon":"☁️","role":"DevOps Engineer","persona":"Atlas","motto":"Without reliable infrastructure, software does not exist in production.","capabilities":["Docker and containerization setup","Kubernetes manifests and orchestration","CI/CD pipeline design and automation","DevContainer generation for team onboarding","Deployment automation and environment management","Observability standards (logging, metrics, tracing)"]},"docs":{"icon":"📄","role":"Technical Writer","persona":"Borges","motto":"The challenge is not to create — it is to structure so it can be found.","capabilities":["Conversational HTML wizard with mandatory design brief","Minsait-branded HTML portals, dashboards, and landing pages","Executive-level reporting for stakeholders","Knowledge base curation and maintenance","Rollout trackers, report pages, and changelog management"]},"ux":{"icon":"🎨","role":"UX/UI Designer","persona":"Norman","motto":"Good design makes complex things understandable.","capabilities":["Usability analysis and heuristic evaluation","Interface design review and recommendations","WCAG accessibility audit and compliance","Design system review and consistency checks","User journey mapping and flow optimization","UI component analysis and improvement proposals"]},"dba":{"icon":"🗄️","role":"Database Architect","persona":"Codd","motto":"Data shall be accessed by its content, not by its location.","capabilities":["Schema design, analysis, and optimization","Reversible database migration scripts","Query performance tuning and indexing strategy","Database impact assessment for epics","DAO/Repository pattern guidance","ORM evaluation and data access layer review"]}},"features":{"heading":"Key Features","description":"A comprehensive AI-powered engineering workflow — from idea to production.","bootstrap":{"title":"New Product Bootstrap","description":"Go from a product idea to your first sprint in a structured, agent-guided process.","steps":["Drucker creates the PRD and defines the product vision","Vitruvius designs the TO-BE architecture with C4 diagrams","Atlas generates DevContainers and CI/CD scaffolding","Descartes scans the landscape and builds the knowledge base","Deming plans Sprint 1 with stories and acceptance criteria"],"agents_involved":"Drucker → Vitruvius → Atlas → Descartes → Deming"},"quality_gates":{"title":"Quality Gates","story_title":"Story Done Gate","story_desc":"5 agents perform a surgical review of every completed story. QA, Security, and Developer hold veto power — one rejection blocks the story.","story_agents":"QA · Security · Developer · Architect · Docs","epic_title":"Epic Done Gate","epic_desc":"Up to 9 agents perform a systemic review of the entire epic. Architect and DBA gain elevated veto power. No agent may remain silent.","epic_agents":"QA · Security · Developer · Architect · Docs · PM + DBA · DevOps · UX","veto_label":"Veto Power","warning_label":"Advisory Role"},"knowledge":{"title":"Knowledge-Driven","description":"Every decision, convention, and architectural choice is recorded in a structured knowledge base that grows with your project.","points":["Descartes builds the knowledge base from deep codebase scans","Marcus Aurelius records all decisions in the decisions log","Borges curates and structures documentation for discoverability","All agents read knowledge before acting — Law 1: Knowledge First"]},"multistack":{"title":"Multi-Stack Support","description":"Works on any technology stack. M3A auto-detects your project's languages, frameworks, and tools — then adapts all 12 agents accordingly.","stacks":"Java · .NET · Python · Node.js · Go · Angular · React · Vue · and more"},"executive_docs":{"title":"Executive Documentation","description":"Borges translates technical analysis into executive-grade reports and premium HTML experiences with Minsait branding.","points":["Portals, dashboards, trackers, reports, and landing pages with Minsait branding","Automatic Layer 1 → Layer 2 translation (technical → executive)","Weak HTML requests normalized through the mandatory design brief","Release notes, sprint reports, and rollout trackers"]},"security_first":{"title":"Security First","description":"Hobbes has absolute VETO power — no unsafe epic or story passes review. Security is not an afterthought, it's enforced at every gate.","points":["OWASP Top 10 audit on every review","CVE dependency scanning with remediation plans","System hardening and attack surface analysis","Security baseline enforcement across all stacks"]},"existing_project":{"title":"Existing Projects & Modernization","description":"Start from an existing codebase — legacy system, monolith, or partial refactoring. M3A maps the AS-IS state, identifies technical debt, and builds a structured modernization roadmap.","steps":["Descartes runs AS-IS analysis: stack scan, CVEs, module decomposition","Knowledge base built from codebase, docs, and architecture artifacts","Vitruvius designs the TO-BE architecture with migration gap analysis","Hobbes audits security posture and CVE exposure","Drucker creates a modernization roadmap with prioritized epics"],"agents_involved":"Descartes \u2192 Vitruvius \u2192 Hobbes \u2192 Drucker \u2192 Deming"}},"commands":{"heading":"Available Commands","description":"All /m3a-* commands available after installation. Run them in VS Code Copilot Chat.","col_command":"Command","col_description":"Description","cat_init":"Initialization","cat_arch":"Assessment & Architecture","cat_quality":"Quality & Governance","cat_docs":"Documentation","cat_ops":"Operations","cat_utils":"Utilities","cmd_init":"Start here — onboarding wizard, personalizes config","cmd_upgrade":"Chat-first upgrade wizard — updates to latest release, preserves all customisations","cmd_restore_customizations":"Post-upgrade recovery — restores selected customisations surgically into updated files","cmd_init_new":"Greenfield project scaffold (PRD → C4 → DevContainer)","cmd_init_existing":"Legacy/existing project scan (AS-IS → knowledge base)","cmd_init_knowledge":"Deep scan + knowledge base bootstrap","cmd_init_docs":"Persistent documentation strategy + portal scaffold","cmd_init_epic":"Backlog structure + epic/story tracker","cmd_assessment":"Full technical diagnosis (inventory, debt, CVEs, risks)","cmd_c4":"Generate C4 diagrams (Context, Container, Component)","cmd_adr":"Generate Architecture Decision Record","cmd_migration":"Stack migration plan (AS-IS → TO-BE gap analysis)","cmd_quality_gates":"Definition of Done checklists per delivery type","cmd_risk_gates":"Go/No-Go gate evaluation (requires human approval)","cmd_dep_audit":"CVE scan, EOL calendar, update recommendations","cmd_sec_baseline":"OWASP baseline, hardening checklist","cmd_story_done":"Story completion quality gate — 5-agent parallel review","cmd_epic_done":"Epic completion systemic gate — up to 9-agent review","cmd_create_html":"Guided HTML wizard for ad hoc or project-aware generation","cmd_create_pdf":"Markdown to PDF wizard — converts .md files to corporate PDF with optional DOCX template. Auto-installs dependencies.","cmd_doc_portal":"Generate the official Minsait-branded project documentation portal","cmd_runbook":"Generate operational runbook","cmd_release_notes":"Generate release notes from version scope","cmd_troubleshooting":"Structured diagnosis: symptoms → causes → fixes","cmd_observability":"Logging, metrics, tracing standards","cmd_incident":"Incident war room (human-only trigger)","cmd_plan_issues":"Create standardized GitHub/GitLab issues","cmd_refactor":"War room analysis → plan → epics (never auto-rewrites)","cmd_create_agent":"Scaffold a new custom agent","cmd_create_devcontainer":"Generate .devcontainer/ for your stack","cmd_data_class":"Data classification policy, PII inventory","cmd_doctor":"Validate M3A Team installation and configuration","cmd_prompt_enricher":"Enrich weak prompts before routing"},"skills":{"heading":"Skills","description":"27 specialized prompt skills — automation routines that agents use to execute complex, multi-step operations."},"workflows":{"heading":"Workflows","description":"11 structured multi-agent processes — end-to-end coordination protocols from project bootstrap to quality gates."},"laws":{"heading":"13 Immutable Laws","description":"Governance baked into every agent. Absolute, inviolable, applied at every interaction.","items":[{"n":"01","name":"Knowledge First","desc":"Every agent reads the knowledge base before any action. New knowledge physically updates the files — never stays in chat only."},{"n":"02","name":"Minimal Chat","desc":"Only status formats in chat: ✅ file, ⚠️ warning, ❌ blocked. No narration, no reasoning, no content duplication."},{"n":"03","name":"Anti-Duplicate","desc":"Before creating anything, check the backlog for similar epics, stories, and analyses already done."},{"n":"04","name":"Continuous Learning","desc":"Every new relevant knowledge about the project physically updates the knowledge base — never gets lost."},{"n":"05","name":"War Room = Human Only","desc":"No agent triggers a War Room automatically. Agents can only suggest it to the human with clear justification."},{"n":"06","name":"No Silence in Review","desc":"Every agent evaluates every epic through their specialized lens. Silence requires explicit documented justification."},{"n":"07","name":"Mandatory Consensus","desc":"Disagreements between agents must be resolved with evidence exchange. Unresolved after 2 rounds → escalate to human."},{"n":"08","name":"Sprint-by-Sprint","desc":"Never detail beyond Sprint N+1. Each sprint is refined based on actual results of the previous sprint."},{"n":"09","name":"Multi-Agent Approval","desc":"No epic advances from draft to approved with any agent blocked (❌). All 12 agents must review and respond."},{"n":"10","name":"Two Output Layers","desc":"Layer 1: operational/technical (internal). Layer 2: executive (for management). Docs agent translates between them."},{"n":"11","name":"Agent Versioning","desc":"Every agent update increments semantic version and adds a changelog entry. Full traceability is mandatory."},{"n":"12","name":"Build Always Passes","desc":"No story is done without evidence of a passing build. Build broken = story returns to in-progress."},{"n":"13","name":"Operational Honesty","desc":"An agent that skipped a mandatory step must actively declare it. Silence about a deviation equals a false declaration."}]},"install":{"heading":"Install M3A Team","description":"One command installs all 12 agents into any VS Code project with GitHub Copilot.","prerequisites":"Prerequisites","prereq_heading":"⚠️ Prerequisites — Required before installing","prereq_desc":"Make sure you have all three before running the install script.","prereq_vscode":"VS Code with GitHub Copilot extension","prereq_cli":"GitHub CLI (gh) — installed and authenticated","prereq_copilot":"GitHub Copilot subscription (Chat + Agent mode)","step1_title":"Run the install script","step1_desc":"Execute from your project root (where .git/ lives)","step2_title":"Activate with /m3a-init","step2_desc":"Personalizes config and activates all 12 agents for your project","step2_callout":"Required before any other command. /m3a-init configures agents with your project stack, team, and context. Without it, agents operate without project knowledge.","mandatory_label":"\u26a1 Mandatory \u2014 Run First","step3_title":"Initialize knowledge base","step3_desc":"Recommended for existing projects — deep codebase scan that powers all agent analysis","step4_title":"Start using commands","step4_desc":"All /m3a-* commands are now available in Copilot Chat","windows_label":"Windows PowerShell","linux_label":"Linux / macOS"},"footer":{"tagline":"Tech for impact","copyright":"© 2026 Minsait (An Indra Company) — All rights reserved","github":"View on GitHub"},"workflow_cards":{"new_project":{"name":"New Project","desc":"Greenfield bootstrap: PRD → C4 architecture → DevContainer setup → Sprint 1 planning","agents":"Drucker · Vitruvius · Atlas · Descartes · Deming"},"existing":{"name":"Existing Project","desc":"Legacy onboarding: AS-IS scan → knowledge base construction → gap analysis → modernization roadmap","agents":"Descartes · Vitruvius · Hobbes · Deming"},"epic_planning":{"name":"Epic Planning","desc":"Epic creation → anti-duplicate check → 12-agent multi-perspective review → approval → sprint planning","agents":"All 12 agents"},"story_done":{"name":"Story Done Gate","desc":"5-agent surgical review of every completed story. QA, Security and Developer hold veto power.","agents":"Popper · Hobbes · Knuth · Vitruvius · Borges"},"epic_done":{"name":"Epic Done Gate","desc":"9-agent systemic review of the entire epic scope. Architect and DBA gain elevated veto power.","agents":"9 reviewing agents"},"docs_portal":{"name":"Docs Portal","desc":"Generates the Minsait-branded HTML documentation portal with rollout trackers and sprint reports","agents":"Borges"},"knowledge":{"name":"Knowledge Bootstrap","desc":"Full knowledge base initialization from codebase scan, docs, architecture artifacts, and ADRs","agents":"Descartes · Borges"},"migration":{"name":"Migration Planner","desc":"Multi-agent migration planning: AS-IS baseline → TO-BE target → gap analysis → phased roadmap with rollback","agents":"Vitruvius · Descartes · Hobbes · Atlas · Codd"},"dep_audit":{"name":"Dependency Audit","desc":"Full dependency inventory, CVE severity scan, EOL calendar, and remediation recommendations","agents":"Hobbes · Descartes · Codd"},"release":{"name":"Release Cycle","desc":"End-to-end release governance: ADRs → runbooks → release notes → risk gate approval","agents":"Vitruvius · Atlas · Borges · Drucker"},"incident":{"name":"Incident & Troubleshooting","desc":"War Room incident protocol: root cause analysis, mitigation, lessons learned (human-only trigger)","agents":"All 12 agents"}}},
+"pt-br":{"lang":"pt-br","nav":{"about":"Sobre","agents":"Agentes","features":"Funcionalidades","skills":"Skills","workflows":"Workflows","laws":"Leis","commands":"Comandos","install":"Instalar"},"hero":{"title":"M3A Team","subtitle":"Framework Multi-Agente de IA Minsait — agentes especializados orquestrados dentro do VS Code, com GitHub Copilot","cta":"Começar Agora","version":"v2.6.0","stat_agents":"Agentes Especializados","stat_gates":"Quality Gates","stat_commands":"Comandos","stat_skills":"Skills","stat_workflows":"Workflows","stat_laws":"Leis"},"about":{"heading":"O que é o M3A Team?","p1":"M3A Team (Minsait Multi Agents Team) é um ecossistema multi-agente de IA corporativo e reutilizável, projetado para qualquer projeto Minsait — novo ou existente, qualquer stack, qualquer domínio.","p2":"Oferece um time de 12 agentes de IA especializados, cada um com uma persona distinta inspirada em figuras históricas e intelectuais. Os agentes colaboram em quality gates, aplicam decisões arquiteturais e produzem documentação de nível executivo — tudo dentro do VS Code usando o modo Agente do GitHub Copilot.","p3":"Sem serviços externos, sem assinaturas cloud além do Copilot. Instale com um comando, ative com /m3a-init e todo o time ganha uma força de trabalho de IA estruturada governada por 13 leis imutáveis.","highlight1_title":"Funciona Dentro do VS Code","highlight1_desc":"Sem ferramentas ou plataformas externas. Os agentes operam como modos de agente do Copilot diretamente no seu editor.","highlight2_title":"Zero Dependências Cloud","highlight2_desc":"Tudo vive no seu repositório em .github/ — totalmente versionado e revisável via PR.","highlight3_title":"13 Leis Imutáveis","highlight3_desc":"Governança embutida em cada agente: conhecimento primeiro, sem silêncio em revisões, consenso obrigatório, honestidade operacional."},"agents":{"heading":"O Time de Agentes","description":"12 agentes especializados, cada um com persona distinta e área de expertise. Clique em qualquer card para ver todas as capacidades.","orchestrator":{"icon":"⚡","role":"Orquestrador","persona":"Marcus Aurelius","motto":"Governa sem executar — decisões sob pressão com racionalidade e visão de longo prazo.","capabilities":["Roteia requisições para o agente especializado correto","Coordena sessões de revisão multi-agente","Aplica as 13 leis imutáveis de governança","Gerencia o fluxo de criação e aprovação de épicos","Consolida veredictos de revisão de todos os agentes","Registra todas as decisões do projeto na base de conhecimento"]},"analyst":{"icon":"📊","role":"Analista","persona":"Descartes","motto":"Decompor cada problema em partes até que nada reste sem explicação.","capabilities":["Análise AS-IS e decomposição de módulos","Auditoria de CVEs e inventário de dependências","Análise de componentes: superficial, intermediária e profunda","Avaliação de compatibilidade e impacto técnico","Verificação de EOL e mapeamento de ciclo de vida tecnológico","Construção da base de conhecimento a partir de varredura do código"]},"architect":{"icon":"🏗️","role":"Arquiteto","persona":"Vitruvius","motto":"Firmitas, Utilitas, Venustas — boa arquitetura serve ao propósito, é robusta e sobrevive ao tempo.","capabilities":["Design de arquitetura TO-BE e planejamento de migração","Criação de Architecture Decision Records (ADR)","Diagramas C4 (Contexto, Container, Componente)","Análise de viabilidade técnica para épicos","Análise de lacunas na migração de stack (AS-IS → TO-BE)","Avaliação de risco de épicos com poder de veto elevado"]},"pm":{"icon":"📋","role":"Product Manager","persona":"Drucker","motto":"Eficácia é fazer as coisas certas. O que não gera valor não existe.","capabilities":["Criação de épicos com processo estruturado de brainstorm","Verificação anti-duplicata no backlog","Priorização de backlog e planejamento de roadmap","Criação de PRD (Product Requirements Document)","Definição e refinamento de critérios de aceitação","Roadmap de modernização para projetos legados"]},"sm":{"icon":"🏃","role":"Scrum Master","persona":"Deming","motto":"Bons resultados vêm de bons sistemas, não de heróis.","capabilities":["Planejamento de sprint (nunca além do Sprint N+1)","Criação e decomposição de stories a partir de épicos","Acompanhamento e gestão do status do sprint","Reviews, retrospectivas e rastreamento de velocidade","Aplicação de Definition of Ready / Definition of Done","Cadência de time e melhoria contínua de processos"]},"dev":{"icon":"💻","role":"Desenvolvedor","persona":"Knuth","motto":"Otimização prematura é a raiz de todo mal. Código deve sobreviver décadas.","capabilities":["Implementação de stories com Red-Green-Refactor","Code review e refatoração estruturada","Suporte multi-stack (Java, .NET, Python, Node, etc.)","Propostas de especificação técnica","Análise em nível de módulo para planejamento de implementação","Geração de DevContainer para ambientes reprodutíveis"]},"qa":{"icon":"🔍","role":"QA Engineer","persona":"Popper","motto":"Apenas o que pode ser falsificado pode ser validado.","capabilities":["Estratégia e planejamento de testes por story/épico","Validação de critérios de aceitação e revisão de testabilidade","Aplicação de Definition of Done nos quality gates","Estratégia de cobertura de testes e análise de lacunas","Participação nos gates de story-done e epic-done","Rastreamento de métricas de qualidade e relatórios"]},"security":{"icon":"🔒","role":"Engenheiro de Segurança","persona":"Hobbes","motto":"Sem segurança adequada, sistemas são solitários, pobres, desagradáveis, brutos e efêmeros.","capabilities":["Auditoria OWASP Top 10 e verificação de conformidade","Varredura de CVEs em dependências e planos de remediação","Recomendações de hardening de sistema","Análise de superfície de ataque e modelagem de ameaças","Poder de VETO — bloqueia qualquer épico ou story insegura","Baseline de segurança e checklists de hardening"]},"devops":{"icon":"☁️","role":"Engenheiro DevOps","persona":"Atlas","motto":"Sem infraestrutura confiável, software não existe em produção.","capabilities":["Setup de Docker e containerização","Manifestos Kubernetes e orquestração","Design e automação de pipelines CI/CD","Geração de DevContainer para onboarding do time","Automação de deploy e gerenciamento de ambientes","Padrões de observabilidade (logging, métricas, tracing)"]},"docs":{"icon":"📄","role":"Technical Writer","persona":"Borges","motto":"O desafio não é criar — é estruturar para que possa ser encontrado.","capabilities":["Portais HTML de documentação com marca Minsait","Relatórios de nível executivo para stakeholders","Curadoria e manutenção da base de conhecimento","Geração de portais com trackers de rollout","Documentação de agentes e gestão de changelog"]},"ux":{"icon":"🎨","role":"Designer UX/UI","persona":"Norman","motto":"Bom design torna coisas complexas compreensíveis.","capabilities":["Análise de usabilidade e avaliação heurística","Revisão de design de interface e recomendações","Auditoria de acessibilidade WCAG e conformidade","Revisão de design system e verificação de consistência","Mapeamento de jornada do usuário e otimização de fluxo","Análise de componentes de UI e propostas de melhoria"]},"dba":{"icon":"🗄️","role":"Arquiteto de Banco de Dados","persona":"Codd","motto":"Dados devem ser acessados pelo seu conteúdo, não pela sua localização.","capabilities":["Design, análise e otimização de schema","Scripts de migração de banco de dados reversíveis","Tuning de performance de queries e estratégia de indexação","Avaliação de impacto no banco de dados para épicos","Orientação em padrões DAO/Repository","Avaliação de ORM e revisão da camada de acesso a dados"]}},"features":{"heading":"Funcionalidades Principais","description":"Um workflow de engenharia completo com IA — da ideia à produção.","bootstrap":{"title":"Bootstrap de Novo Produto","description":"Vá de uma ideia de produto ao primeiro sprint em um processo estruturado, guiado por agentes.","steps":["Drucker cria o PRD e define a visão do produto","Vitruvius projeta a arquitetura TO-BE com diagramas C4","Atlas gera DevContainers e scaffolding de CI/CD","Descartes varre o cenário e constrói a base de conhecimento","Deming planeja o Sprint 1 com stories e critérios de aceitação"],"agents_involved":"Drucker → Vitruvius → Atlas → Descartes → Deming"},"quality_gates":{"title":"Quality Gates","story_title":"Gate de Story Concluída","story_desc":"5 agentes realizam uma revisão cirúrgica de cada story concluída. QA, Segurança e Desenvolvedor têm poder de veto — uma rejeição bloqueia a story.","story_agents":"QA · Segurança · Desenvolvedor · Arquiteto · Docs","epic_title":"Gate de Épico Concluído","epic_desc":"Até 9 agentes realizam uma revisão sistêmica de todo o épico. Arquiteto e DBA ganham poder de veto elevado. Nenhum agente pode permanecer em silêncio.","epic_agents":"QA · Segurança · Desenvolvedor · Arquiteto · Docs · PM + DBA · DevOps · UX","veto_label":"Poder de Veto","warning_label":"Papel Consultivo"},"platform_title":"Funcionalidades da Plataforma","knowledge":{"title":"Orientado por Conhecimento","description":"Cada decisão, convenção e escolha arquitetural é registrada em uma base de conhecimento estruturada que cresce com o projeto.","points":["Descartes constrói a base de conhecimento a partir de varreduras profundas","Marcus Aurelius registra todas as decisões no log de decisões","Borges curadoria e estrutura a documentação para facilitar busca","Todos os agentes leem o conhecimento antes de agir — Lei 1: Conhecimento Primeiro"]},"multistack":{"title":"Suporte Multi-Stack","description":"Funciona em qualquer stack de tecnologia. O M3A detecta automaticamente linguagens, frameworks e ferramentas do projeto — e adapta todos os 12 agentes.","stacks":"Java · .NET · Python · Node.js · Go · Angular · React · Vue · e mais"},"executive_docs":{"title":"Documentação Executiva","description":"Borges traduz análises técnicas em relatórios de nível executivo com identidade visual Minsait.","points":["Portais HTML com marca Minsait e tipografia ForFutureSans","Tradução automática Camada 1 → Camada 2 (técnico → executivo)","Relatórios de sprint, sumários de épicos, registros de risco","Trackers de rollout e release notes"]},"security_first":{"title":"Segurança em Primeiro Lugar","description":"Hobbes tem poder de VETO absoluto — nenhum épico ou story insegura passa pela revisão. Segurança não é um detalhe, é imposta em cada gate.","points":["Auditoria OWASP Top 10 em cada revisão","Varredura de CVEs em dependências com planos de remediação","Hardening de sistema e análise de superfície de ataque","Enforcement de baseline de segurança em todas as stacks"]},"existing_project":{"title":"Projetos Existentes & Modernização","description":"Comece a partir de um código legado, monolito ou projeto em refatoração. O M3A mapeia o estado AS-IS, identifica dívida técnica e constrói um roadmap de modernização estruturado.","steps":["Descartes realiza análise AS-IS: varredura de stack, CVEs, decomposição de módulos","Base de conhecimento construída a partir do código, docs e artefatos de arquitetura","Vitruvius projeta a arquitetura TO-BE com análise de lacunas da migração","Hobbes audita a postura de segurança e exposição de CVEs","Drucker cria o roadmap de modernização com épicos priorizados"],"agents_involved":"Descartes → Vitruvius → Hobbes → Drucker → Deming"}},"commands":{"heading":"Comandos Disponíveis","description":"Todos os comandos /m3a-* disponíveis após a instalação. Execute no Copilot Chat do VS Code.","col_command":"Comando","col_description":"Descrição","cat_init":"Inicialização","cat_arch":"Avaliação & Arquitetura","cat_quality":"Qualidade & Governança","cat_docs":"Documentação","cat_ops":"Operações","cat_utils":"Utilitários","cmd_init":"Comece aqui — assistente de onboarding, personaliza a configuração","cmd_upgrade":"Upgrade do setup de agentes (minimal → full) sem reconfiguração","cmd_init_new":"Scaffold de projeto greenfield (PRD → C4 → DevContainer)","cmd_init_existing":"Varredura de projeto existente/legado (AS-IS → base de conhecimento)","cmd_init_knowledge":"Varredura profunda + bootstrap da base de conhecimento","cmd_init_docs":"Scaffold de portal de documentação","cmd_init_epic":"Estrutura de backlog + tracker de épicos/stories","cmd_assessment":"Diagnóstico técnico completo (inventário, débito, CVEs, riscos)","cmd_c4":"Gerar diagramas C4 (Contexto, Container, Componente)","cmd_adr":"Gerar Architecture Decision Record","cmd_migration":"Plano de migração de stack (análise de lacunas AS-IS → TO-BE)","cmd_quality_gates":"Checklists de Definition of Done por tipo de entrega","cmd_risk_gates":"Avaliação Go/No-Go (requer aprovação humana)","cmd_dep_audit":"Varredura de CVEs, calendário EOL, recomendações de atualização","cmd_sec_baseline":"Baseline OWASP, checklist de hardening","cmd_story_done":"Quality gate de conclusão de story — revisão paralela de 5 agentes","cmd_epic_done":"Gate sistêmico de conclusão de épico — revisão de até 9 agentes","cmd_create_html":"Wizard HTML guiado para geração ad hoc ou com ciência do projeto","cmd_create_pdf":"Wizard MD→PDF — converte arquivos .md em PDF corporativo com template DOCX opcional. Instala dependências automaticamente.","cmd_doc_portal":"Gerar portal HTML de documentação com marca Minsait","cmd_runbook":"Gerar runbook operacional","cmd_release_notes":"Gerar release notes a partir do escopo de versão","cmd_troubleshooting":"Diagnóstico estruturado: sintomas → causas → correções","cmd_observability":"Padrões de logging, métricas, tracing","cmd_incident":"War room de incidentes (acionamento apenas humano)","cmd_plan_issues":"Criar issues padronizadas no GitHub/GitLab","cmd_refactor":"Análise war room → plano → épicos (nunca reescreve automaticamente)","cmd_create_agent":"Criar scaffold de novo agente customizado","cmd_create_devcontainer":"Gerar .devcontainer/ para sua stack","cmd_data_class":"Política de classificação de dados, inventário PII","cmd_doctor":"Validar instalação e configuração do M3A Team","cmd_prompt_enricher":"Enriquecer prompts fracos antes do roteamento"},"skills":{"heading":"Skills","description":"25 skills especializadas de prompts — rotinas de automação para operações complexas e multi-etapa."},"workflows":{"heading":"Workflows","description":"11 processos multi-agente estruturados — protocolos de coordenação do bootstrap aos quality gates."},"laws":{"heading":"13 Leis Imutáveis","description":"Governança embutida em cada agente. Absolutas, invioláveis, aplicadas em cada interação.","items":[{"n":"01","name":"Conhecimento Primeiro","desc":"Todo agente lê a base de conhecimento antes de qualquer ação. Novo conhecimento atualiza fisicamente os arquivos — nunca fica apenas no chat."},{"n":"02","name":"Chat Mínimo","desc":"Apenas formatos de status no chat: ✅ arquivo, ⚠️ aviso, ❌ bloqueado. Sem narração, sem raciocínio, sem duplicação de conteúdo."},{"n":"03","name":"Anti-Duplicata","desc":"Antes de criar qualquer coisa, verificar no backlog épicos, stories e análises similares já existentes."},{"n":"04","name":"Aprendizado Contínuo","desc":"Todo novo conhecimento relevante sobre o projeto atualiza fisicamente a base de conhecimento — nunca se perde."},{"n":"05","name":"War Room = Só Humano","desc":"Nenhum agente aciona um War Room automaticamente. Agentes só podem sugeri-lo ao humano com justificativa clara."},{"n":"06","name":"Sem Silêncio em Revisões","desc":"Todo agente avalia todo épico pela sua lente especializada. Silêncio exige justificativa documentada explícita."},{"n":"07","name":"Consenso Obrigatório","desc":"Divergências entre agentes devem ser resolvidas com troca de evidências. Sem resolução em 2 rodadas → escalar ao humano."},{"n":"08","name":"Sprint a Sprint","desc":"Nunca detalhar além do Sprint N+1. Cada sprint é refinado com base nos resultados reais do sprint anterior."},{"n":"09","name":"Aprovação Multi-Agente","desc":"Nenhum épico avança de rascunho para aprovado com qualquer agente bloqueado (❌). Todos os 12 agentes devem revisar e responder."},{"n":"10","name":"Duas Camadas de Output","desc":"Camada 1: operacional/técnica (interna). Camada 2: executiva (para gestão). Agente Docs traduz entre elas."},{"n":"11","name":"Versionamento de Agentes","desc":"Toda atualização de agente incrementa a versão semântica e adiciona entrada no changelog. Rastreabilidade total é obrigatória."},{"n":"12","name":"Build Sempre Passa","desc":"Nenhuma story é concluída sem evidência de build passando. Build quebrado = story retorna ao em-progresso."},{"n":"13","name":"Honestidade Operacional","desc":"Um agente que pulou etapa obrigatória deve declará-lo ativamente. Silêncio sobre um desvio equivale a declaração falsa."}]},"install":{"heading":"Instalar M3A Team","description":"Um comando instala todos os 12 agentes em qualquer projeto VS Code com GitHub Copilot.","prerequisites":"Pré-requisitos","prereq_heading":"⚠️ Pré-requisitos — Obrigatórios antes de instalar","prereq_desc":"Certifique-se de ter os três antes de executar o script de instalação.","prereq_vscode":"VS Code com extensão GitHub Copilot","prereq_cli":"GitHub CLI (gh) — instalado e autenticado","prereq_copilot":"Assinatura GitHub Copilot (Chat + modo Agente)","step1_title":"Execute o script de instalação","step1_desc":"Execute a partir da raiz do seu projeto (onde está o .git/)","step2_title":"Ative com /m3a-init","step2_desc":"Personaliza a configuração e ativa todos os 12 agentes para o seu projeto","step2_callout":"Obrigatório antes de qualquer outro comando. O /m3a-init configura os agentes com o stack, time e contexto do seu projeto. Sem ele, os agentes operam sem conhecimento do projeto.","mandatory_label":"⚡ Obrigatório — Execute Primeiro","step3_title":"Inicializar base de conhecimento","step3_desc":"Recomendado para projetos existentes — varredura profunda do código que alimenta toda análise dos agentes","step4_title":"Comece a usar os comandos","step4_desc":"Todos os comandos /m3a-* estão disponíveis no Copilot Chat","windows_label":"Windows PowerShell","linux_label":"Linux / macOS"},"footer":{"tagline":"Tecnologia para impacto","copyright":"© 2026 Minsait (An Indra Company) — Todos os direitos reservados","github":"Ver no GitHub"},"workflow_cards":{"new_project":{"name":"Novo Projeto","desc":"Bootstrap greenfield: PRD → arquitetura C4 → DevContainer → planejamento do Sprint 1","agents":"Drucker · Vitruvius · Atlas · Descartes · Deming"},"existing":{"name":"Projeto Existente","desc":"Onboarding legado: análise AS-IS → base de conhecimento → análise de lacunas → roadmap de modernização","agents":"Descartes · Vitruvius · Hobbes · Deming"},"epic_planning":{"name":"Planejamento de Épico","desc":"Criação de épico → verificação anti-duplicata → revisão multi-agente → aprovação → sprint","agents":"Todos os 12 agentes"},"story_done":{"name":"Gate de Story Concluída","desc":"5 agentes revisam cirurgicamente cada story. QA, Segurança e Desenvolvedor têm poder de veto.","agents":"Popper · Hobbes · Knuth · Vitruvius · Borges"},"epic_done":{"name":"Gate de Épico Concluído","desc":"9 agentes revisam sistemicamente o épico completo. Arquiteto e DBA com veto elevado.","agents":"9 agentes revisores"},"docs_portal":{"name":"Portal de Docs","desc":"Gera o portal HTML com marca Minsait com trackers de rollout e relatórios de sprint","agents":"Borges"},"knowledge":{"name":"Bootstrap de Conhecimento","desc":"Inicialização completa da base de conhecimento a partir de varredura, docs e ADRs","agents":"Descartes · Borges"},"migration":{"name":"Plano de Migração","desc":"Planejamento de migração multi-agente: baseline AS-IS → TO-BE → análise de lacunas → roadmap faseado","agents":"Vitruvius · Descartes · Hobbes · Atlas · Codd"},"dep_audit":{"name":"Auditoria de Dependências","desc":"Inventário completo, varredura de CVEs, calendário EOL e recomendações de atualização","agents":"Hobbes · Descartes · Codd"},"release":{"name":"Ciclo de Release","desc":"Governança de release end-to-end: ADRs → runbooks → release notes → aprovação de gate de risco","agents":"Vitruvius · Atlas · Borges · Drucker"},"incident":{"name":"Incidente & Troubleshooting","desc":"Protocolo War Room: análise de causa raiz, mitigação, lições aprendidas (apenas humano)","agents":"Todos os 12 agentes"}}},"es":{"lang":"es","nav":{"about":"Sobre","agents":"Agentes","features":"Funcionalidades","skills":"Skills","workflows":"Workflows","laws":"Leyes","commands":"Comandos","install":"Instalar"},"hero":{"title":"M3A Team","subtitle":"Framework Multi-Agente de IA Minsait — agentes especializados orquestados dentro de VS Code, con GitHub Copilot","cta":"Empezar Ahora","version":"v2.6.0","stat_agents":"Agentes Especializados","stat_gates":"Quality Gates","stat_commands":"Comandos","stat_skills":"Skills","stat_workflows":"Workflows","stat_laws":"Leyes"},"about":{"heading":"¿Qué es M3A Team?","p1":"M3A Team (Minsait Multi Agents Team) es un ecosistema multi-agente de IA empresarial y reutilizable, diseñado para cualquier proyecto Minsait — nuevo o existente, cualquier stack, cualquier dominio.","p2":"Proporciona un equipo de 12 agentes de IA especializados, cada uno con una persona distinta inspirada en figuras históricas e intelectuales. Los agentes colaboran en quality gates, aplican decisiones arquitectónicas y producen documentación de nivel ejecutivo — todo dentro de VS Code usando el modo Agente de GitHub Copilot.","p3":"Sin servicios externos, sin suscripciones cloud más allá de Copilot. Instala con un comando, activa con /m3a-init, y todo tu equipo obtiene una fuerza de trabajo de IA estructurada gobernada por 13 leyes inmutables.","highlight1_title":"Funciona Dentro de VS Code","highlight1_desc":"Sin herramientas o plataformas externas. Los agentes operan como modos de agente de Copilot directamente en tu editor.","highlight2_title":"Cero Dependencias Cloud","highlight2_desc":"Todo vive en tu repositorio en .github/ — completamente versionado y revisable vía PR.","highlight3_title":"13 Leyes Inmutables","highlight3_desc":"Gobernanza integrada en cada agente: conocimiento primero, sin silencio en revisiones, consenso obligatorio, honestidad operacional."},"agents":{"heading":"El Equipo de Agentes","description":"12 agentes especializados, cada uno con persona distinta y área de expertise. Haz clic en cualquier tarjeta para ver todas las capacidades.","orchestrator":{"icon":"⚡","role":"Orquestador","persona":"Marcus Aurelius","motto":"Gobierna sin ejecutar — decisiones bajo presión con racionalidad y visión a largo plazo.","capabilities":["Enruta solicitudes al agente especializado correcto","Coordina sesiones de revisión multi-agente","Aplica las 13 leyes inmutables de gobernanza","Gestiona el flujo de creación y aprobación de épicos","Consolida veredictos de revisión de todos los agentes","Registra todas las decisiones del proyecto en la base de conocimiento"]},"analyst":{"icon":"📊","role":"Analista","persona":"Descartes","motto":"Descomponer cada problema en partes hasta que nada quede sin explicar.","capabilities":["Análisis AS-IS y descomposición de módulos","Auditoría de CVEs e inventario de dependencias","Análisis de componentes: superficial, intermedio y profundo","Evaluación de compatibilidad e impacto técnico","Verificación de EOL y mapeo de ciclo de vida tecnológico","Construcción de la base de conocimiento desde escaneo del código"]},"architect":{"icon":"🏗️","role":"Arquitecto","persona":"Vitruvius","motto":"Firmitas, Utilitas, Venustas — la buena arquitectura sirve al propósito, es robusta y sobrevive al tiempo.","capabilities":["Diseño de arquitectura TO-BE y planificación de migración","Creación de Architecture Decision Records (ADR)","Diagramas C4 (Contexto, Contenedor, Componente)","Análisis de viabilidad técnica para épicos","Análisis de brechas en migración de stack (AS-IS → TO-BE)","Evaluación de riesgo de épicos con poder de veto elevado"]},"pm":{"icon":"📋","role":"Product Manager","persona":"Drucker","motto":"La eficacia es hacer las cosas correctas. Lo que no genera valor no existe.","capabilities":["Creación de épicos con proceso estructurado de brainstorm","Verificación anti-duplicados en el backlog","Priorización del backlog y planificación del roadmap","Creación de PRD (Product Requirements Document)","Definición y refinamiento de criterios de aceptación","Roadmap de modernización para proyectos legados"]},"sm":{"icon":"🏃","role":"Scrum Master","persona":"Deming","motto":"Los buenos resultados vienen de buenos sistemas, no de héroes.","capabilities":["Planificación de sprint (nunca más allá del Sprint N+1)","Creación y descomposición de stories desde épicos","Seguimiento y gestión del estado del sprint","Reviews, retrospectivas y seguimiento de velocidad","Aplicación de Definition of Ready / Definition of Done","Cadencia de equipo y mejora continua de procesos"]},"dev":{"icon":"💻","role":"Desarrollador","persona":"Knuth","motto":"La optimización prematura es la raíz de todo mal. El código debe sobrevivir décadas.","capabilities":["Implementación de stories con Red-Green-Refactor","Code review y refactorización estructurada","Soporte multi-stack (Java, .NET, Python, Node, etc.)","Propuestas de especificación técnica","Análisis a nivel de módulo para planificación de implementación","Generación de DevContainer para ambientes reproducibles"]},"qa":{"icon":"🔍","role":"QA Engineer","persona":"Popper","motto":"Solo lo que puede ser falsificado puede ser validado.","capabilities":["Estrategia y planificación de pruebas por story/épico","Validación de criterios de aceptación y revisión de testabilidad","Aplicación de Definition of Done en los quality gates","Estrategia de cobertura de pruebas y análisis de brechas","Participación en gates de story-done y epic-done","Seguimiento de métricas de calidad y reportes"]},"security":{"icon":"🔒","role":"Ingeniero de Seguridad","persona":"Hobbes","motto":"Sin seguridad adecuada, los sistemas son solitarios, pobres, desagradables, brutales y efímeros.","capabilities":["Auditoría OWASP Top 10 y verificación de conformidad","Escaneo de CVEs en dependencias y planes de remediación","Recomendaciones de hardening del sistema","Análisis de superficie de ataque y modelado de amenazas","Poder de VETO — bloquea cualquier épico o story insegura","Baseline de seguridad y checklists de hardening"]},"devops":{"icon":"☁️","role":"Ingeniero DevOps","persona":"Atlas","motto":"Sin infraestructura confiable, el software no existe en producción.","capabilities":["Setup de Docker y containerización","Manifiestos Kubernetes y orquestación","Diseño y automatización de pipelines CI/CD","Generación de DevContainer para onboarding del equipo","Automatización de despliegue y gestión de ambientes","Estándares de observabilidad (logging, métricas, tracing)"]},"docs":{"icon":"📄","role":"Technical Writer","persona":"Borges","motto":"El desafío no es crear — es estructurar para que pueda ser encontrado.","capabilities":["Portales HTML de documentación con marca Minsait","Reportes de nivel ejecutivo para stakeholders","Curación y mantenimiento de la base de conocimiento","Generación de portales con trackers de rollout","Documentación de agentes y gestión de changelog"]},"ux":{"icon":"🎨","role":"Diseñador UX/UI","persona":"Norman","motto":"El buen diseño hace comprensibles las cosas complejas.","capabilities":["Análisis de usabilidad y evaluación heurística","Revisión de diseño de interfaz y recomendaciones","Auditoría de accesibilidad WCAG y conformidad","Revisión de design system y verificación de consistencia","Mapeo de journey del usuario y optimización de flujo","Análisis de componentes UI y propuestas de mejora"]},"dba":{"icon":"🗄️","role":"Arquitecto de Base de Datos","persona":"Codd","motto":"Los datos deben ser accedidos por su contenido, no por su ubicación.","capabilities":["Diseño, análisis y optimización de schemas","Scripts de migración de base de datos reversibles","Tuning de rendimiento de queries y estrategia de indexación","Evaluación de impacto en base de datos para épicos","Orientación en patrones DAO/Repository","Evaluación de ORM y revisión de la capa de acceso a datos"]}},"features":{"heading":"Funcionalidades Principales","description":"Un workflow de ingeniería completo con IA — de la idea a producción.","bootstrap":{"title":"Bootstrap de Nuevo Producto","description":"Ve de una idea de producto a tu primer sprint en un proceso estructurado, guiado por agentes.","steps":["Drucker crea el PRD y define la visión del producto","Vitruvius diseña la arquitectura TO-BE con diagramas C4","Atlas genera DevContainers y scaffolding de CI/CD","Descartes escanea el panorama y construye la base de conocimiento","Deming planifica el Sprint 1 con stories y criterios de aceptación"],"agents_involved":"Drucker → Vitruvius → Atlas → Descartes → Deming"},"quality_gates":{"title":"Quality Gates","story_title":"Gate de Story Completada","story_desc":"5 agentes realizan una revisión quirúrgica de cada story completada. QA, Seguridad y Desarrollador tienen poder de veto — un rechazo bloquea la story.","story_agents":"QA · Seguridad · Desarrollador · Arquitecto · Docs","epic_title":"Gate de Épico Completado","epic_desc":"Hasta 9 agentes realizan una revisión sistémica de todo el épico. Arquitecto y DBA obtienen poder de veto elevado. Ningún agente puede permanecer en silencio.","epic_agents":"QA · Seguridad · Desarrollador · Arquitecto · Docs · PM + DBA · DevOps · UX","veto_label":"Poder de Veto","warning_label":"Rol Consultivo"},"platform_title":"Funcionalidades de la Plataforma","knowledge":{"title":"Orientado por Conocimiento","description":"Cada decisión, convención y elección arquitectónica se registra en una base de conocimiento estructurada que crece con tu proyecto.","points":["Descartes construye la base de conocimiento desde escaneos profundos","Marcus Aurelius registra todas las decisiones en el log de decisiones","Borges curación y estructura la documentación para facilitar búsqueda","Todos los agentes leen el conocimiento antes de actuar — Ley 1: Conocimiento Primero"]},"multistack":{"title":"Soporte Multi-Stack","description":"Funciona con cualquier stack tecnológico. M3A detecta automáticamente lenguajes, frameworks y herramientas del proyecto — y adapta los 12 agentes.","stacks":"Java · .NET · Python · Node.js · Go · Angular · React · Vue · y más"},"executive_docs":{"title":"Documentación Ejecutiva","description":"Borges traduce análisis técnicos en reportes de nivel ejecutivo con identidad visual Minsait.","points":["Portales HTML con marca Minsait y tipografía ForFutureSans","Traducción automática Capa 1 → Capa 2 (técnico → ejecutivo)","Reportes de sprint, resúmenes de épicos, registros de riesgo","Trackers de rollout y release notes"]},"security_first":{"title":"Seguridad Primero","description":"Hobbes tiene poder de VETO absoluto — ningún épico o story insegura pasa la revisión. La seguridad no es un detalle, se impone en cada gate.","points":["Auditoría OWASP Top 10 en cada revisión","Escaneo de CVEs en dependencias con planes de remediación","Hardening del sistema y análisis de superficie de ataque","Enforcement de baseline de seguridad en todos los stacks"]},"existing_project":{"title":"Proyectos Existentes & Modernización","description":"Comienza desde un código legado, monolito o proyecto en refactorización. M3A mapea el estado AS-IS, identifica deuda técnica y construye un roadmap de modernización estructurado.","steps":["Descartes realiza análisis AS-IS: escaneo de stack, CVEs, descomposición de módulos","Base de conocimiento construida desde el código, docs y artefactos de arquitectura","Vitruvius diseña la arquitectura TO-BE con análisis de brechas de la migración","Hobbes audita la postura de seguridad y exposición de CVEs","Drucker crea el roadmap de modernización con épicos priorizados"],"agents_involved":"Descartes → Vitruvius → Hobbes → Drucker → Deming"}},"commands":{"heading":"Comandos Disponibles","description":"Todos los comandos /m3a-* disponibles tras la instalación. Ejecútalos en Copilot Chat de VS Code.","col_command":"Comando","col_description":"Descripción","cat_init":"Inicialización","cat_arch":"Evaluación & Arquitectura","cat_quality":"Calidad & Gobernanza","cat_docs":"Documentación","cat_ops":"Operaciones","cat_utils":"Utilidades","cmd_init":"Empieza aquí — asistente de onboarding, personaliza la configuración","cmd_upgrade":"Upgrade del setup de agentes (minimal → full) sin reconfiguración","cmd_init_new":"Scaffold de proyecto greenfield (PRD → C4 → DevContainer)","cmd_init_existing":"Escaneo de proyecto existente/legado (AS-IS → base de conocimiento)","cmd_init_knowledge":"Escaneo profundo + bootstrap de la base de conocimiento","cmd_init_docs":"Scaffold de portal de documentación","cmd_init_epic":"Estructura de backlog + tracker de épicos/stories","cmd_assessment":"Diagnóstico técnico completo (inventario, deuda, CVEs, riesgos)","cmd_c4":"Generar diagramas C4 (Contexto, Contenedor, Componente)","cmd_adr":"Generar Architecture Decision Record","cmd_migration":"Plan de migración de stack (análisis de brechas AS-IS → TO-BE)","cmd_quality_gates":"Checklists de Definition of Done por tipo de entrega","cmd_risk_gates":"Evaluación Go/No-Go (requiere aprobación humana)","cmd_dep_audit":"Escaneo de CVEs, calendario EOL, recomendaciones de actualización","cmd_sec_baseline":"Baseline OWASP, checklist de hardening","cmd_story_done":"Quality gate de conclusión de story — revisión paralela de 5 agentes","cmd_epic_done":"Gate sistémico de conclusión de épico — revisión de hasta 9 agentes","cmd_doc_portal":"Generar portal HTML de documentación con marca Minsait","cmd_runbook":"Generar runbook operacional","cmd_release_notes":"Generar release notes desde el alcance de versión","cmd_troubleshooting":"Diagnóstico estructurado: síntomas → causas → correcciones","cmd_observability":"Estándares de logging, métricas, tracing","cmd_incident":"War room de incidentes (activación solo humana)","cmd_plan_issues":"Crear issues estandarizadas en GitHub/GitLab","cmd_refactor":"Análisis war room → plan → épicos (nunca reescribe automáticamente)","cmd_create_agent":"Crear scaffold de nuevo agente personalizado","cmd_create_devcontainer":"Generar .devcontainer/ para tu stack","cmd_data_class":"Política de clasificación de datos, inventario PII","cmd_doctor":"Validar instalación y configuración de M3A Team","cmd_prompt_enricher":"Enriquecer prompts débiles antes del enrutamiento"},"skills":{"heading":"Skills","description":"25 skills especializadas de prompts — rutinas de automatización para operaciones complejas y multi-paso."},"workflows":{"heading":"Workflows","description":"11 procesos multi-agente estructurados — protocolos de coordinación del bootstrap a los quality gates."},"laws":{"heading":"13 Leyes Inmutables","description":"Gobernanza integrada en cada agente. Absolutas, inviolables, aplicadas en cada interacción.","items":[{"n":"01","name":"Conocimiento Primero","desc":"Todo agente lee la base de conocimiento antes de cualquier acción. El nuevo conocimiento actualiza físicamente los archivos — nunca queda solo en el chat."},{"n":"02","name":"Chat Mínimo","desc":"Solo formatos de estado en el chat: ✅ archivo, ⚠️ aviso, ❌ bloqueado. Sin narración, sin razonamiento, sin duplicación de contenido."},{"n":"03","name":"Anti-Duplicados","desc":"Antes de crear cualquier cosa, verificar en el backlog épicos, stories y análisis similares ya existentes."},{"n":"04","name":"Aprendizaje Continuo","desc":"Todo nuevo conocimiento relevante sobre el proyecto actualiza físicamente la base de conocimiento — nunca se pierde."},{"n":"05","name":"War Room = Solo Humano","desc":"Ningún agente activa un War Room automáticamente. Los agentes solo pueden sugerirlo al humano con justificación clara."},{"n":"06","name":"Sin Silencio en Revisiones","desc":"Todo agente evalúa todo épico desde su lente especializada. El silencio requiere justificación documentada explícita."},{"n":"07","name":"Consenso Obligatorio","desc":"Los desacuerdos entre agentes deben resolverse con intercambio de evidencias. Sin resolución en 2 rondas → escalar al humano."},{"n":"08","name":"Sprint a Sprint","desc":"Nunca detallar más allá del Sprint N+1. Cada sprint se refina basándose en los resultados reales del sprint anterior."},{"n":"09","name":"Aprobación Multi-Agente","desc":"Ningún épico avanza de borrador a aprobado con ningún agente bloqueado (❌). Los 12 agentes deben revisar y responder."},{"n":"10","name":"Dos Capas de Output","desc":"Capa 1: operacional/técnica (interna). Capa 2: ejecutiva (para gestión). El agente Docs traduce entre ellas."},{"n":"11","name":"Versionado de Agentes","desc":"Toda actualización de agente incrementa la versión semántica y añade una entrada al changelog. La trazabilidad total es obligatoria."},{"n":"12","name":"Build Siempre Pasa","desc":"Ninguna story está terminada sin evidencia de un build exitoso. Build roto = story vuelve a en-progreso."},{"n":"13","name":"Honestidad Operacional","desc":"Un agente que saltó un paso obligatorio debe declararlo activamente. El silencio sobre una desviación equivale a una declaración falsa."}]},"install":{"heading":"Instalar M3A Team","description":"Un comando instala los 12 agentes en cualquier proyecto VS Code con GitHub Copilot.","prerequisites":"Requisitos Previos","prereq_heading":"⚠️ Requisitos Previos — Obligatorios antes de instalar","prereq_desc":"Asegúrate de tener los tres antes de ejecutar el script de instalación.","prereq_vscode":"VS Code con extensión GitHub Copilot","prereq_cli":"GitHub CLI (gh) — instalado y autenticado","prereq_copilot":"Suscripción GitHub Copilot (Chat + modo Agente)","step1_title":"Ejecuta el script de instalación","step1_desc":"Ejecuta desde la raíz de tu proyecto (donde está el .git/)","step2_title":"Activa con /m3a-init","step2_desc":"Personaliza la configuración y activa los 12 agentes para tu proyecto","step2_callout":"Obligatorio antes de cualquier otro comando. /m3a-init configura los agentes con el stack, equipo y contexto de tu proyecto. Sin él, los agentes operan sin conocimiento del proyecto.","mandatory_label":"⚡ Obligatorio — Ejecuta Primero","step3_title":"Inicializar base de conocimiento","step3_desc":"Recomendado para proyectos existentes — escaneo profundo del código que alimenta todo el análisis de los agentes","step4_title":"Empieza a usar los comandos","step4_desc":"Todos los comandos /m3a-* están disponibles en Copilot Chat","windows_label":"Windows PowerShell","linux_label":"Linux / macOS"},"footer":{"tagline":"Tecnología para el impacto","copyright":"© 2026 Minsait (An Indra Company) — Todos los derechos reservados","github":"Ver en GitHub"},"workflow_cards":{"new_project":{"name":"Nuevo Proyecto","desc":"Bootstrap greenfield: PRD → arquitectura C4 → DevContainer → planificación del Sprint 1","agents":"Drucker · Vitruvius · Atlas · Descartes · Deming"},"existing":{"name":"Proyecto Existente","desc":"Onboarding legado: análisis AS-IS → base de conocimiento → análisis de brechas → roadmap de modernización","agents":"Descartes · Vitruvius · Hobbes · Deming"},"epic_planning":{"name":"Planificación de Épico","desc":"Creación de épico → verificación anti-duplicados → revisión multi-agente → aprobación → sprint","agents":"Todos los 12 agentes"},"story_done":{"name":"Gate de Story Completada","desc":"5 agentes revisan quirúrgicamente cada story. QA, Seguridad y Desarrollador tienen poder de veto.","agents":"Popper · Hobbes · Knuth · Vitruvius · Borges"},"epic_done":{"name":"Gate de Épico Completado","desc":"9 agentes revisan sistémicamente el épico completo. Arquitecto y DBA con veto elevado.","agents":"9 agentes revisores"},"docs_portal":{"name":"Portal de Docs","desc":"Genera el portal HTML con marca Minsait con trackers de rollout y reportes de sprint","agents":"Borges"},"knowledge":{"name":"Bootstrap de Conocimiento","desc":"Inicialización completa de la base de conocimiento desde escaneo, docs y ADRs","agents":"Descartes · Borges"},"migration":{"name":"Plan de Migración","desc":"Planificación de migración multi-agente: baseline AS-IS → TO-BE → análisis de brechas → roadmap por fases","agents":"Vitruvius · Descartes · Hobbes · Atlas · Codd"},"dep_audit":{"name":"Auditoría de Dependencias","desc":"Inventario completo, escaneo de CVEs, calendario EOL y recomendaciones de actualización","agents":"Hobbes · Descartes · Codd"},"release":{"name":"Ciclo de Release","desc":"Gobernanza de release end-to-end: ADRs → runbooks → release notes → aprobación de gate de riesgo","agents":"Vitruvius · Atlas · Borges · Drucker"},"incident":{"name":"Incidente & Troubleshooting","desc":"Protocolo War Room: análisis de causa raíz, mitigación, lecciones aprendidas (solo humano)","agents":"Todos los 12 agentes"}}}
+    };
+    let currentLang = 'en';
+    let currentTranslations = null;
+
+    function switchLang(lang) {
+        if (!i18nCache[lang]) { console.warn('i18n: unknown lang', lang); return; }
+        currentLang = lang;
+        currentTranslations = i18nCache[lang];
+        applyTranslations(currentTranslations);
+        renderAgents(currentTranslations);
+        renderBootstrapTimeline(currentTranslations);
+        renderExistingProjectTimeline(currentTranslations);
+        renderCommands(currentTranslations);
+        renderSkills(currentTranslations, true);
+        renderWorkflows(currentTranslations, true);
+        renderLaws(currentTranslations, true);
+
+        document.querySelectorAll('.lang-btn').forEach(function(btn) {
+            btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+        document.documentElement.lang = lang === 'pt-br' ? 'pt-BR' : lang === 'es' ? 'es' : 'en';
+    }
+
+    function resolve(obj, path) {
+        return path.split('.').reduce(function(o, k) { return o && o[k]; }, obj);
+    }
+
+    function applyTranslations(t) {
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+            var val = resolve(t, el.getAttribute('data-i18n'));
+            if (val !== undefined && val !== null && typeof val === 'string') {
+                el.textContent = val;
+            }
+        });
+        document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+            var val = resolve(t, el.getAttribute('data-i18n-html'));
+            if (val !== undefined && val !== null) {
+                if (Array.isArray(val)) {
+                    el.innerHTML = val.map(function(v) { return '<li>' + escapeHtml(v) + '</li>'; }).join('');
+                } else if (typeof val === 'string') {
+                    el.textContent = val;
+                }
+            }
+        });
+    }
+
+    function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    /* ═══════════════════════════════════════════════
+       Render Agents Grid
+    ═══════════════════════════════════════════════ */
+    var agentKeys = ['orchestrator','analyst','architect','pm','sm','dev','qa','security','devops','docs','ux','dba'];
+
+    function renderAgents(t) {
+        var grid = document.getElementById('agentsGrid');
+        grid.innerHTML = '';
+        agentKeys.forEach(function(key) {
+            var a = t.agents[key];
+            if (!a) return;
+            var card = document.createElement('article');
+            card.className = 'agent-card reveal visible';
+            card.onclick = function() { card.classList.toggle('expanded'); };
+
+            var capsHtml = '';
+            if (a.capabilities && a.capabilities.length) {
+                capsHtml = '<ul class="agent-capabilities">' +
+                    a.capabilities.map(function(c) { return '<li>' + escapeHtml(c) + '</li>'; }).join('') +
+                    '</ul>';
+            }
+
+            card.innerHTML =
+                '<div class="agent-card-header">' +
+                    '<div class="agent-icon">' + escapeHtml(a.icon) + '</div>' +
+                    '<div>' +
+                        '<div class="agent-role">' + escapeHtml(a.role) + '</div>' +
+                        '<div class="agent-persona">' + escapeHtml(a.persona) + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="agent-motto">"' + escapeHtml(a.motto) + '"</div>' +
+                capsHtml;
+
+            grid.appendChild(card);
+        });
+    }
+
+    /* ═══════════════════════════════════════════════
+       Render Bootstrap Timeline
+    ═══════════════════════════════════════════════ */
+    function renderBootstrapTimeline(t) {
+        var container = document.getElementById('bootstrapTimeline');
+        var steps = t.features && t.features.bootstrap && t.features.bootstrap.steps;
+        if (!steps || !steps.length) return;
+        container.innerHTML = '';
+        steps.forEach(function(step, i) {
+            var div = document.createElement('div');
+            div.className = 'timeline-step';
+            div.innerHTML = '<div class="timeline-dot">' + (i + 1) + '</div><p>' + escapeHtml(step) + '</p>';
+            container.appendChild(div);
+        });
+    }
+
+    function renderExistingProjectTimeline(t) {
+        var container = document.getElementById('existingProjectTimeline');
+        if (!container) return;
+        var steps = t.features && t.features.existing_project && t.features.existing_project.steps;
+        if (!steps || !steps.length) return;
+        container.innerHTML = '';
+        steps.forEach(function(step, i) {
+            var div = document.createElement('div');
+            div.className = 'timeline-step';
+            div.innerHTML = '<div class="timeline-dot">' + (i + 1) + '</div><p>' + escapeHtml(step) + '</p>';
+            container.appendChild(div);
+        });
+    }
+
+    /* ═══════════════════════════════════════════════
+       Render Commands Table
+    ═══════════════════════════════════════════════ */
+    var commandsData = [
+        { cat: 'cat_init', commands: [
+            { name: '/m3a-init', key: 'cmd_init' },
+            { name: '/m3a-update-latest', key: 'cmd_upgrade' },
+            { name: '/m3a-init-knowledge', key: 'cmd_init_knowledge' },
+            { name: '/m3a-init-docs', key: 'cmd_init_docs' },
+            { name: '/m3a-init-epic', key: 'cmd_init_epic' }
+        ]},
+        { cat: 'cat_arch', commands: [
+            { name: '/m3a-assessment', key: 'cmd_assessment' },
+            { name: '/m3a-architecture-c4', key: 'cmd_c4' },
+            { name: '/m3a-adr', key: 'cmd_adr' },
+            { name: '/m3a-migration-planner', key: 'cmd_migration' }
+        ]},
+        { cat: 'cat_quality', commands: [
+            { name: '/m3a-quality-gates', key: 'cmd_quality_gates' },
+            { name: '/m3a-risk-gates', key: 'cmd_risk_gates' },
+            { name: '/m3a-dependency-audit', key: 'cmd_dep_audit' },
+            { name: '/m3a-security-baseline', key: 'cmd_sec_baseline' },
+            { name: '/m3a-story-done', key: 'cmd_story_done' },
+            { name: '/m3a-epic-done', key: 'cmd_epic_done' }
+        ]},
+        { cat: 'cat_docs', commands: [
+            { name: '/m3a-create-html', key: 'cmd_create_html' },
+            { name: '/m3a-create-pdf', key: 'cmd_create_pdf' },
+            { name: '/m3a-create-doc-portal', key: 'cmd_doc_portal' },
+            { name: '/m3a-runbook', key: 'cmd_runbook' },
+            { name: '/m3a-release-notes', key: 'cmd_release_notes' }
+        ]},
+        { cat: 'cat_ops', commands: [
+            { name: '/m3a-troubleshooting', key: 'cmd_troubleshooting' },
+            { name: '/m3a-observability', key: 'cmd_observability' },
+            { name: '/m3a-incident', key: 'cmd_incident' },
+            { name: '/m3a-plan-issues', key: 'cmd_plan_issues' },
+            { name: '/m3a-refactor', key: 'cmd_refactor' }
+        ]},
+        { cat: 'cat_utils', commands: [
+            { name: '/m3a-create-agent', key: 'cmd_create_agent' },
+            { name: '/m3a-create-dev-container', key: 'cmd_create_devcontainer' },
+            { name: '/m3a-data-classification', key: 'cmd_data_class' },
+            { name: '/m3a-doctor', key: 'cmd_doctor' },
+            { name: '/m3a-prompt-enricher', key: 'cmd_prompt_enricher' },
+            { name: '/m3a-restore-customizations', key: 'cmd_restore_customizations' }
+        ]}
+    ];
+
+    function renderCommands(t) {
+        var tbody = document.getElementById('commandsBody');
+        tbody.innerHTML = '';
+        commandsData.forEach(function(group) {
+            var catName = t.commands[group.cat] || group.cat;
+            var catRow = document.createElement('tr');
+            catRow.className = 'cat-row';
+            catRow.innerHTML = '<td colspan="2">' + escapeHtml(catName) + '</td>';
+            tbody.appendChild(catRow);
+
+            group.commands.forEach(function(cmd) {
+                var desc = t.commands[cmd.key] || '';
+                var row = document.createElement('tr');
+                row.innerHTML = '<td class="cmd-name">' + escapeHtml(cmd.name) + '</td><td class="cmd-desc">' + escapeHtml(desc) + '</td>';
+                tbody.appendChild(row);
+            });
+        });
+    }
+
+    /* ═══════════════════════════════════════════════
+       Skills Data & Renderer
+    ═══════════════════════════════════════════════ */
+    var skillsData = [
+        {icon:'🚀', name:'/m3a-init',               cmdKey:'cmd_init'},
+        {icon:'⬆️', name:'/m3a-update-latest',        cmdKey:'cmd_upgrade'},
+        {icon:'🔁', name:'/m3a-restore-customizations',cmdKey:'cmd_restore_customizations'},
+        {icon:'✨', name:'/m3a-prompt-enricher',     cmdKey:'cmd_prompt_enricher'},
+        {icon:'🔄', name:'/m3a-refactor',            cmdKey:'cmd_refactor'},
+        {icon:'🤖', name:'/m3a-create-agent',        cmdKey:'cmd_create_agent'},
+        {icon:'🐳', name:'/m3a-create-dev-container',cmdKey:'cmd_create_devcontainer'},
+        {icon:'📄', name:'/m3a-init-docs',           cmdKey:'cmd_init_docs'},
+        {icon:'📋', name:'/m3a-init-epic',           cmdKey:'cmd_init_epic'},
+        {icon:'🧠', name:'/m3a-init-knowledge',      cmdKey:'cmd_init_knowledge'},
+        {icon:'🔍', name:'/m3a-troubleshooting',     cmdKey:'cmd_troubleshooting'},
+        {icon:'📊', name:'/m3a-assessment',          cmdKey:'cmd_assessment'},
+        {icon:'🏗️', name:'/m3a-architecture-c4',    cmdKey:'cmd_c4'},
+        {icon:'📝', name:'/m3a-adr',                 cmdKey:'cmd_adr'},
+        {icon:'🗺️', name:'/m3a-migration-planner',  cmdKey:'cmd_migration'},
+        {icon:'🪄', name:'/m3a-create-html',         cmdKey:'cmd_create_html'},
+        {icon:'📄', name:'/m3a-create-pdf',          cmdKey:'cmd_create_pdf'},
+        {icon:'📦', name:'/m3a-create-doc-portal',   cmdKey:'cmd_doc_portal'},
+        {icon:'📖', name:'/m3a-runbook',             cmdKey:'cmd_runbook'},
+        {icon:'📰', name:'/m3a-release-notes',       cmdKey:'cmd_release_notes'},
+        {icon:'✅', name:'/m3a-quality-gates',       cmdKey:'cmd_quality_gates'},
+        {icon:'🚦', name:'/m3a-risk-gates',          cmdKey:'cmd_risk_gates'},
+        {icon:'🔒', name:'/m3a-dependency-audit',    cmdKey:'cmd_dep_audit'},
+        {icon:'🛡️', name:'/m3a-security-baseline',  cmdKey:'cmd_sec_baseline'},
+        {icon:'🏷️', name:'/m3a-data-classification',cmdKey:'cmd_data_class'},
+        {icon:'📡', name:'/m3a-observability',       cmdKey:'cmd_observability'},
+        {icon:'🚨', name:'/m3a-incident',            cmdKey:'cmd_incident'},
+        {icon:'🎫', name:'/m3a-plan-issues',         cmdKey:'cmd_plan_issues'}
+    ];
+
+    function renderSkills(t, forceVisible) {
+        var grid = document.getElementById('skillsGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        skillsData.forEach(function(s) {
+            var desc = (t && t.commands && t.commands[s.cmdKey]) || '';
+            var card = document.createElement('div');
+            card.className = 'skill-card reveal' + (forceVisible ? ' visible' : '');
+            card.innerHTML =
+                '<div class="skill-icon">' + s.icon + '</div>' +
+                '<div class="skill-name">' + escapeHtml(s.name) + '</div>' +
+                '<div class="skill-desc">' + escapeHtml(desc) + '</div>';
+            grid.appendChild(card);
+        });
+    }
+
+    /* ═══════════════════════════════════════════════
+       Workflows Data & Renderer
+    ═══════════════════════════════════════════════ */
+    var workflowsData = [
+        {icon:'🌱', key:'new_project'},
+        {icon:'🏛️', key:'existing'},
+        {icon:'📌', key:'epic_planning'},
+        {icon:'✅', key:'story_done'},
+        {icon:'🏆', key:'epic_done'},
+        {icon:'📖', key:'docs_portal'},
+        {icon:'🗄️', key:'knowledge'},
+        {icon:'🗺️', key:'migration'},
+        {icon:'🔒', key:'dep_audit'},
+        {icon:'📦', key:'release'},
+        {icon:'🚨', key:'incident'}
+    ];
+
+    function renderWorkflows(t, forceVisible) {
+        var grid = document.getElementById('workflowsGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        workflowsData.forEach(function(w) {
+            var wc = t && t.workflow_cards && t.workflow_cards[w.key];
+            var name   = (wc && wc.name)   || w.key;
+            var desc   = (wc && wc.desc)   || '';
+            var agents = (wc && wc.agents) || '';
+            var card = document.createElement('div');
+            card.className = 'workflow-card reveal' + (forceVisible ? ' visible' : '');
+            card.innerHTML =
+                '<div class="workflow-icon">' + w.icon + '</div>' +
+                '<div class="workflow-name">' + escapeHtml(name) + '</div>' +
+                '<div class="workflow-desc">' + escapeHtml(desc) + '</div>' +
+                '<div class="workflow-agents">' + escapeHtml(agents) + '</div>';
+            grid.appendChild(card);
+        });
+    }
+
+    /* ═══════════════════════════════════════════════
+       Laws Data & Renderer
+    ═══════════════════════════════════════════════ */
+    function renderLaws(t, forceVisible) {
+        var grid = document.getElementById('lawsGrid');
+        if (!grid) return;
+        var items = (t && t.laws && t.laws.items) ? t.laws.items : i18nCache.en.laws.items;
+        grid.innerHTML = '';
+        items.forEach(function(l) {
+            var card = document.createElement('div');
+            card.className = 'law-card reveal' + (forceVisible ? ' visible' : '');
+            card.innerHTML =
+                '<div class="law-number">' + escapeHtml(l.n) + '</div>' +
+                '<div class="law-name">' + escapeHtml(l.name) + '</div>' +
+                '<div class="law-desc">' + escapeHtml(l.desc) + '</div>';
+            grid.appendChild(card);
+        });
+    }
+
+    /* ═══════════════════════════════════════════════
+       Header Scroll
+    ═══════════════════════════════════════════════ */
+    var header = document.getElementById('siteHeader');
+    window.addEventListener('scroll', function() {
+        header.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ═══════════════════════════════════════════════
+       Mobile Menu Toggle
+    ═══════════════════════════════════════════════ */
+    document.getElementById('mobileToggle').addEventListener('click', function() {
+        header.classList.toggle('mobile-open');
+    });
+    document.querySelectorAll('.header-nav a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            header.classList.remove('mobile-open');
+        });
+    });
+
+    /* ═══════════════════════════════════════════════
+       Scroll Reveal (IntersectionObserver)
+    ═══════════════════════════════════════════════ */
+    renderSkills(i18nCache.en);
+    renderWorkflows(i18nCache.en);
+    renderLaws(i18nCache.en, false);
+
+    var revealObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(function(el) {
+        revealObserver.observe(el);
+    });
+
+    /* ═══════════════════════════════════════════════
+       Copy on click — code blocks
+    ═══════════════════════════════════════════════ */
+    document.querySelectorAll('.code-block:not(.no-copy)').forEach(function(block) {
+        block.addEventListener('click', function() {
+            var code = block.querySelector('code');
+            if (!code) return;
+            navigator.clipboard.writeText(code.innerText).then(function() {
+                block.classList.add('copied');
+                setTimeout(function() { block.classList.remove('copied'); }, 1800);
+            });
+        });
+    });
+
+    /* ═══════════════════════════════════════════════
+       Code Tab Switcher
+    ═══════════════════════════════════════════════ */
+    function switchTab(btn, targetId) {
+        var parent = btn.closest('.install-step');
+        parent.querySelectorAll('.code-tab').forEach(function(t) { t.classList.remove('active'); });
+        parent.querySelectorAll('.code-block').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById(targetId).classList.add('active');
+    }
+
+    /* ═══════════════════════════════════════════════
+       Init — Load default language
+    ═══════════════════════════════════════════════ */
+    switchLang('en');
+    </script>
+</body>
+</html>
