@@ -42,9 +42,10 @@ if (supabase) {
 
 // Global State
 let client = null;
-let connectionStatus = 'DISCONNECTED'; // 'DISCONNECTED' | 'INITIALIZING' | 'QR_READY' | 'AUTHENTICATING' | 'CONNECTED' | 'ERROR'
+let connectionStatus = 'DISCONNECTED'; // 'DISCONNECTED' | 'INITIALIZING' | 'QR_READY' | 'PAIRING_CODE_READY' | 'AUTHENTICATING' | 'CONNECTED' | 'ERROR'
 let currentQrCode = null;
 let currentQrDataUrl = null;
+let currentPairingCode = null;
 let connectedUser = null;
 let lastError = null;
 
@@ -259,11 +260,18 @@ function initializeWhatsAppClient() {
       }
     });
 
+    client.on('code', (code) => {
+      console.log(`[WhatsApp Server] 🔑 Código de Pareamento de 8 dígitos recebido: ${code}`);
+      currentPairingCode = code;
+      connectionStatus = 'PAIRING_CODE_READY';
+    });
+
     client.on('authenticated', () => {
       console.log('[WhatsApp Server] Autenticação realizada com sucesso!');
       connectionStatus = 'AUTHENTICATING';
       currentQrCode = null;
       currentQrDataUrl = null;
+      currentPairingCode = null;
     });
 
     client.on('ready', async () => {
@@ -271,6 +279,7 @@ function initializeWhatsAppClient() {
       connectionStatus = 'CONNECTED';
       currentQrCode = null;
       currentQrDataUrl = null;
+      currentPairingCode = null;
 
       try {
         const info = client.info;
@@ -759,12 +768,13 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy', uptime: process.uptime() });
 });
 
-// 1. Get Connection Status & QR Code
+// 1. Get Connection Status, QR Code & Pairing Code
 app.get('/api/whatsapp/status', (req, res) => {
   res.json({
     status: connectionStatus,
     qrCodeDataUrl: currentQrDataUrl,
     qrCodeRaw: currentQrCode,
+    pairingCode: currentPairingCode,
     user: connectedUser,
     error: lastError
   });
@@ -798,6 +808,71 @@ app.post('/api/whatsapp/initialize', (req, res) => {
   });
 });
 
+// 2b. Request 8-digit Pairing Code (Conectar por número de telefone sem câmera)
+app.post('/api/whatsapp/request-pairing-code', async (req, res) => {
+  const { phoneNumber } = req.body;
+  if (!phoneNumber) {
+    return res.status(400).json({
+      success: false,
+      error: 'Número de telefone é obrigatório.'
+    });
+  }
+
+  let cleanPhone = String(phoneNumber).replace(/\D/g, '');
+  if (!cleanPhone.startsWith('55') && cleanPhone.length <= 11) {
+    cleanPhone = '55' + cleanPhone;
+  }
+
+  console.log(`[WhatsApp Server] 📲 Solicitando Código de Pareamento de 8 dígitos para ${cleanPhone}...`);
+
+  try {
+    if (!client) {
+      initializeWhatsAppClient();
+    }
+
+    // Aguardar até 20 segundos para o cliente carregar e estar pronto para o pareamento
+    let waited = 0;
+    while ((connectionStatus === 'INITIALIZING' || !client) && waited < 20) {
+      await new Promise(r => setTimeout(r, 1000));
+      waited++;
+    }
+
+    if (!client) {
+      return res.status(500).json({
+        success: false,
+        error: 'O cliente do WhatsApp ainda não inicializou. Tente novamente em alguns segundos.'
+      });
+    }
+
+    let code = null;
+    if (typeof client.requestPairingCode === 'function') {
+      code = await client.requestPairingCode(cleanPhone);
+    } else if (typeof client.getPairingCode === 'function') {
+      code = await client.getPairingCode(cleanPhone);
+    } else {
+      throw new Error('Método requestPairingCode não disponível nesta versão do whatsapp-web.js.');
+    }
+
+    currentPairingCode = code || currentPairingCode;
+    connectionStatus = 'PAIRING_CODE_READY';
+
+    console.log(`[WhatsApp Server] 🔑 Código gerado com sucesso: ${currentPairingCode}`);
+
+    res.json({
+      success: true,
+      pairingCode: currentPairingCode,
+      phoneNumber: cleanPhone,
+      status: connectionStatus
+    });
+  } catch (err) {
+    console.error('[WhatsApp Server] Erro ao solicitar código de pareamento:', err);
+    res.status(500).json({
+      success: false,
+      error: err.message || 'Falha ao gerar código de pareamento.'
+    });
+  }
+});
+
 // 3. Disconnect / Logout
 app.post('/api/whatsapp/disconnect', async (req, res) => {
   try {
@@ -820,6 +895,7 @@ app.post('/api/whatsapp/disconnect', async (req, res) => {
     connectedUser = null;
     currentQrCode = null;
     currentQrDataUrl = null;
+    currentPairingCode = null;
 
     res.json({
       success: true,

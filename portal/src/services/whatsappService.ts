@@ -3,9 +3,10 @@ import type { Appointment } from './appointmentService';
 import type { ClientProfile } from './clientService';
 
 export interface WhatsAppWebStatus {
-  status: 'DISCONNECTED' | 'INITIALIZING' | 'QR_READY' | 'AUTHENTICATING' | 'CONNECTED' | 'ERROR';
+  status: 'DISCONNECTED' | 'INITIALIZING' | 'QR_READY' | 'PAIRING_CODE_READY' | 'AUTHENTICATING' | 'CONNECTED' | 'ERROR';
   qrCodeDataUrl: string | null;
   qrCodeRaw: string | null;
+  pairingCode?: string | null;
   user?: {
     pushname?: string;
     phone?: string;
@@ -257,6 +258,35 @@ export const whatsappService = {
       qrCodeRaw: null,
       error: 'Não foi possível conectar ao servidor WhatsApp Web. Verifique a URL do servidor.',
     };
+  },
+
+  // 2b. Request 8-Digit Pairing Code (Phone Number Pairing)
+  async requestPairingCode(phoneNumber: string): Promise<WhatsAppWebStatus & { pairingCode?: string }> {
+    const url = `${this.getBaseUrl()}/request-pairing-code`;
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber }),
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      const errData = await response.json().catch(() => ({}));
+      return {
+        status: 'ERROR',
+        qrCodeDataUrl: null,
+        qrCodeRaw: null,
+        error: errData.error || 'Erro ao gerar código de pareamento no servidor.',
+      };
+    } catch (err: any) {
+      return {
+        status: 'ERROR',
+        qrCodeDataUrl: null,
+        qrCodeRaw: null,
+        error: err?.message || 'Falha de conexão com o servidor.',
+      };
+    }
   },
 
   // 3. Disconnect / Logout
