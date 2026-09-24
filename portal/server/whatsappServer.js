@@ -732,7 +732,19 @@ setInterval(async () => {
   }
 }, 20000);
 
-// REST Endpoints
+// Health Check & Root
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'GlowApp WhatsApp Server',
+    connectionStatus,
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'healthy', uptime: process.uptime() });
+});
 
 // 1. Get Connection Status & QR Code
 app.get('/api/whatsapp/status', (req, res) => {
