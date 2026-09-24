@@ -9,9 +9,11 @@
     "whatsapp": "node server/whatsappServer.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "dependencies": {
+    "puppeteer": "^24.4.0",
     "@base-ui/react": "^1.5.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",

@@ -177,22 +177,26 @@ function initializeWhatsAppClient() {
   lastError = null;
 
   try {
+    const puppeteerOptions = {
+      headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--disable-gpu',
+        '--single-process'
+      ]
+    };
+
     client = new Client({
       authStrategy: new LocalAuth({
         dataPath: './.wwebjs_auth'
       }),
-      puppeteer: {
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--disable-gpu'
-        ]
-      }
+      puppeteer: puppeteerOptions
     });
 
     client.on('qr', async (qr) => {
