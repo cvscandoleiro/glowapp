@@ -151,6 +151,11 @@ export const RemindersView: React.FC = () => {
   // Resend confirmation modal state
   const [resendConfirmAppointment, setResendConfirmAppointment] = useState<Appointment | null>(null);
 
+  // Guided Fast-Dispatch Modal State (Free 1-by-1 WhatsApp Queue Assistant)
+  const [isGuidedModalOpen, setIsGuidedModalOpen] = useState(false);
+  const [guidedQueue, setGuidedQueue] = useState<ReminderGroup[]>([]);
+  const [guidedIndex, setGuidedIndex] = useState(0);
+
   // Template Editing Modal State
   const [editingTemplate, setEditingTemplate] = useState<WhatsAppTemplate | null>(null);
   const [templateForm, setTemplateForm] = useState<{
@@ -458,19 +463,26 @@ export const RemindersView: React.FC = () => {
     }
   };
 
-  // Execute scheduled routine (calls server engine or simulation loop)
-  const executeScheduledRoutine = async (isManualTest = false) => {
-    if (webStatus.status !== 'CONNECTED' && !config.isSimulationMode) {
-      showToast('Conecte o WhatsApp na aba "Conexão WhatsApp" antes de disparar.', 'error');
+  // Helper to start the Guided WhatsApp Dispatch Assistant
+  const startGuidedQueue = (customGroups?: ReminderGroup[]) => {
+    const queueToRun = customGroups || pendingReminderGroups;
+    if (!queueToRun || queueToRun.length === 0) {
+      showToast('Nenhum agendamento pendente para envio de lembrete!', 'info');
       return;
     }
+    setGuidedQueue(queueToRun);
+    setGuidedIndex(0);
+    setIsGuidedModalOpen(true);
+  };
 
+  // Execute scheduled routine (calls server engine or launches guided queue in free mode)
+  const executeScheduledRoutine = async (isManualTest = false) => {
     if (isManualTest) {
       setIsRunningScheduledManual(true);
     }
 
     try {
-      // 1. If connected to real WhatsApp, run authoritative server-side routine
+      // 1. If connected to local Node.js Server robot, run 100% authoritative server-side routine
       if (webStatus.status === 'CONNECTED' && !config.isSimulationMode) {
         const serverResult = await whatsappService.runScheduledRoutineNow();
         if (serverResult.success) {
@@ -491,7 +503,7 @@ export const RemindersView: React.FC = () => {
         }
       }
 
-      // 2. Simulation Mode fallback
+      // 2. Free Direct WhatsApp Mode: Find target appointments for scheduled days in advance
       const targetDate = getTargetDateForScheduler(schedulerConfig.daysInAdvance);
       const targetApts = appointments.filter(apt => apt.status !== 'cancelado' && apt.date === targetDate);
 
@@ -502,62 +514,29 @@ export const RemindersView: React.FC = () => {
         return;
       }
 
-      const unnotified = targetApts.filter(apt => {
-        const hasLog = logs.some(
-          l =>
-            l.appointmentId === apt.id &&
-            (l.status === 'enviado' || l.status === 'entregue' || l.status === 'lido' || l.status === 'simulado')
-        );
-        return !hasLog;
-      });
+      // Filter unnotified groups for target date
+      const targetGroups = filteredReminderGroups.filter(g => g.date === targetDate && !g.isNotified);
 
-      if (unnotified.length === 0) {
+      if (targetGroups.length === 0) {
         if (isManualTest) {
-          showToast(`Todos os ${targetApts.length} agendamentos de ${targetDate} já receberam lembrete!`, 'info');
+          showToast(`Todos os agendamentos de ${targetDate} já receberam lembrete!`, 'info');
         }
         return;
       }
 
-      const selectedTmpl = templates.find(t => t.id === schedulerConfig.templateId) || templates[0];
-      const customTemplateText = selectedTmpl?.bodyText;
-
-      let sentCount = 0;
-      let failedCount = 0;
-      const newLogs: WhatsAppMessageLog[] = [];
-
-      for (const apt of unnotified) {
-        const matchedClient = getClientForAppointment(apt);
-        const phone = matchedClient?.phone || '11999999999';
-        const formattedMsg = whatsappService.formatReminderMessage(apt, matchedClient, customTemplateText);
-
-        const res = await whatsappService.sendAppointmentReminder(apt, formattedMsg, phone);
-        if (res.success) {
-          sentCount++;
-        } else {
-          failedCount++;
-        }
-        newLogs.push(res.log);
+      // Play audio notification or trigger guided queue
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('GlowApp - Lembretes Agendados', {
+          body: `⏰ Hora do disparo agendado! ${targetGroups.length} clientes de amanhã aguardando confirmação.`,
+          icon: '/favicon.ico'
+        });
       }
 
-      await whatsappService.logSchedulerExecution({
-        targetDate,
-        scheduledTime: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        daysInAdvance: schedulerConfig.daysInAdvance,
-        total: unnotified.length,
-        sent: sentCount,
-        failed: failedCount,
-      });
-
-      setLogs(prev => [...newLogs, ...prev]);
-      const reloadedAudits = await whatsappService.getAuditLogs();
-      setAuditLogs(reloadedAudits);
-      const reloadedScheduler = await whatsappService.getSchedulerConfig();
-      setSchedulerConfig(reloadedScheduler);
-
       showToast(
-        `Disparo simulado: ${sentCount} lembretes enviados para ${targetDate}.`,
+        `⏰ Horário agendado atingido! Abrindo fila com ${targetGroups.length} lembrete(s) para ${targetDate}...`,
         'success'
       );
+      startGuidedQueue(targetGroups);
     } catch (err: any) {
       showToast(`Erro na rotina de agendamento: ${err.message || err}`, 'error');
     } finally {
@@ -997,21 +976,51 @@ export const RemindersView: React.FC = () => {
         setIsSendingBulk(false);
       }
     } else {
-      // Modo Gratuito: Abre o primeiro pendente e orienta o usuário
-      const firstGroup = pendingReminderGroups[0];
-      const matchedClient = getClientForAppointment(firstGroup.primaryAppointment);
+      // Modo Gratuito: Inicia o Assistente Guiado de Disparos Rápidos
+      startGuidedQueue(pendingReminderGroups);
+    }
+  };
+
+  // Guided Queue: Send current item and advance to next
+  const handleGuidedSendAndNext = async () => {
+    if (!guidedQueue || guidedQueue.length === 0 || guidedIndex >= guidedQueue.length) return;
+
+    const currentGroup = guidedQueue[guidedIndex];
+    const matchedClient = getClientForAppointment(currentGroup.primaryAppointment);
+
+    try {
       await whatsappService.sendDirectWhatsApp(
-        firstGroup.primaryAppointment,
+        currentGroup.primaryAppointment,
         undefined,
-        firstGroup.phone,
+        currentGroup.phone,
         matchedClient
       );
-      showToast(
-        `Abrindo 1º lembrete (${firstGroup.clientName}). Clique nos botões "Disparar" de cada cliente para enviar os próximos.`,
-        'info'
-      );
-      const reloaded = await whatsappService.getAuditLogs();
-      setAuditLogs(reloaded);
+
+      const reloadedAudits = await whatsappService.getAuditLogs();
+      setAuditLogs(reloadedAudits);
+      const reloadedLogs = await whatsappService.getLogs();
+      setLogs(reloadedLogs);
+
+      if (guidedIndex + 1 < guidedQueue.length) {
+        setGuidedIndex(guidedIndex + 1);
+        showToast(`Enviado para ${currentGroup.clientName}! Avançando para próximo cliente...`, 'success');
+      } else {
+        setIsGuidedModalOpen(false);
+        showToast('🎉 Todos os lembretes da fila foram disparados com sucesso!', 'success');
+      }
+    } catch (err: any) {
+      showToast(`Erro ao disparar para ${currentGroup.clientName}: ${err.message || err}`, 'error');
+    }
+  };
+
+  // Guided Queue: Skip current customer
+  const handleGuidedSkip = () => {
+    if (guidedIndex + 1 < guidedQueue.length) {
+      setGuidedIndex(guidedIndex + 1);
+      showToast('Cliente pulado.', 'info');
+    } else {
+      setIsGuidedModalOpen(false);
+      showToast('Fim da fila de disparos.', 'info');
     }
   };
 
@@ -3188,6 +3197,128 @@ export const RemindersView: React.FC = () => {
           </div>
         </div>
       )}
+      {/* ========================================================= */}
+      {/* MODAL: ASSISTENTE DE FILA GUIADA DE DISPAROS RÁPIDOS      */}
+      {/* ========================================================= */}
+      {isGuidedModalOpen && guidedQueue.length > 0 && guidedIndex < guidedQueue.length && (() => {
+        const currentGroup = guidedQueue[guidedIndex];
+        const matchedClient = getClientForAppointment(currentGroup.primaryAppointment);
+        const progressPct = Math.round(((guidedIndex + 1) / guidedQueue.length) * 100);
+        const previewMsg = whatsappService.formatReminderMessage(currentGroup.primaryAppointment, matchedClient);
+
+        return (
+          <div className="fixed inset-0 z-[10000] bg-stone-950/60 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+            <div className="bg-[#FAF6F0] rounded-[32px] border border-[#E2D8CA] p-6 max-w-xl w-full shadow-2xl space-y-5 animate-scale-up">
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-[#E2D8CA]">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 shadow-xs">
+                    <WhatsappLogo size={22} weight="fill" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-[#3D3028] flex items-center space-x-2">
+                      <span>Assistente de Disparos Rápidos</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200">100% Gratuito</span>
+                    </h3>
+                    <p className="text-[11px] text-[#8C7A6B] font-semibold">Envio 1-a-1 otimizado sem custo de servidor</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsGuidedModalOpen(false)}
+                  className="w-8 h-8 rounded-full bg-white/80 hover:bg-stone-200 text-stone-500 hover:text-stone-800 flex items-center justify-center transition-all cursor-pointer"
+                >
+                  <X size={16} weight="bold" />
+                </button>
+              </div>
+
+              {/* Progress Tracker */}
+              <div className="space-y-1.5 bg-white/60 p-3.5 rounded-2xl border border-[#E2D8CA]/80">
+                <div className="flex items-center justify-between text-xs font-bold text-[#3D3028]">
+                  <span>Progresso da Fila:</span>
+                  <span className="text-emerald-700 font-black">Cliente {guidedIndex + 1} de {guidedQueue.length} ({progressPct}%)</span>
+                </div>
+                <div className="w-full h-2.5 bg-stone-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-300"
+                    style={{ width: `${progressPct}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Client Info Card */}
+              <div className="bg-white rounded-2xl border border-[#E2D8CA] p-4 space-y-3 shadow-2xs">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#c5922a]/15 to-[#966b1a]/15 border border-[#c5922a]/20 flex items-center justify-center text-[#966b1a] font-black text-base shadow-xs">
+                      {currentGroup.clientName.substring(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black text-[#3D3028]">{currentGroup.clientName}</h4>
+                      <p className="text-xs text-stone-500 font-medium">
+                        📱 {currentGroup.phone}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs font-black text-[#3D3028]">
+                      📅 {currentGroup.date} às {currentGroup.startTime}
+                    </div>
+                    <div className="text-[11px] font-bold text-[#966b1a]">
+                      {currentGroup.combinedTitle}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Message preview box */}
+                <div className="bg-emerald-50/60 rounded-xl p-3 border border-emerald-200/60 space-y-1">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-emerald-800 flex items-center space-x-1">
+                    <WhatsappLogo size={13} weight="fill" />
+                    <span>Texto pronto para envio:</span>
+                  </div>
+                  <p className="text-xs text-stone-700 whitespace-pre-line max-h-32 overflow-y-auto font-mono text-[11px] leading-relaxed bg-white/70 p-2.5 rounded-lg border border-emerald-100">
+                    {previewMsg}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between pt-2 border-t border-[#E2D8CA]">
+                <button
+                  type="button"
+                  onClick={handleGuidedSkip}
+                  className="px-4 py-2.5 rounded-xl bg-white border border-[#E2D8CA] text-xs font-bold text-stone-600 hover:bg-stone-100 transition-all cursor-pointer shadow-2xs"
+                >
+                  Pular Cliente
+                </button>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(previewMsg);
+                      showToast('Texto copiado!', 'success');
+                    }}
+                    className="px-3.5 py-2.5 rounded-xl bg-white border border-[#E2D8CA] text-xs font-bold text-stone-700 hover:bg-stone-50 transition-all cursor-pointer shadow-2xs flex items-center space-x-1.5"
+                  >
+                    <FloppyDisk size={14} weight="bold" />
+                    <span>Copiar</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleGuidedSendAndNext}
+                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-black shadow-lg shadow-emerald-900/20 hover:shadow-xl active:scale-95 transition-all flex items-center space-x-2 cursor-pointer"
+                  >
+                    <WhatsappLogo size={16} weight="fill" />
+                    <span>Abrir WhatsApp &amp; Próximo ➜</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
