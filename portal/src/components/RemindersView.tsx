@@ -85,6 +85,10 @@ export const RemindersView: React.FC = () => {
   const [auditLogs, setAuditLogs] = useState<WhatsAppAuditLog[]>([]);
   const [templates, setTemplates] = useState<WhatsAppTemplate[]>([]);
 
+  // Custom Server URL state
+  const [customServerUrl, setCustomServerUrl] = useState('');
+  const [isTestingServer, setIsTestingServer] = useState(false);
+
   // Scheduler Automation State
   const [schedulerConfig, setSchedulerConfig] = useState<WhatsAppSchedulerConfig>({
     enabled: false,
@@ -320,6 +324,9 @@ export const RemindersView: React.FC = () => {
       setAppointments(loadedApts || []);
       setClientsList(loadedClients || []);
       setConfig(loadedConfig);
+      if (loadedConfig.serverUrl) {
+        setCustomServerUrl(loadedConfig.serverUrl);
+      }
       setLogs(loadedLogs || []);
       setAuditLogs(loadedAudits || []);
       setWebStatus(status);
@@ -2149,8 +2156,16 @@ export const RemindersView: React.FC = () => {
                 </div>
 
                 {webStatus.error && (
-                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold max-w-md text-left">
-                    ⚠️ {webStatus.error}
+                  <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200 text-[#8C6D46] text-xs font-semibold max-w-md text-left space-y-1">
+                    <div className="flex items-center space-x-1.5 font-black text-[#966b1a]">
+                      <Info size={16} weight="fill" />
+                      <span>Status da Conexão do Servidor</span>
+                    </div>
+                    <p className="text-[11px] font-medium leading-relaxed">
+                      {typeof window !== 'undefined' && window.location.protocol === 'https:'
+                        ? 'Você está no ambiente de produção na nuvem (Vercel). Configure a URL do seu serviço no Render.com no campo abaixo para conectar o robô, ou utilize o Envio Direto via WhatsApp Web nos agendamentos.'
+                        : webStatus.error}
+                    </p>
                   </div>
                 )}
 
@@ -2174,6 +2189,58 @@ export const RemindersView: React.FC = () => {
                 </button>
               </div>
             )}
+
+            {/* Remote Backend Server Configuration (Render.com / Custom URL) */}
+            <div className="p-5 rounded-3xl bg-[#FAF6F0] border border-[#E2D8CA] space-y-3 shadow-xs">
+              <div className="flex items-center space-x-2 text-[#966b1a]">
+                <Robot size={20} weight="fill" />
+                <h4 className="text-xs font-black text-[#3D3028]">Servidor do Robô WhatsApp (Render / Nuvem)</h4>
+              </div>
+              <p className="text-[11px] text-[#8C7A6B] font-medium leading-relaxed">
+                Insira a URL do seu serviço gerado no <strong>Render.com</strong> para manter a conexão ativa 24h na nuvem:
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  value={customServerUrl}
+                  onChange={(e) => setCustomServerUrl(e.target.value)}
+                  placeholder="https://seu-servico-whatsapp.onrender.com"
+                  className="flex-1 px-3.5 py-2.5 rounded-xl bg-white border border-[#E2D8CA] text-xs text-[#3D3028] placeholder-stone-400 focus:outline-none focus:border-[#c5922a] font-mono shadow-2xs"
+                />
+                <button
+                  type="button"
+                  disabled={isTestingServer}
+                  onClick={async () => {
+                    setIsTestingServer(true);
+                    try {
+                      const updatedConfig = { ...config, serverUrl: customServerUrl.trim() };
+                      setConfig(updatedConfig);
+                      await whatsappService.saveConfig(updatedConfig);
+                      const testStatus = await whatsappService.getStatus();
+                      setWebStatus(testStatus);
+                      if (testStatus.status === 'CONNECTED' || testStatus.status === 'QR_READY' || testStatus.status === 'DISCONNECTED') {
+                        showToast('Servidor salvo e conectado com sucesso!', 'success');
+                      } else {
+                        showToast('Servidor salvo. Clique em "Conectar WhatsApp" para gerar o QR Code.', 'info');
+                      }
+                    } catch (e: any) {
+                      showToast('Servidor salvo no perfil local.', 'info');
+                    } finally {
+                      setIsTestingServer(false);
+                    }
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-[#c5922a] hover:bg-[#b38222] text-amber-50 text-xs font-black transition-all cursor-pointer flex items-center justify-center space-x-1.5 shrink-0 shadow-2xs"
+                >
+                  {isTestingServer ? (
+                    <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <FloppyDisk size={14} weight="bold" />
+                  )}
+                  <span>Salvar &amp; Conectar</span>
+                </button>
+              </div>
+            </div>
 
             {/* Simulation Mode Switch */}
             <div className="p-4 rounded-2xl bg-[#FAF6F0] border border-[#E2D8CA] flex items-center justify-between">

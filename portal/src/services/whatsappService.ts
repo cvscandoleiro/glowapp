@@ -177,38 +177,61 @@ const DEFAULT_TEMPLATES: WhatsAppTemplate[] = [
 export const whatsappService = {
   // Helper to get backend base URL
   getBaseUrl(): string {
+    try {
+      const cached = localStorage.getItem(CONFIG_STORAGE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.serverUrl && parsed.serverUrl.trim()) {
+          const cleanUrl = parsed.serverUrl.trim().replace(/\/+$/, '');
+          if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+            return cleanUrl.endsWith('/api/whatsapp') ? cleanUrl : `${cleanUrl}/api/whatsapp`;
+          }
+        }
+      }
+    } catch (e) {}
+
+    const envUrl = (import.meta as any).env?.VITE_WHATSAPP_SERVER_URL;
+    if (envUrl && envUrl.trim()) {
+      const cleanEnv = envUrl.trim().replace(/\/+$/, '');
+      return cleanEnv.endsWith('/api/whatsapp') ? cleanEnv : `${cleanEnv}/api/whatsapp`;
+    }
+
     return '/api/whatsapp';
   },
 
   // 1. Get WhatsApp Web Connection Status & QR Code
   async getStatus(): Promise<WhatsAppWebStatus> {
+    const url = `${this.getBaseUrl()}/status`;
     try {
-      const response = await fetch(`${this.getBaseUrl()}/status`, {
+      const response = await fetch(url, {
         headers: { 'Accept': 'application/json' },
       });
       if (response.ok) {
         return await response.json();
       }
     } catch (err) {
-      // If vite proxy isn't reached, try direct port 3001
-      try {
-        const directResp = await fetch('http://localhost:3001/api/whatsapp/status');
-        if (directResp.ok) return await directResp.json();
-      } catch (e) {}
+      // If relative proxy failed and not on HTTPS custom server, try direct localhost
+      if (url.startsWith('/api/whatsapp') && typeof window !== 'undefined' && window.location.protocol === 'http:') {
+        try {
+          const directResp = await fetch('http://localhost:3001/api/whatsapp/status');
+          if (directResp.ok) return await directResp.json();
+        } catch (e) {}
+      }
     }
 
     return {
       status: 'DISCONNECTED',
       qrCodeDataUrl: null,
       qrCodeRaw: null,
-      error: 'Serviço do WhatsApp não está rodando na porta 3001. Execute "npm run whatsapp" para iniciar o servidor.',
+      error: 'Servidor do WhatsApp não conectado. Configure o link do Render nas opções abaixo ou inicie o servidor.',
     };
   },
 
   // 2. Initialize / Request Connection (Generates QR Code)
   async initializeClient(): Promise<WhatsAppWebStatus> {
+    const url = `${this.getBaseUrl()}/initialize`;
     try {
-      const response = await fetch(`${this.getBaseUrl()}/initialize`, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -216,20 +239,22 @@ export const whatsappService = {
         return await response.json();
       }
     } catch (err) {
-      try {
-        const directResp = await fetch('http://localhost:3001/api/whatsapp/initialize', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (directResp.ok) return await directResp.json();
-      } catch (e) {}
+      if (url.startsWith('/api/whatsapp') && typeof window !== 'undefined' && window.location.protocol === 'http:') {
+        try {
+          const directResp = await fetch('http://localhost:3001/api/whatsapp/initialize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          if (directResp.ok) return await directResp.json();
+        } catch (e) {}
+      }
     }
 
     return {
       status: 'ERROR',
       qrCodeDataUrl: null,
       qrCodeRaw: null,
-      error: 'Não foi possível conectar ao serviço WhatsApp Web local.',
+      error: 'Não foi possível conectar ao servidor WhatsApp Web. Verifique a URL do servidor.',
     };
   },
 
