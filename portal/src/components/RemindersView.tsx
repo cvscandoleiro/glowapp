@@ -2161,10 +2161,14 @@ export const RemindersView: React.FC = () => {
                       <Info size={16} weight="fill" />
                       <span>Status da Conexão do Servidor</span>
                     </div>
-                    <p className="text-[11px] font-medium leading-relaxed">
-                      {typeof window !== 'undefined' && window.location.protocol === 'https:'
-                        ? 'Você está no ambiente de produção na nuvem (Vercel). Configure a URL do seu serviço no Render.com no campo abaixo para conectar o robô, ou utilize o Envio Direto via WhatsApp Web nos agendamentos.'
-                        : webStatus.error}
+                    <p className="text-[11px] font-medium leading-relaxed break-words">
+                      {webStatus.error.includes('Could not find Chrome') ? (
+                        <>
+                          O servidor no Render está ativo, mas o Chromium ainda está finalizando o deploy. No Render, clique em <strong>Manual Deploy &gt; Clear build cache &amp; deploy</strong> para concluir a instalação do Chrome.
+                        </>
+                      ) : (
+                        webStatus.error
+                      )}
                     </p>
                   </div>
                 )}
