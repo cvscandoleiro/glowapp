@@ -106,6 +106,14 @@ if ($activePorts.Count -gt 0) {
   }
 }
 
+# Iniciar o servidor WhatsApp Web (whatsapp-web.js) se nao estiver ativo
+$whatsappPort = 3001
+$whatsappRunning = Test-PortListening -Port $whatsappPort
+if (-not $whatsappRunning) {
+  Write-Host "Iniciando servico WhatsApp Web (npm run whatsapp)..." -ForegroundColor Cyan
+  Start-NpmScriptWindow -WorkingDir $ProjectDir -ScriptName "whatsapp" -Title "WhatsApp Web Service"
+}
+
 # Se nenhuma aplicacao estiver rodando, iniciar o servico dev
 $devRunning = Test-PortListening -Port $DevPort
 

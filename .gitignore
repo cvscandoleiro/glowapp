@@ -1,32 +1,26 @@
-# Dependências
-node_modules/
-portal/node_modules/
+# Node modules & builds
+node_modules
+dist
+dist-ssr
 
-# Builds e outputs
-dist/
-portal/dist/
-dist-ssr/
-*.local
-
-# Variáveis de ambiente e senhas (Segurança)
+# Environment files
 .env
 .env.*
 !.env.example
-portal/.env
-portal/.env.*
-!portal/.env.example
-Senha*.txt
-*.key
-*.pem
 
-# Arquivos temporários e grandes
-*.zip
-*.tar.gz
+# WhatsApp Web Session & Cache
+.wwebjs_auth
+.wwebjs_cache
+*.sqlite
+*.sqlite-journal
+session
+
+# Logs
+logs
 *.log
-logs/
+npm-debug.log*
 
-# IDEs e Sistema
-.vscode/
-.idea/
+# Editor
+.vscode
+.idea
 .DS_Store
-Thumbs.db

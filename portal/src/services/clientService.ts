@@ -5,10 +5,14 @@ export interface ProcedureItem {
   title: string;
   subtitle: string;
   modules: string;
-  status: 'concluido' | 'em_andamento';
+  status: 'concluido' | 'em_andamento' | 'agendado' | 'cancelado';
   statusLabel: string;
   colorScheme: 'blue' | 'purple' | 'pink' | 'emerald' | 'amber';
   iconType: 'desktop' | 'mobile' | 'wand';
+  date?: string;
+  time?: string;
+  notes?: string;
+  price?: number;
 }
 
 export interface ClientProfile {

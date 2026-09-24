@@ -6,73 +6,69 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 327 61% 24%;
-    /* #64183f as HSL format */
+    --background: 40 28% 96%;
+    /* #F6F3EE Algodão Egípcio */
+    --foreground: 28 22% 22%;
+    /* #433422 Warm Deep Mocha */
 
     --card: 0 0% 100%;
-    --card-foreground: 327 61% 24%;
+    --card-foreground: 28 22% 22%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 327 61% 24%;
+    --popover-foreground: 28 22% 22%;
 
-    --primary: 327 61% 24%;
-    /* #64183f as primary */
+    --primary: 38 65% 47%;
+    /* Warm Champagne Gold */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 33% 39%;
-    /* Rich Azure */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 35 25% 85%;
+    /* Soft Linen */
+    --secondary-foreground: 28 22% 22%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 38 20% 93%;
+    --muted-foreground: 30 12% 50%;
 
-    --accent: 189 53% 50%;
-    /* Soft Teal */
+    --accent: 38 65% 47%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 327 61% 24%;
+    --border: 35 20% 88%;
+    --input: 35 20% 88%;
+    --ring: 38 65% 47%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 327 61% 15%;
-    --foreground: 210 40% 98%;
+    --background: 28 22% 12%;
+    --foreground: 40 28% 96%;
 
-    --card: 327 61% 12%;
-    --card-foreground: 210 40% 98%;
+    --card: 28 22% 10%;
+    --card-foreground: 40 28% 96%;
 
-    --popover: 327 61% 12%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 28 22% 10%;
+    --popover-foreground: 40 28% 96%;
 
-    --primary: 187 78% 67%;
-    /* Light Teal */
-    --primary-foreground: 327 61% 24%;
+    --primary: 38 65% 60%;
+    --primary-foreground: 28 22% 12%;
 
-    --secondary: 189 53% 50%;
-    /* Soft Teal */
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 35 20% 25%;
+    --secondary-foreground: 40 28% 96%;
 
-    --muted: 327 40% 20%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 28 15% 20%;
+    --muted-foreground: 35 15% 65%;
 
-    --accent: 217 33% 39%;
-    /* Rich Azure */
-    --accent-foreground: 210 40% 98%;
+    --accent: 38 65% 55%;
+    --accent-foreground: 40 28% 96%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 327 40% 20%;
-    --input: 327 40% 20%;
-    --ring: 187 78% 67%;
-    /* Light Teal */
+    --border: 28 15% 25%;
+    --input: 28 15% 25%;
+    --ring: 38 65% 60%;
   }
 }
 
@@ -83,13 +79,13 @@
 
   body {
     background-color: hsl(var(--background));
-    color: #64183f;
+    color: #3D3028;
     @apply min-h-screen overflow-x-hidden;
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6, .portal-heading {
-    color: #64183f !important;
+    color: #3D3028 !important;
   }
 }
 
@@ -99,11 +95,11 @@
   }
 
   .glass-button {
-    @apply relative overflow-hidden transition-all duration-300 bg-white border border-slate-200 text-primary rounded-xl px-4 py-2 hover:border-primary/50 hover:bg-slate-50 font-semibold shadow-sm hover:shadow-glow;
+    @apply relative overflow-hidden transition-all duration-300 bg-white border border-[#E2D8CA] text-primary rounded-xl px-4 py-2 hover:border-primary/50 hover:bg-[#FAF8F5] font-semibold shadow-sm hover:shadow-glow;
   }
 
   .nav-item {
-    @apply flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-[#d1cbf5] hover:bg-white/10 hover:text-white cursor-pointer;
+    @apply flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-300 text-[#7A695B] hover:bg-white/40 hover:text-[#2D2319] cursor-pointer;
   }
 
   .nav-item.active {
@@ -111,25 +107,25 @@
   }
 
   .glass-sidebar {
-    @apply bg-white/40 backdrop-blur-2xl border-r border-white/40 shadow-[10px_0_30px_-15px_rgba(0, 0, 0, 0.1)];
+    @apply bg-[#F7F4EF]/80 backdrop-blur-2xl border-r border-[#E2D8CA]/80 shadow-[10px_0_30px_-15px_rgba(180, 155, 130, 0.12)];
   }
 
   /* Curved Active Tab Effect */
   .curved-active-tab {
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(16px);
-    color: #881337;
+    color: #3D3028;
     border-top-left-radius: 1.25rem;
     border-bottom-left-radius: 1.25rem;
     position: relative;
     z-index: 10;
-    box-shadow: 0 4px 18px rgba(244, 114, 182, 0.18);
-    border: 1px solid rgba(254, 205, 211, 0.6);
+    box-shadow: 0 4px 18px rgba(180, 155, 130, 0.16);
+    border: 1px solid rgba(226, 216, 202, 0.9);
     border-right: none;
   }
 
   .nav-item-active {
-    @apply bg-white text-slate-800 font-extrabold shadow-sm relative transition-all;
+    @apply bg-white text-[#3D3028] font-extrabold shadow-sm relative transition-all;
   }
 
   /* Indicador vertical roxo na esquerda para o item ativo */

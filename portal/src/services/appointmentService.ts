@@ -2,6 +2,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface Appointment {
   id: string;
+  clientId?: string;
   date: string; // YYYY-MM-DD
   startTime: string; // HH:mm
   endTime: string; // HH:mm
@@ -11,15 +12,22 @@ export interface Appointment {
   location?: string;
   clientAvatar?: string;
   color: string;
-  status: 'confirmado' | 'em_andamento' | 'concluido' | 'pendente';
+  status: 'confirmado' | 'em_andamento' | 'concluido' | 'pendente' | 'cancelado';
   notes?: string;
+  price?: number;
+  services?: {
+    id: string;
+    name: string;
+    price: number;
+    category?: string;
+  }[];
 }
 
-const LOCAL_STORAGE_KEY = 'glowapp_appointments';
 
 function mapFromDb(row: any): Appointment {
   return {
     id: row.id,
+    clientId: row.client_id || '',
     date: row.date,
     startTime: row.start_time,
     endTime: row.end_time,
@@ -31,12 +39,15 @@ function mapFromDb(row: any): Appointment {
     color: row.color || '#8b5cf6',
     status: row.status || 'confirmado',
     notes: row.notes || '',
+    price: row.price || 0,
+    services: row.services || [],
   };
 }
 
 function mapToDb(appointment: Appointment) {
   return {
     id: appointment.id,
+    client_id: appointment.clientId || null,
     date: appointment.date,
     start_time: appointment.startTime,
     end_time: appointment.endTime,
@@ -48,13 +59,15 @@ function mapToDb(appointment: Appointment) {
     color: appointment.color,
     status: appointment.status,
     notes: appointment.notes,
+    price: appointment.price || 0,
+    services: appointment.services || [],
     updated_at: new Date().toISOString(),
   };
 }
 
 export const appointmentService = {
-  // Fetch all appointments
-  async getAppointments(fallbackDefaults: Appointment[]): Promise<Appointment[]> {
+  // Fetch all appointments directly from Supabase database
+  async getAppointments(): Promise<Appointment[]> {
     if (isSupabaseConfigured && supabase) {
       try {
         const { data, error } = await supabase
@@ -62,54 +75,24 @@ export const appointmentService = {
           .select('*')
           .order('date', { ascending: true });
 
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(mapFromDb);
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mapped));
-          return mapped;
+        if (error) {
+          console.error('Erro ao buscar agendamentos do Supabase:', error);
+          return [];
         }
 
-        // If table is empty in Supabase, seed defaults
-        if (!error && data && data.length === 0 && fallbackDefaults.length > 0) {
-          await this.seedAppointments(fallbackDefaults);
-          return fallbackDefaults;
+        if (data && Array.isArray(data)) {
+          return data.map(mapFromDb);
         }
       } catch (err) {
-        console.warn('Erro ao buscar agendamentos do Supabase. Usando armazenamento local.', err);
+        console.error('Falha de conexão com o banco de dados ao buscar agendamentos:', err);
       }
     }
 
-    // LocalStorage Fallback
-    try {
-      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch (e) {
-      console.warn('Erro ao ler agendamentos do localStorage:', e);
-    }
-
-    return fallbackDefaults;
+    return [];
   },
 
-  // Save or update an appointment
+  // Save or update an appointment directly in Supabase
   async saveAppointment(appointment: Appointment): Promise<void> {
-    // 1. Update local cache immediately
-    try {
-      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-      let list: Appointment[] = cached ? JSON.parse(cached) : [];
-      const index = list.findIndex(a => a.id === appointment.id);
-      if (index >= 0) {
-        list[index] = appointment;
-      } else {
-        list.push(appointment);
-      }
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(list));
-    } catch (e) {
-      console.warn('Erro ao salvar agendamento localmente:', e);
-    }
-
-    // 2. Sync to Supabase
     if (isSupabaseConfigured && supabase) {
       try {
         const { error } = await supabase
@@ -125,34 +108,21 @@ export const appointmentService = {
     }
   },
 
-  // Delete an appointment
+  // Delete an appointment directly in Supabase
   async deleteAppointment(appointmentId: string): Promise<void> {
-    try {
-      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (cached) {
-        const list: Appointment[] = JSON.parse(cached);
-        const filtered = list.filter(a => a.id !== appointmentId);
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filtered));
-      }
-    } catch (e) {}
-
     if (isSupabaseConfigured && supabase) {
       try {
-        await supabase.from('appointments').delete().eq('id', appointmentId);
+        const { error } = await supabase
+          .from('appointments')
+          .delete()
+          .eq('id', appointmentId);
+
+        if (error) {
+          console.error('Erro ao deletar agendamento no Supabase:', error);
+        }
       } catch (err) {
         console.error('Erro ao deletar agendamento no Supabase:', err);
       }
-    }
-  },
-
-  // Seed initial appointments to Supabase
-  async seedAppointments(appointments: Appointment[]): Promise<void> {
-    if (!isSupabaseConfigured || !supabase || appointments.length === 0) return;
-    try {
-      const rows = appointments.map(mapToDb);
-      await supabase.from('appointments').upsert(rows, { onConflict: 'id' });
-    } catch (err) {
-      console.warn('Erro ao semear agendamentos no Supabase:', err);
     }
   }
 };
