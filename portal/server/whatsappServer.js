@@ -163,18 +163,17 @@ async function loadSchedulerConfigFromSupabase() {
   }
 }
 
-// Helper para encontrar automaticamente o Chrome no sistema (Windows/Linux)
+// Helper para encontrar automaticamente o Chrome no sistema (Windows/Linux) ou Render
 function findChromeExecutablePath() {
   if (process.env.PUPPETEER_EXECUTABLE_PATH && fs.existsSync(process.env.PUPPETEER_EXECUTABLE_PATH)) {
     return process.env.PUPPETEER_EXECUTABLE_PATH;
   }
   if (process.platform === 'linux') {
     const linuxPaths = [
-      '/usr/bin/google-chrome-stable',
       '/usr/bin/google-chrome',
-      '/opt/google/chrome/google-chrome',
-      '/usr/bin/chromium-browser',
-      '/usr/bin/chromium'
+      '/usr/bin/google-chrome-stable',
+      '/usr/bin/chromium',
+      '/usr/bin/chromium-browser'
     ];
     for (const p of linuxPaths) {
       if (fs.existsSync(p)) return p;
@@ -201,13 +200,16 @@ function initializeWhatsAppClient() {
     const puppeteerOptions = {
       headless: true,
       executablePath: detectedChromePath,
+      bypassCSP: true,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
         '--disable-gpu',
-        '--disable-extensions'
+        '--disable-extensions',
+        '--disable-software-rasterizer',
+        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36'
       ]
     };
 
@@ -231,6 +233,7 @@ function initializeWhatsAppClient() {
       authStrategy: new LocalAuth({
         dataPath: './.wwebjs_auth'
       }),
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
       puppeteer: puppeteerOptions,
       webVersionCache: {
         type: 'remote',
