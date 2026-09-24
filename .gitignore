@@ -11,6 +11,7 @@ dist-ssr
 # WhatsApp Web Session & Cache
 .wwebjs_auth
 .wwebjs_cache
+.cache
 *.sqlite
 *.sqlite-journal
 session

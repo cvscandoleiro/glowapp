@@ -163,6 +163,25 @@ async function loadSchedulerConfigFromSupabase() {
   }
 }
 
+// Helper para encontrar automaticamente o Chrome no sistema (Windows/Linux) ou Render
+function findChromeExecutablePath() {
+  if (process.env.PUPPETEER_EXECUTABLE_PATH && fs.existsSync(process.env.PUPPETEER_EXECUTABLE_PATH)) {
+    return process.env.PUPPETEER_EXECUTABLE_PATH;
+  }
+  if (process.platform === 'linux') {
+    const linuxPaths = [
+      '/usr/bin/google-chrome',
+      '/usr/bin/google-chrome-stable',
+      '/usr/bin/chromium',
+      '/usr/bin/chromium-browser'
+    ];
+    for (const p of linuxPaths) {
+      if (fs.existsSync(p)) return p;
+    }
+  }
+  return undefined;
+}
+
 // Initialize WhatsApp Web Client
 function initializeWhatsAppClient() {
   if (client && (connectionStatus === 'CONNECTED' || connectionStatus === 'INITIALIZING' || connectionStatus === 'QR_READY')) {
@@ -177,9 +196,10 @@ function initializeWhatsAppClient() {
   lastError = null;
 
   try {
+    const detectedChromePath = findChromeExecutablePath();
     const puppeteerOptions = {
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      executablePath: detectedChromePath,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -191,6 +211,22 @@ function initializeWhatsAppClient() {
         '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
       ]
     };
+
+    // Limpar locks antigos residuais do Chromium se houver
+    try {
+      const sessionPath = path.resolve(process.cwd(), '.wwebjs_auth', 'session');
+      if (fs.existsSync(sessionPath)) {
+        const lockFiles = ['SingletonLock', 'SingletonCookie', 'SingletonSocket', 'DevToolsActivePort'];
+        for (const file of lockFiles) {
+          const filePath = path.join(sessionPath, file);
+          if (fs.existsSync(filePath)) {
+            try { fs.unlinkSync(filePath); } catch (e) {}
+          }
+        }
+      }
+    } catch (lockErr) {
+      console.warn('[WhatsApp Server] Aviso ao limpar locks de sessão:', lockErr.message);
+    }
 
     client = new Client({
       authStrategy: new LocalAuth({
