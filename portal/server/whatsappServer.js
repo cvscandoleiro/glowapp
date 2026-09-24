@@ -235,7 +235,7 @@ function initializeWhatsAppClient() {
       puppeteer: puppeteerOptions,
       webVersionCache: {
         type: 'remote',
-        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1018949021-alpha.html'
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1048298845-alpha.html'
       }
     });
 
