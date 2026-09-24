@@ -188,7 +188,7 @@ function initializeWhatsAppClient() {
         '--no-first-run',
         '--no-zygote',
         '--disable-gpu',
-        '--single-process'
+        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
       ]
     };
 
@@ -196,7 +196,11 @@ function initializeWhatsAppClient() {
       authStrategy: new LocalAuth({
         dataPath: './.wwebjs_auth'
       }),
-      puppeteer: puppeteerOptions
+      puppeteer: puppeteerOptions,
+      webVersionCache: {
+        type: 'remote',
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1018949021-alpha.html'
+      }
     });
 
     client.on('qr', async (qr) => {
@@ -741,6 +745,15 @@ app.post('/api/whatsapp/disconnect', async (req, res) => {
       await client.logout().catch(() => {});
       await client.destroy().catch(() => {});
       client = null;
+    }
+    try {
+      const authPath = path.resolve(process.cwd(), '.wwebjs_auth');
+      if (fs.existsSync(authPath)) {
+        fs.rmSync(authPath, { recursive: true, force: true });
+        console.log('[WhatsApp Server] Sessão .wwebjs_auth limpa com sucesso.');
+      }
+    } catch (cleanErr) {
+      console.warn('[WhatsApp Server] Aviso ao limpar auth:', cleanErr.message);
     }
     connectionStatus = 'DISCONNECTED';
     connectedUser = null;
