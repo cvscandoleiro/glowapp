@@ -424,6 +424,44 @@ export const whatsappService = {
     return this.interpolateTemplate(DEFAULT_TEMPLATES[1].bodyText, appointment, client);
   },
 
+  // 11b. Send appointment reminder directly via WhatsApp Web / App (100% Free, Zero Server Maintenance)
+  async sendDirectWhatsApp(
+    appointment: Appointment,
+    customText?: string,
+    clientPhone?: string,
+    clientProfile?: ClientProfile | null
+  ): Promise<{ success: boolean; url: string; log: WhatsAppMessageLog }> {
+    const phone = clientPhone || clientProfile?.phone || (appointment as any).phone || '';
+    const cleanPhone = this.formatPhoneNumber(phone);
+    const messageContent = customText || this.formatReminderMessage(appointment, clientProfile);
+    const directUrl = this.generateDirectLink(cleanPhone, messageContent);
+
+    const logEntry: WhatsAppMessageLog = {
+      id: `wlog-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      appointmentId: appointment.id,
+      clientName: appointment.clientName || 'Cliente',
+      phone: cleanPhone,
+      messageType: 'lembrete',
+      messageContent,
+      status: 'enviado',
+      createdAt: new Date().toISOString(),
+    };
+
+    // Salva o registro nos logs e auditoria do Supabase
+    await this.saveLog(logEntry);
+
+    // Abre a conversa do WhatsApp com o texto pronto
+    if (typeof window !== 'undefined' && directUrl) {
+      window.open(directUrl, '_blank');
+    }
+
+    return {
+      success: true,
+      url: directUrl,
+      log: logEntry
+    };
+  },
+
   // 11. Send appointment reminder via WhatsApp Web
   async sendAppointmentReminder(
     appointment: Appointment,

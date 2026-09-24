@@ -925,27 +925,35 @@ export const RemindersView: React.FC = () => {
     }
   };
 
-  // Single reminder send handler (direct execution)
+  // Single reminder send handler (supports both Background Server and Direct 1-Click Free WhatsApp)
   const executeSendReminder = async (apt: Appointment) => {
-    if (webStatus.status !== 'CONNECTED' && !config.isSimulationMode) {
-      showToast('Conecte o WhatsApp via QR Code na aba "Conexão WhatsApp" antes de disparar.', 'error');
-      setActiveTab('connection');
-      return;
-    }
-
     setSendingId(apt.id);
     const matchedClient = getClientForAppointment(apt);
     const phone = matchedClient?.phone || '11999999999';
 
     try {
-      const res = await whatsappService.sendAppointmentReminder(apt, undefined, phone);
-      if (res.success) {
-        showToast(res.message, 'success');
+      if (webStatus.status === 'CONNECTED' && !config.isSimulationMode) {
+        // Envio via robô backend
+        const res = await whatsappService.sendAppointmentReminder(apt, undefined, phone);
+        if (res.success) {
+          showToast(res.message, 'success');
+          setLogs(prev => [res.log, ...prev]);
+          const reloaded = await whatsappService.getAuditLogs();
+          setAuditLogs(reloaded);
+        } else {
+          // Fallback para envio direto se o servidor falhar
+          await whatsappService.sendDirectWhatsApp(apt, undefined, phone, matchedClient);
+          showToast(`Servidor offline. Abrindo WhatsApp Direto para ${apt.clientName}...`, 'info');
+          const reloaded = await whatsappService.getAuditLogs();
+          setAuditLogs(reloaded);
+        }
+      } else {
+        // Modo 100% Gratuito: Envio Direto via WhatsApp Web/App
+        const res = await whatsappService.sendDirectWhatsApp(apt, undefined, phone, matchedClient);
+        showToast(`Abrindo WhatsApp para ${apt.clientName}... Lembrete registrado como enviado!`, 'success');
         setLogs(prev => [res.log, ...prev]);
         const reloaded = await whatsappService.getAuditLogs();
         setAuditLogs(reloaded);
-      } else {
-        showToast(res.message, 'error');
       }
     } catch (err: any) {
       showToast(`Erro ao disparar lembrete: ${err.message || err}`, 'error');
@@ -966,32 +974,44 @@ export const RemindersView: React.FC = () => {
 
   // Bulk send reminders handler (strictly pending reminder groups)
   const handleSendBulk = async () => {
-    if (webStatus.status !== 'CONNECTED' && !config.isSimulationMode) {
-      showToast('Conecte o WhatsApp via QR Code na aba "Conexão WhatsApp" antes de disparar.', 'error');
-      setActiveTab('connection');
-      return;
-    }
-
     if (pendingReminderGroups.length === 0) {
       showToast('Todos os agendamentos da lista já receberam lembrete!', 'info');
       return;
     }
 
-    setIsSendingBulk(true);
-    try {
-      const consolidatedApts = pendingReminderGroups.map(g => g.primaryAppointment);
-      const res = await whatsappService.sendBulkReminders(consolidatedApts, clientsList);
-      showToast(
-        `Disparos concluídos: ${res.sent} enviados com sucesso, ${res.failed} falhas.`,
-        res.failed > 0 ? 'info' : 'success'
+    if (webStatus.status === 'CONNECTED' && !config.isSimulationMode) {
+      setIsSendingBulk(true);
+      try {
+        const consolidatedApts = pendingReminderGroups.map(g => g.primaryAppointment);
+        const res = await whatsappService.sendBulkReminders(consolidatedApts, clientsList);
+        showToast(
+          `Disparos concluídos: ${res.sent} enviados com sucesso, ${res.failed} falhas.`,
+          res.failed > 0 ? 'info' : 'success'
+        );
+        setLogs(prev => [...res.logs, ...prev]);
+        const reloaded = await whatsappService.getAuditLogs();
+        setAuditLogs(reloaded);
+      } catch (err: any) {
+        showToast(`Erro no disparo em massa: ${err.message || err}`, 'error');
+      } finally {
+        setIsSendingBulk(false);
+      }
+    } else {
+      // Modo Gratuito: Abre o primeiro pendente e orienta o usuário
+      const firstGroup = pendingReminderGroups[0];
+      const matchedClient = getClientForAppointment(firstGroup.primaryAppointment);
+      await whatsappService.sendDirectWhatsApp(
+        firstGroup.primaryAppointment,
+        undefined,
+        firstGroup.phone,
+        matchedClient
       );
-      setLogs(prev => [...res.logs, ...prev]);
+      showToast(
+        `Abrindo 1º lembrete (${firstGroup.clientName}). Clique nos botões "Disparar" de cada cliente para enviar os próximos.`,
+        'info'
+      );
       const reloaded = await whatsappService.getAuditLogs();
       setAuditLogs(reloaded);
-    } catch (err: any) {
-      showToast(`Erro no disparo em massa: ${err.message || err}`, 'error');
-    } finally {
-      setIsSendingBulk(false);
     }
   };
 
@@ -1009,23 +1029,32 @@ export const RemindersView: React.FC = () => {
   // Send from preview modal
   const handleSendFromPreview = async () => {
     if (!previewAppointment) return;
-    if (webStatus.status !== 'CONNECTED' && !config.isSimulationMode) {
-      showToast('Conecte o WhatsApp via QR Code antes de disparar.', 'error');
-      setActiveTab('connection');
-      return;
-    }
 
     setSendingId(previewAppointment.id);
     try {
-      const res = await whatsappService.sendAppointmentReminder(previewAppointment, previewText, previewPhone);
-      if (res.success) {
-        showToast(res.message, 'success');
+      if (webStatus.status === 'CONNECTED' && !config.isSimulationMode) {
+        const res = await whatsappService.sendAppointmentReminder(previewAppointment, previewText, previewPhone);
+        if (res.success) {
+          showToast(res.message, 'success');
+          setLogs(prev => [res.log, ...prev]);
+          setPreviewAppointment(null);
+          const reloaded = await whatsappService.getAuditLogs();
+          setAuditLogs(reloaded);
+        } else {
+          await whatsappService.sendDirectWhatsApp(previewAppointment, previewText, previewPhone);
+          showToast('Abrindo WhatsApp Direto...', 'info');
+          setPreviewAppointment(null);
+          const reloaded = await whatsappService.getAuditLogs();
+          setAuditLogs(reloaded);
+        }
+      } else {
+        // Envio direto gratuito
+        const res = await whatsappService.sendDirectWhatsApp(previewAppointment, previewText, previewPhone);
+        showToast(`Abrindo WhatsApp para ${previewAppointment.clientName}... Mensagem registrada!`, 'success');
         setLogs(prev => [res.log, ...prev]);
         setPreviewAppointment(null);
         const reloaded = await whatsappService.getAuditLogs();
         setAuditLogs(reloaded);
-      } else {
-        showToast(res.message, 'error');
       }
     } catch (err: any) {
       showToast(`Erro ao enviar: ${err.message || err}`, 'error');
@@ -1344,6 +1373,24 @@ export const RemindersView: React.FC = () => {
         {/* ========================================================= */}
         {activeTab === 'queue' && (
         <div className="space-y-4">
+          {/* Free 1-Click WhatsApp Direct Mode Banner */}
+          <div className="bg-gradient-to-r from-emerald-500/10 via-amber-500/5 to-[#FAF6F0] border border-emerald-500/20 rounded-3xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+            <div className="flex items-start sm:items-center space-x-3">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0 shadow-2xs">
+                <WhatsappLogo size={22} weight="fill" />
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-[#3D3028] flex items-center space-x-2">
+                  <span>Envio Inteligente via WhatsApp (100% Gratuito)</span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase">Ativo</span>
+                </h4>
+                <p className="text-[11px] text-[#8C7A6B] font-medium mt-0.5">
+                  Clique em <strong>Disparar</strong> em qualquer cliente abaixo para abrir a conversa com a mensagem pronta. O envio é registrado automaticamente na auditoria e no histórico.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Filters Bar */}
           <div className="bg-white/95 backdrop-blur-xl border border-[#EBE4D8] rounded-3xl p-4 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
             {/* Filter Buttons */}
@@ -3045,16 +3092,21 @@ export const RemindersView: React.FC = () => {
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-between pt-3 border-t border-[#E2D8CA]">
-              <a
-                href={whatsappService.generateDirectLink(previewPhone, previewText)}
-                target="_blank"
-                rel="noreferrer"
-                className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition-all flex items-center space-x-1.5"
-              >
-                <ArrowSquareOut size={14} weight="bold" />
-                <span>Abrir no WhatsApp</span>
-              </a>
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#E2D8CA]">
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(previewText);
+                    showToast('Texto da mensagem copiado para a área de transferência!', 'success');
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-white border border-[#E2D8CA] text-xs font-bold text-[#6A5A4D] hover:bg-stone-50 transition-all flex items-center space-x-1.5 cursor-pointer shadow-2xs"
+                  title="Copiar texto para colar manualmente"
+                >
+                  <FloppyDisk size={14} weight="bold" />
+                  <span>Copiar Texto</span>
+                </button>
+              </div>
 
               <div className="flex items-center space-x-2">
                 <button
@@ -3062,16 +3114,16 @@ export const RemindersView: React.FC = () => {
                   onClick={() => setPreviewAppointment(null)}
                   className="px-3.5 py-1.5 rounded-xl bg-white border border-[#E2D8CA] text-xs font-bold text-stone-700 hover:bg-stone-50 transition-all cursor-pointer"
                 >
-                  Cancelar
+                  Fechar
                 </button>
                 <button
                   type="button"
                   onClick={handleSendFromPreview}
                   disabled={sendingId === previewAppointment.id}
-                  className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#c5922a] to-[#966b1a] hover:from-[#d4a34b] hover:to-[#a77820] text-amber-50 text-xs font-black shadow-xs hover:shadow transition-all flex items-center space-x-1.5 cursor-pointer"
+                  className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md shadow-emerald-900/15 hover:shadow-lg active:scale-95 transition-all flex items-center space-x-1.5 cursor-pointer"
                 >
-                  <PaperPlaneTilt size={14} weight="bold" />
-                  <span>Enviar Agora</span>
+                  <WhatsappLogo size={16} weight="fill" />
+                  <span>Abrir &amp; Enviar no WhatsApp</span>
                 </button>
               </div>
             </div>
