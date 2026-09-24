@@ -10,6 +10,7 @@ export interface WhatsAppWebStatus {
     pushname?: string;
     phone?: string;
     platform?: string;
+    profilePicUrl?: string | null;
     connectedAt?: string;
   } | null;
   error?: string | null;

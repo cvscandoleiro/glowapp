@@ -2135,22 +2135,50 @@ export const RemindersView: React.FC = () => {
 
             {/* Connection States */}
             {isConnected ? (
-              /* CONNECTED STATE (Clean, no specific individual names) */
-              <div className="p-6 rounded-3xl bg-[#FAF6F0] border border-[#E2D8CA] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
-                    <WhatsappLogo size={36} weight="fill" />
+              /* CONNECTED STATE WITH USER PROFILE, PICTURE AND STATUS */
+              <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-[#FAF6F0] to-[#F5ECE0] border border-[#E2D8CA] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
+                <div className="flex items-center space-x-4 sm:space-x-5 w-full sm:w-auto">
+                  {/* Profile Picture or Avatar */}
+                  <div className="relative shrink-0">
+                    {webStatus.user?.profilePicUrl ? (
+                      <img
+                        src={webStatus.user.profilePicUrl}
+                        alt={webStatus.user?.pushname || 'Perfil WhatsApp'}
+                        className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover border-2 border-emerald-400 shadow-md ring-4 ring-emerald-50"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center font-black text-xl shadow-md border-2 border-emerald-300 ring-4 ring-emerald-50">
+                        {webStatus.user?.pushname ? (
+                          webStatus.user.pushname.charAt(0).toUpperCase()
+                        ) : (
+                          <WhatsappLogo size={36} weight="fill" />
+                        )}
+                      </div>
+                    )}
+                    <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center text-white text-[10px] shadow-xs">
+                      ✓
+                    </span>
                   </div>
-                  <div>
-                    <h4 className="text-base font-black text-[#3D3028]">
-                      WhatsApp Conectado com Sucesso
-                    </h4>
-                    <p className="text-xs text-[#8C7A6B] font-semibold mt-0.5">
-                      Sessão salva localmente no navegador e pronta para envios de lembretes.
-                    </p>
-                    <p className="text-[11px] text-emerald-700 font-bold mt-1 flex items-center space-x-1">
-                      <CheckCircle size={13} weight="fill" />
-                      <span>Autenticação ativa e persistente</span>
+
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="text-base sm:text-lg font-black text-[#3D3028]">
+                        {webStatus.user?.pushname || 'Conta WhatsApp Conectada'}
+                      </h4>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black tracking-wide border border-emerald-300">
+                        ONLINE
+                      </span>
+                    </div>
+
+                    {webStatus.user?.phone && (
+                      <p className="text-xs text-[#6B5A4E] font-bold tracking-tight">
+                        📱 +{webStatus.user.phone}
+                      </p>
+                    )}
+
+                    <p className="text-[11px] text-emerald-800 font-semibold flex items-center space-x-1 pt-0.5">
+                      <CheckCircle size={13} weight="fill" className="text-emerald-600" />
+                      <span>Servidor Oracle Cloud 24/7 • Sessão ativa e pronta para envios</span>
                     </p>
                   </div>
                 </div>
@@ -2159,7 +2187,7 @@ export const RemindersView: React.FC = () => {
                   type="button"
                   onClick={handleDisconnectWhatsApp}
                   disabled={isDisconnectingClient}
-                  className="px-4 py-2.5 rounded-2xl bg-white hover:bg-rose-50 border border-rose-200 text-rose-600 text-xs font-black shadow-xs hover:shadow transition-all flex items-center space-x-2 cursor-pointer shrink-0"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-white hover:bg-rose-50 border border-rose-200 text-rose-600 text-xs font-black shadow-xs hover:shadow transition-all flex items-center justify-center space-x-2 cursor-pointer shrink-0"
                 >
                   <SignOut size={16} weight="bold" />
                   <span>{isDisconnectingClient ? 'Desconectando...' : 'Desconectar Sessão'}</span>
@@ -2220,7 +2248,7 @@ export const RemindersView: React.FC = () => {
                     <p className="text-[11px] font-medium leading-relaxed break-words">
                       {webStatus.error.includes('Could not find Chrome') ? (
                         <>
-                          O servidor no Render está ativo, mas o Chromium ainda está finalizando o deploy. No Render, clique em <strong>Manual Deploy &gt; Clear build cache &amp; deploy</strong> para concluir a instalação do Chrome.
+                          O servidor está ativo, mas o Chromium ainda está finalizando a instalação. Reinicie o serviço no servidor para concluir a instalação do Chrome.
                         </>
                       ) : (
                         webStatus.error
@@ -2250,14 +2278,14 @@ export const RemindersView: React.FC = () => {
               </div>
             )}
 
-            {/* Remote Backend Server Configuration (Render.com / Custom URL) */}
+            {/* Remote Backend Server Configuration (Oracle Cloud / Custom URL) */}
             <div className="p-5 rounded-3xl bg-[#FAF6F0] border border-[#E2D8CA] space-y-3 shadow-xs">
               <div className="flex items-center space-x-2 text-[#966b1a]">
                 <Robot size={20} weight="fill" />
-                <h4 className="text-xs font-black text-[#3D3028]">Servidor do Robô WhatsApp (Render / Nuvem)</h4>
+                <h4 className="text-xs font-black text-[#3D3028]">Servidor do Robô WhatsApp (Oracle Cloud / Nuvem 24/7)</h4>
               </div>
               <p className="text-[11px] text-[#8C7A6B] font-medium leading-relaxed">
-                Insira a URL do seu serviço gerado no <strong>Render.com</strong> para manter a conexão ativa 24h na nuvem:
+                Insira a URL HTTPS segura gerada na sua VM da <strong>Oracle Cloud</strong> (ex: túnel Cloudflare) para manter a conexão e os disparos ativos 24h na nuvem:
               </p>
 
               <div className="flex flex-col sm:flex-row gap-2">
@@ -2265,7 +2293,7 @@ export const RemindersView: React.FC = () => {
                   type="text"
                   value={customServerUrl}
                   onChange={(e) => setCustomServerUrl(e.target.value)}
-                  placeholder="https://seu-servico-whatsapp.onrender.com"
+                  placeholder="https://sua-url-segura.trycloudflare.com"
                   className="flex-1 px-3.5 py-2.5 rounded-xl bg-white border border-[#E2D8CA] text-xs text-[#3D3028] placeholder-stone-400 focus:outline-none focus:border-[#c5922a] font-mono shadow-2xs"
                 />
                 <button

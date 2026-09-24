@@ -205,10 +205,8 @@ function initializeWhatsAppClient() {
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
         '--disable-gpu',
-        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+        '--disable-extensions'
       ]
     };
 
@@ -234,7 +232,8 @@ function initializeWhatsAppClient() {
       }),
       puppeteer: puppeteerOptions,
       webVersionCache: {
-        type: 'none'
+        type: 'remote',
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1018902507-alpha.html'
       }
     });
 
@@ -271,10 +270,20 @@ function initializeWhatsAppClient() {
 
       try {
         const info = client.info;
+        let profilePic = null;
+        try {
+          if (info?.wid?._serialized) {
+            profilePic = await client.getProfilePicUrl(info.wid._serialized);
+          }
+        } catch (picErr) {
+          console.log('[WhatsApp Server] Foto de perfil não disponível ou privada.');
+        }
+
         connectedUser = {
-          pushname: info?.pushname || 'Usuário WhatsApp',
+          pushname: info?.pushname || 'WhatsApp Conectado',
           phone: info?.wid?.user || '',
-          platform: info?.platform || 'whatsapp-web',
+          platform: info?.platform || 'oracle-cloud-linux',
+          profilePicUrl: profilePic || null,
           connectedAt: new Date().toISOString()
         };
         console.log('[WhatsApp Server] Usuário Conectado:', connectedUser);
@@ -282,6 +291,7 @@ function initializeWhatsAppClient() {
         connectedUser = {
           pushname: 'WhatsApp Conectado',
           phone: '',
+          profilePicUrl: null,
           connectedAt: new Date().toISOString()
         };
       }
