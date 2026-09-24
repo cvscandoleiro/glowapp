@@ -163,17 +163,18 @@ async function loadSchedulerConfigFromSupabase() {
   }
 }
 
-// Helper para encontrar automaticamente o Chrome no sistema (Windows/Linux) ou Render
+// Helper para encontrar automaticamente o Chrome no sistema (Windows/Linux)
 function findChromeExecutablePath() {
   if (process.env.PUPPETEER_EXECUTABLE_PATH && fs.existsSync(process.env.PUPPETEER_EXECUTABLE_PATH)) {
     return process.env.PUPPETEER_EXECUTABLE_PATH;
   }
   if (process.platform === 'linux') {
     const linuxPaths = [
-      '/usr/bin/google-chrome',
       '/usr/bin/google-chrome-stable',
-      '/usr/bin/chromium',
-      '/usr/bin/chromium-browser'
+      '/usr/bin/google-chrome',
+      '/opt/google/chrome/google-chrome',
+      '/usr/bin/chromium-browser',
+      '/usr/bin/chromium'
     ];
     for (const p of linuxPaths) {
       if (fs.existsSync(p)) return p;
