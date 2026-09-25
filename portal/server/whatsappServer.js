@@ -776,7 +776,9 @@ app.get('/api/whatsapp/status', (req, res) => {
     qrCodeRaw: currentQrCode,
     pairingCode: currentPairingCode,
     user: connectedUser,
-    error: lastError
+    error: lastError,
+    serverTime: new Date().toISOString(),
+    serverTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Sao_Paulo'
   });
 });
 

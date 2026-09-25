@@ -138,6 +138,33 @@ export const RemindersView: React.FC = () => {
     }
   }, [activeTab]);
 
+  // Live Server Clock state
+  const [serverLiveTime, setServerLiveTime] = useState<string>('');
+  const [serverOffsetMs, setServerOffsetMs] = useState<number | null>(null);
+
+  // Sync server clock offset whenever webStatus is updated
+  useEffect(() => {
+    if (webStatus?.serverTime) {
+      const srvDate = new Date(webStatus.serverTime).getTime();
+      if (!isNaN(srvDate)) {
+        setServerOffsetMs(srvDate - Date.now());
+      }
+    }
+  }, [webStatus?.serverTime]);
+
+  // Update live server clock every second
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date(Date.now() + (serverOffsetMs ?? 0));
+      setServerLiveTime(
+        now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      );
+    };
+    updateClock();
+    const interval = setInterval(updateClock, 1000);
+    return () => clearInterval(interval);
+  }, [serverOffsetMs]);
+
   // Filters state for Queue
   const [queueFilter, setQueueFilter] = useState<'today' | 'tomorrow' | 'week' | 'all'>('today');
   const [searchQuery, setSearchQuery] = useState('');
@@ -1702,10 +1729,21 @@ export const RemindersView: React.FC = () => {
                   <p className="text-xs text-[#8C7A6B] font-medium mt-1">
                     Envio programado e automático de notificações no WhatsApp sem necessidade de intervenção manual
                   </p>
-                  <p className="text-xs font-bold text-[#966b1a] mt-2 flex items-center space-x-1.5">
-                    <Clock size={14} weight="bold" />
-                    <span>Próximo Disparo Previsto: <strong>{nextScheduledTimeInfo.text}</strong></span>
-                  </p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2.5 text-xs">
+                    <p className="font-bold text-[#966b1a] flex items-center space-x-1.5">
+                      <Clock size={14} weight="bold" />
+                      <span>Próximo Disparo: <strong>{nextScheduledTimeInfo.text}</strong></span>
+                    </p>
+                    <span className="text-[#D8CDBC] hidden sm:inline">•</span>
+                    <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-lg bg-[#FAF6F0] border border-[#E2D8CA] text-[11px] font-medium text-[#6A5A4D] shadow-2xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>Hora no Servidor:</span>
+                      <strong className="font-mono text-[#3D3028] font-black">{serverLiveTime || '--:--:--'}</strong>
+                      {webStatus.serverTimeZone && (
+                        <span className="text-[10px] text-[#966b1a] font-bold">({webStatus.serverTimeZone.replace('_', ' ')})</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 

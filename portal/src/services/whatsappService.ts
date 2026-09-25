@@ -15,6 +15,8 @@ export interface WhatsAppWebStatus {
     connectedAt?: string;
   } | null;
   error?: string | null;
+  serverTime?: string | null;
+  serverTimeZone?: string | null;
 }
 
 export interface WhatsAppConfig {
