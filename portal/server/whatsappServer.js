@@ -830,9 +830,9 @@ app.post('/api/whatsapp/request-pairing-code', async (req, res) => {
       initializeWhatsAppClient();
     }
 
-    // Aguardar até 20 segundos para o cliente carregar e estar pronto para o pareamento
+    // Aguardar o carregamento completo da tela de login do WhatsApp Web (máximo 35 segundos)
     let waited = 0;
-    while ((connectionStatus === 'INITIALIZING' || !client) && waited < 20) {
+    while ((connectionStatus === 'INITIALIZING' || !currentQrCode) && connectionStatus !== 'CONNECTED' && waited < 35) {
       await new Promise(r => setTimeout(r, 1000));
       waited++;
     }
@@ -845,17 +845,28 @@ app.post('/api/whatsapp/request-pairing-code', async (req, res) => {
     }
 
     let code = null;
-    if (typeof client.requestPairingCode === 'function') {
-      code = await client.requestPairingCode(cleanPhone);
-    } else if (typeof client.getPairingCode === 'function') {
-      code = await client.getPairingCode(cleanPhone);
-    } else {
-      throw new Error('Método requestPairingCode não disponível nesta versão do whatsapp-web.js.');
+    try {
+      if (typeof client.requestPairingCode === 'function') {
+        code = await client.requestPairingCode(cleanPhone);
+      } else if (typeof client.getPairingCode === 'function') {
+        code = await client.getPairingCode(cleanPhone);
+      } else {
+        throw new Error('Método de Código de Pareamento não suportado nesta versão do whatsapp-web.js.');
+      }
+    } catch (reqErr) {
+      console.warn('[WhatsApp Server] Tentativa inicial de pairing code falhou, aguardando 2s para tentar novamente...', reqErr.message);
+      await new Promise(r => setTimeout(r, 2500));
+      if (typeof client.requestPairingCode === 'function') {
+        code = await client.requestPairingCode(cleanPhone);
+      }
     }
 
     currentPairingCode = code || currentPairingCode;
-    connectionStatus = 'PAIRING_CODE_READY';
+    if (!currentPairingCode) {
+      throw new Error('Não foi possível obter o código de 8 dígitos do WhatsApp. Verifique se o número informado está correto (com DDD) e tente novamente.');
+    }
 
+    connectionStatus = 'PAIRING_CODE_READY';
     console.log(`[WhatsApp Server] 🔑 Código gerado com sucesso: ${currentPairingCode}`);
 
     res.json({
