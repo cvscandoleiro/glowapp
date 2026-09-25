@@ -496,50 +496,85 @@ async function executeServerScheduledRoutine(isManualTrigger = false) {
       return { success: true, total: 0, sent: 0, failed: 0, message: 'Nenhum agendamento para a data alvo.' };
     }
 
-    // 2. Fetch existing audit logs and message logs to ensure strictly unnotified appointments are sent
+    // 2. Fetch existing audit logs and message logs to validate if client already received reminder for this date and time
     const { data: existingAudits } = await supabase
       .from('whatsapp_audit_logs')
-      .select('appointment_id, client_name, phone, status, created_at, sent_at')
+      .select('appointment_id, client_id, client_name, phone, message_content, status, created_at, sent_at')
       .in('status', ['enviado', 'entregue', 'lido', 'simulado', 'pendente']);
 
     const { data: existingLogs } = await supabase
       .from('whatsapp_logs')
-      .select('appointment_id, client_name, phone, status, created_at')
+      .select('appointment_id, client_name, phone, message_content, status, created_at')
       .in('status', ['enviado', 'entregue', 'lido', 'simulado', 'pendente']);
 
-    const alreadyNotifiedIds = new Set();
-    const alreadyNotifiedPhonesForDate = new Set();
-    const alreadyNotifiedNamesForDate = new Set();
+    const allLogs = [...(existingAudits || []), ...(existingLogs || [])];
+    const notifiedAptIds = Array.from(new Set(allLogs.map(l => l.appointment_id).filter(Boolean)));
 
-    (existingAudits || []).forEach(a => {
-      if (a.appointment_id) alreadyNotifiedIds.add(a.appointment_id);
-      const isForTargetDate = a.created_at?.startsWith(targetDate) || a.sent_at?.startsWith(targetDate);
-      if (isForTargetDate) {
-        if (a.phone) alreadyNotifiedPhonesForDate.add((a.phone || '').replace(/\D/g, ''));
-        if (a.client_name) alreadyNotifiedNamesForDate.add((a.client_name || '').trim().toLowerCase());
+    // Fetch details of referenced appointments to compare client + date + time
+    let refAptsMap = new Map();
+    if (notifiedAptIds.length > 0) {
+      try {
+        const { data: refApts } = await supabase
+          .from('appointments')
+          .select('id, client_id, client_name, phone, date, start_time')
+          .in('id', notifiedAptIds);
+        if (refApts) {
+          refApts.forEach(a => refAptsMap.set(a.id, a));
+        }
+      } catch (e) {
+        console.warn('[Auto Scheduler Server] Erro ao carregar agendamentos de referência:', e.message);
       }
-    });
-
-    (existingLogs || []).forEach(l => {
-      if (l.appointment_id) alreadyNotifiedIds.add(l.appointment_id);
-      const isForTargetDate = l.created_at?.startsWith(targetDate);
-      if (isForTargetDate) {
-        if (l.phone) alreadyNotifiedPhonesForDate.add((l.phone || '').replace(/\D/g, ''));
-        if (l.client_name) alreadyNotifiedNamesForDate.add((l.client_name || '').trim().toLowerCase());
-      }
-    });
+    }
 
     const unnotified = appointments.filter(apt => {
-      // 1. Direct ID match
-      if (alreadyNotifiedIds.has(apt.id)) return false;
+      const aptDate = apt.date || ''; // YYYY-MM-DD
+      const aptTime = (apt.start_time || apt.startTime || '').trim(); // HH:mm
+      const [y, m, d] = aptDate.split('-');
+      const formattedDate = d && m && y ? `${d}/${m}/${y}` : '';
+      const shortDate = d && m ? `${d}/${m}` : '';
 
-      // 2. Client Name match for the same date
       const cName = (apt.client_name || apt.clientName || '').trim().toLowerCase();
-      if (cName && alreadyNotifiedNamesForDate.has(cName)) return false;
-
-      // 3. Phone match for the same date
       const cPhone = (apt.phone || '').replace(/\D/g, '');
-      if (cPhone && alreadyNotifiedPhonesForDate.has(cPhone)) return false;
+      const cId = apt.client_id || apt.clientId;
+
+      for (const log of allLogs) {
+        // 1. Direct appointment_id match
+        if (log.appointment_id && log.appointment_id === apt.id) {
+          return false;
+        }
+
+        // Check if log belongs to same client
+        const logClientName = (log.client_name || '').trim().toLowerCase();
+        const logPhone = (log.phone || '').replace(/\D/g, '');
+        const logClientId = log.client_id;
+
+        const isSameClient =
+          (cId && logClientId && cId === logClientId) ||
+          (cName && logClientName && cName === logClientName) ||
+          (cPhone && logPhone && cPhone.length >= 8 && (cPhone.includes(logPhone) || logPhone.includes(cPhone)));
+
+        if (!isSameClient) continue;
+
+        // 2. Validate Regra: Cliente + Data + Hora
+        // 2a. Match via referenced appointment
+        if (log.appointment_id && refAptsMap.has(log.appointment_id)) {
+          const refApt = refAptsMap.get(log.appointment_id);
+          const refDate = refApt.date;
+          const refTime = (refApt.start_time || refApt.startTime || '').trim();
+          if (refDate === aptDate && refTime === aptTime) {
+            return false; // Already notified for this exact date & time!
+          }
+        }
+
+        // 2b. Match via message content containing the appointment's date & time
+        const content = log.message_content || '';
+        if (formattedDate && aptTime && content.includes(formattedDate) && content.includes(aptTime)) {
+          return false;
+        }
+        if (shortDate && aptTime && content.includes(shortDate) && content.includes(aptTime)) {
+          return false;
+        }
+      }
 
       return true;
     });

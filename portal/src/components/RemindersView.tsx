@@ -684,27 +684,49 @@ export const RemindersView: React.FC = () => {
   };
 
   // Helper to check if an appointment already received a reminder strictly based on database tables
+  // REGRA: Cliente + Data + Hora (recebe apenas 1x para a mesma data e horário)
   const getAppointmentReminderStatus = (apt: Appointment) => {
     const matchedClient = getClientForAppointment(apt);
     const cleanPhone = (matchedClient?.phone || '').replace(/\D/g, '');
     const cleanClientName = (apt.clientName || '').trim().toLowerCase();
-    const aptDate = apt.date; // YYYY-MM-DD
+    const aptDate = apt.date || ''; // YYYY-MM-DD
+    const aptTime = (apt.startTime || (apt as any).start_time || '').trim(); // HH:mm
+    const [y, m, d] = aptDate.split('-');
+    const formattedDate = d && m && y ? `${d}/${m}/${y}` : '';
+    const shortDate = d && m ? `${d}/${m}` : '';
 
     const validStatuses = ['enviado', 'entregue', 'lido', 'simulado', 'pendente'];
 
     // 1. Check in auditLogs first (tabela whatsapp_audit_logs)
     const audit = auditLogs.find(a => {
-      if (!a) return false;
+      if (!a || !validStatuses.includes(a.status)) return false;
       // Direct appointment_id match
       if (a.appointmentId && a.appointmentId === apt.id) return true;
-      // Match by client_id on the same date
-      if (apt.clientId && a.clientId && a.clientId === apt.clientId && (a.createdAt?.startsWith(aptDate) || a.sentAt?.startsWith(aptDate))) return true;
-      // Match by phone on the same date
+
+      // Check client match
       const logPhone = (a.phone || '').replace(/\D/g, '');
-      if (cleanPhone && logPhone && logPhone === cleanPhone && (a.createdAt?.startsWith(aptDate) || a.sentAt?.startsWith(aptDate))) return true;
-      // Match by client name on the same date
       const logName = (a.clientName || '').trim().toLowerCase();
-      if (cleanClientName && logName && logName === cleanClientName && (a.createdAt?.startsWith(aptDate) || a.sentAt?.startsWith(aptDate))) return true;
+      const isClientMatch =
+        (apt.clientId && a.clientId && a.clientId === apt.clientId) ||
+        (cleanClientName && logName && logName === cleanClientName) ||
+        (cleanPhone && logPhone && cleanPhone.length >= 8 && (cleanPhone.includes(logPhone) || logPhone.includes(cleanPhone)));
+
+      if (!isClientMatch) return false;
+
+      // Check Data + Hora via referenced appointment
+      if (a.appointmentId) {
+        const refApt = appointments.find(ap => ap.id === a.appointmentId);
+        if (refApt) {
+          const refTime = (refApt.startTime || (refApt as any).start_time || '').trim();
+          if (refApt.date === aptDate && refTime === aptTime) return true;
+        }
+      }
+
+      // Check Data + Hora via message content
+      const content = a.messageContent || '';
+      if (formattedDate && aptTime && content.includes(formattedDate) && content.includes(aptTime)) return true;
+      if (shortDate && aptTime && content.includes(shortDate) && content.includes(aptTime)) return true;
+
       return false;
     });
 
@@ -714,15 +736,33 @@ export const RemindersView: React.FC = () => {
 
     // 2. Check in standard logs (tabela whatsapp_logs)
     const log = logs.find(l => {
-      if (!l) return false;
+      if (!l || !validStatuses.includes(l.status)) return false;
       // Direct appointment_id match
       if (l.appointmentId && l.appointmentId === apt.id) return true;
-      // Match by phone on the same date
+
+      // Check client match
       const logPhone = (l.phone || '').replace(/\D/g, '');
-      if (cleanPhone && logPhone && logPhone === cleanPhone && l.createdAt?.startsWith(aptDate)) return true;
-      // Match by client name on the same date
       const logName = (l.clientName || '').trim().toLowerCase();
-      if (cleanClientName && logName && logName === cleanClientName && l.createdAt?.startsWith(aptDate)) return true;
+      const isClientMatch =
+        (cleanClientName && logName && logName === cleanClientName) ||
+        (cleanPhone && logPhone && cleanPhone.length >= 8 && (cleanPhone.includes(logPhone) || logPhone.includes(cleanPhone)));
+
+      if (!isClientMatch) return false;
+
+      // Check Data + Hora via referenced appointment
+      if (l.appointmentId) {
+        const refApt = appointments.find(ap => ap.id === l.appointmentId);
+        if (refApt) {
+          const refTime = (refApt.startTime || (refApt as any).start_time || '').trim();
+          if (refApt.date === aptDate && refTime === aptTime) return true;
+        }
+      }
+
+      // Check Data + Hora via message content
+      const content = l.messageContent || '';
+      if (formattedDate && aptTime && content.includes(formattedDate) && content.includes(aptTime)) return true;
+      if (shortDate && aptTime && content.includes(shortDate) && content.includes(aptTime)) return true;
+
       return false;
     });
 
