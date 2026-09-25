@@ -312,10 +312,10 @@ export const RemindersView: React.FC = () => {
   const loadData = async () => {
     setLoading(true);
     try {
+      const loadedConfig = await whatsappService.getConfig();
       const [
         loadedApts,
         loadedClients,
-        loadedConfig,
         loadedLogs,
         loadedAudits,
         status,
@@ -324,7 +324,6 @@ export const RemindersView: React.FC = () => {
       ] = await Promise.all([
         appointmentService.getAppointments(),
         clientService.getClients([]),
-        whatsappService.getConfig(),
         whatsappService.getLogs(),
         whatsappService.getAuditLogs(),
         whatsappService.getStatus(),
@@ -371,6 +370,21 @@ export const RemindersView: React.FC = () => {
           async () => {
             const updatedLogs = await whatsappService.getLogs();
             setLogs(updatedLogs);
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'whatsapp_config' },
+          async () => {
+            const updatedCfg = await whatsappService.getConfig();
+            setConfig(updatedCfg);
+            if (updatedCfg.serverUrl) {
+              setCustomServerUrl(updatedCfg.serverUrl);
+            }
+            const updatedScheduler = await whatsappService.getSchedulerConfig();
+            setSchedulerConfig(updatedScheduler);
+            const currentStatus = await whatsappService.getStatus();
+            setWebStatus(currentStatus);
           }
         )
         .subscribe();

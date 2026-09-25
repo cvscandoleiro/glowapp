@@ -177,8 +177,27 @@ const DEFAULT_TEMPLATES: WhatsAppTemplate[] = [
 ];
 
 export const whatsappService = {
+  inMemoryConfig: null as WhatsAppConfig | null,
+
+  // Helper to ensure server URL and config are loaded from Supabase
+  async ensureConfigLoaded(): Promise<WhatsAppConfig> {
+    if (this.inMemoryConfig) {
+      return this.inMemoryConfig;
+    }
+    return await this.getConfig();
+  },
+
   // Helper to get backend base URL
   getBaseUrl(): string {
+    // 1. In-memory loaded from Supabase or updated during session
+    if (this.inMemoryConfig?.serverUrl && this.inMemoryConfig.serverUrl.trim()) {
+      const cleanUrl = this.inMemoryConfig.serverUrl.trim().replace(/\/+$/, '');
+      if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+        return cleanUrl.endsWith('/api/whatsapp') ? cleanUrl : `${cleanUrl}/api/whatsapp`;
+      }
+    }
+
+    // 2. LocalStorage cache fallback
     try {
       const cached = localStorage.getItem(CONFIG_STORAGE_KEY);
       if (cached) {
@@ -192,6 +211,7 @@ export const whatsappService = {
       }
     } catch (e) {}
 
+    // 3. Environment variable fallback
     const envUrl = (import.meta as any).env?.VITE_WHATSAPP_SERVER_URL;
     if (envUrl && envUrl.trim()) {
       const cleanEnv = envUrl.trim().replace(/\/+$/, '');
@@ -203,6 +223,7 @@ export const whatsappService = {
 
   // 1. Get WhatsApp Web Connection Status & QR Code
   async getStatus(): Promise<WhatsAppWebStatus> {
+    await this.ensureConfigLoaded();
     const url = `${this.getBaseUrl()}/status`;
     try {
       const response = await fetch(url, {
@@ -225,12 +246,13 @@ export const whatsappService = {
       status: 'DISCONNECTED',
       qrCodeDataUrl: null,
       qrCodeRaw: null,
-      error: 'Servidor do WhatsApp não conectado. Configure o link do Render nas opções abaixo ou inicie o servidor.',
+      error: 'Servidor do WhatsApp não conectado. Configure o link do Servidor nas opções abaixo ou inicie o servidor.',
     };
   },
 
   // 2. Initialize / Request Connection (Generates QR Code)
   async initializeClient(): Promise<WhatsAppWebStatus> {
+    await this.ensureConfigLoaded();
     const url = `${this.getBaseUrl()}/initialize`;
     try {
       const response = await fetch(url, {
@@ -262,6 +284,7 @@ export const whatsappService = {
 
   // 2b. Request 8-Digit Pairing Code (Phone Number Pairing)
   async requestPairingCode(phoneNumber: string): Promise<WhatsAppWebStatus & { pairingCode?: string }> {
+    await this.ensureConfigLoaded();
     const url = `${this.getBaseUrl()}/request-pairing-code`;
     try {
       const response = await fetch(url, {
@@ -291,6 +314,7 @@ export const whatsappService = {
 
   // 3. Disconnect / Logout
   async disconnectClient(): Promise<{ success: boolean; message?: string }> {
+    await this.ensureConfigLoaded();
     try {
       const response = await fetch(`${this.getBaseUrl()}/disconnect`, {
         method: 'POST',
@@ -312,22 +336,72 @@ export const whatsappService = {
     return { success: false, message: 'Erro ao desconectar sessão.' };
   },
 
-  // 4. Get saved settings
+  // 4. Get saved settings (prioritize Supabase server persistence)
   async getConfig(): Promise<WhatsAppConfig> {
+    // 1. Fetch from Supabase
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('whatsapp_config')
+          .select('*')
+          .eq('id', 'default_config')
+          .maybeSingle();
+
+        if (!error && data) {
+          const config: WhatsAppConfig = {
+            autoReminderHours: data.auto_reminder_hours ?? DEFAULT_CONFIG.autoReminderHours,
+            serverUrl: (data.server_url && data.server_url.trim()) ? data.server_url.trim() : DEFAULT_CONFIG.serverUrl,
+            isSimulationMode: data.is_simulation_mode ?? DEFAULT_CONFIG.isSimulationMode,
+          };
+          this.inMemoryConfig = config;
+          try {
+            localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
+          } catch (e) {}
+          return config;
+        }
+      } catch (e) {
+        console.warn('[WhatsApp Service] Aviso ao carregar config do Supabase:', e);
+      }
+    }
+
+    // 2. Fallback to LocalStorage
     try {
       const cached = localStorage.getItem(CONFIG_STORAGE_KEY);
       if (cached) {
-        return { ...DEFAULT_CONFIG, ...JSON.parse(cached) };
+        const parsed = { ...DEFAULT_CONFIG, ...JSON.parse(cached) };
+        this.inMemoryConfig = parsed;
+        return parsed;
       }
     } catch (e) {}
+
+    this.inMemoryConfig = DEFAULT_CONFIG;
     return DEFAULT_CONFIG;
   },
 
-  // 5. Save settings
+  // 5. Save settings to Supabase and cache locally
   async saveConfig(config: WhatsAppConfig): Promise<void> {
+    this.inMemoryConfig = config;
     try {
       localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
     } catch (e) {}
+
+    // Persist to Supabase whatsapp_config table
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('whatsapp_config').upsert(
+          {
+            id: 'default_config',
+            server_url: config.serverUrl,
+            auto_reminder_hours: config.autoReminderHours,
+            is_simulation_mode: config.isSimulationMode,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'id' }
+        );
+      } catch (err) {
+        console.error('[WhatsApp Service] Erro ao persistir config no Supabase:', err);
+      }
+    }
   },
 
   // 6. Format phone number to clean E.164 (e.g. 5511999998888)

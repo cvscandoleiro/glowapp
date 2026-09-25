@@ -90,10 +90,12 @@ CREATE TABLE IF NOT EXISTS public.whatsapp_config (
     last_run_at TIMESTAMP WITH TIME ZONE,
     last_run_summary JSONB,
     scheduler_history JSONB DEFAULT '[]'::jsonb,
+    server_url TEXT DEFAULT 'http://localhost:3001',
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 -- Migrações seguras caso whatsapp_config já exista
+ALTER TABLE public.whatsapp_config ADD COLUMN IF NOT EXISTS server_url TEXT DEFAULT 'http://localhost:3001';
 ALTER TABLE public.whatsapp_config ADD COLUMN IF NOT EXISTS is_auto_scheduler_enabled BOOLEAN DEFAULT false;
 ALTER TABLE public.whatsapp_config ADD COLUMN IF NOT EXISTS scheduled_times JSONB DEFAULT '["08:00", "14:00", "18:00"]'::jsonb;
 ALTER TABLE public.whatsapp_config ADD COLUMN IF NOT EXISTS days_in_advance INTEGER DEFAULT 1;
