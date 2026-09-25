@@ -16,7 +16,8 @@ import {
   CheckSquare,
   Square,
   Trash,
-  SealCheck
+  SealCheck,
+  SidebarSimple
 } from '@phosphor-icons/react';
 
 import { appointmentService, type Appointment } from '../services/appointmentService';
@@ -99,6 +100,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
 
   // Modal State for New Appointment
   const [isNewAppointmentModalOpen, setIsNewAppointmentModalOpen] = useState(false);
+  const [isEditDetailsCollapsed, setIsEditDetailsCollapsed] = useState(false);
 
   // Helper to format Date to YYYY-MM-DD
   const formatIsoDate = (d: Date) => {
@@ -456,6 +458,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
       setEditNotes(group.notes || primaryApt.notes || '');
       setEditStatus(group.status === 'pendente' ? 'confirmado' : (group.status as any));
       setServiceSearch('');
+      setIsEditDetailsCollapsed(false);
       setIsEditModalOpen(true);
 
       // Collect all service identifiers from all appointments in group and matched client procedures
@@ -1514,131 +1517,170 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 sm:gap-4 flex-1 min-h-0">
                   
                   {/* Left Column: Data, Horário, Status, Descrição */}
-                  <div className="md:col-span-5 flex flex-col justify-between space-y-2.5 bg-white/85 backdrop-blur-sm border border-[#E8DFD3] rounded-2xl p-3.5 shadow-sm overflow-y-auto">
-                    
-                    <div className="space-y-2.5">
-                      <div className="border-b border-[#EBE4D8] pb-1.5">
-                        <h4 className="text-xs font-black text-[#3D3028] uppercase tracking-wider flex items-center space-x-1.5">
-                          <CalendarBlank size={14} className="text-[#c5922a]" weight="bold" />
-                          <span>Dados do Agendamento</span>
-                        </h4>
-                        <p className="text-[10px] text-[#8C7A6B] font-medium mt-0.5">
-                          Defina a data, horário e detalhes
-                        </p>
-                      </div>
+                  {!isEditDetailsCollapsed && (
+                    <div className="md:col-span-5 flex flex-col justify-between space-y-2.5 bg-white/85 backdrop-blur-sm border border-[#E8DFD3] rounded-2xl p-3.5 shadow-sm overflow-y-auto animate-fade-in">
+                      
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between border-b border-[#EBE4D8] pb-1.5">
+                          <div>
+                            <h4 className="text-xs font-black text-[#3D3028] uppercase tracking-wider flex items-center space-x-1.5">
+                              <CalendarBlank size={14} className="text-[#c5922a]" weight="bold" />
+                              <span>Dados do Agendamento</span>
+                            </h4>
+                            <p className="text-[10px] text-[#8C7A6B] font-medium mt-0.5">
+                              Defina a data, horário e detalhes
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setIsEditDetailsCollapsed(true)}
+                            className="px-2.5 py-1 rounded-xl bg-[#FAF6F0] hover:bg-[#EAE2D5] text-[#8C7A6B] hover:text-[#3D3028] border border-[#E2D8CA] transition-all flex items-center space-x-1 text-[11px] font-bold cursor-pointer shadow-2xs group shrink-0"
+                            title="Retrair Dados do Agendamento para expandir a Lista de Serviços"
+                          >
+                            <SidebarSimple size={14} weight="bold" className="text-[#c5922a] group-hover:scale-110 transition-transform" />
+                            <span className="hidden sm:inline">Retrair</span>
+                          </button>
+                        </div>
 
-                      {/* Data */}
-                      <div>
-                        <label className="flex items-center space-x-1.5 text-[11px] font-bold text-[#4A3B31] mb-1">
-                          <CalendarBlank size={13} className="text-[#c5922a]" weight="bold" />
-                          <span>Data do Agendamento *</span>
-                        </label>
-                        <input
-                          type="date"
-                          value={editDate}
-                          onChange={e => setEditDate(e.target.value)}
-                          required
-                          className="w-full bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl px-3 py-1.5 text-xs font-bold text-[#3D3028] focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm transition-all"
-                        />
-                      </div>
-
-                      {/* Horário Início e Término */}
-                      <div className="grid grid-cols-2 gap-2">
+                        {/* Data */}
                         <div>
-                          <label className="flex items-center space-x-1 text-[11px] font-bold text-[#4A3B31] mb-1">
-                            <Clock size={13} className="text-[#c5922a]" weight="bold" />
-                            <span>Início *</span>
+                          <label className="flex items-center space-x-1.5 text-[11px] font-bold text-[#4A3B31] mb-1">
+                            <CalendarBlank size={13} className="text-[#c5922a]" weight="bold" />
+                            <span>Data do Agendamento *</span>
                           </label>
                           <input
-                            type="time"
-                            value={editStartTime}
-                            onChange={e => setEditStartTime(e.target.value)}
+                            type="date"
+                            value={editDate}
+                            onChange={e => setEditDate(e.target.value)}
                             required
                             className="w-full bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl px-3 py-1.5 text-xs font-bold text-[#3D3028] focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm transition-all"
                           />
                         </div>
+
+                        {/* Horário Início e Término */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="flex items-center space-x-1 text-[11px] font-bold text-[#4A3B31] mb-1">
+                              <Clock size={13} className="text-[#c5922a]" weight="bold" />
+                              <span>Início *</span>
+                            </label>
+                            <input
+                              type="time"
+                              value={editStartTime}
+                              onChange={e => setEditStartTime(e.target.value)}
+                              required
+                              className="w-full bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl px-3 py-1.5 text-xs font-bold text-[#3D3028] focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm transition-all"
+                            />
+                          </div>
+                          <div>
+                            <label className="flex items-center space-x-1 text-[11px] font-bold text-[#4A3B31] mb-1">
+                              <Clock size={13} className="text-[#c5922a]" weight="bold" />
+                              <span>Término</span>
+                            </label>
+                            <input
+                              type="time"
+                              value={editEndTime}
+                              onChange={e => setEditEndTime(e.target.value)}
+                              className="w-full bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl px-3 py-1.5 text-xs font-bold text-[#3D3028] focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm transition-all"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Status */}
                         <div>
-                          <label className="flex items-center space-x-1 text-[11px] font-bold text-[#4A3B31] mb-1">
-                            <Clock size={13} className="text-[#c5922a]" weight="bold" />
-                            <span>Término</span>
+                          <label className="block text-[11px] font-bold text-[#4A3B31] mb-1">
+                            Status do Agendamento
                           </label>
-                          <input
-                            type="time"
-                            value={editEndTime}
-                            onChange={e => setEditEndTime(e.target.value)}
+                          <select
+                            value={editStatus}
+                            onChange={e => setEditStatus(e.target.value as any)}
                             className="w-full bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl px-3 py-1.5 text-xs font-bold text-[#3D3028] focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm transition-all"
+                          >
+                            <option value="confirmado">Confirmado / Agendado</option>
+                            <option value="em_andamento">Em Andamento</option>
+                            <option value="concluido">Concluído</option>
+                            <option value="cancelado">Cancelado</option>
+                          </select>
+                        </div>
+
+                        {/* Descrição / Observações */}
+                        <div>
+                          <label className="block text-[11px] font-bold text-[#4A3B31] mb-1">
+                            Descrição / Observações
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={editNotes}
+                            onChange={e => setEditNotes(e.target.value)}
+                            placeholder="Ex: 1ª Sessão, Retorno, Cuidados prévios..."
+                            className="w-full bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl px-3 py-1.5 text-xs font-medium text-[#3D3028] placeholder-[#A6978A] focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm resize-none"
                           />
                         </div>
                       </div>
 
-                      {/* Status */}
-                      <div>
-                        <label className="block text-[11px] font-bold text-[#4A3B31] mb-1">
-                          Status do Agendamento
-                        </label>
-                        <select
-                          value={editStatus}
-                          onChange={e => setEditStatus(e.target.value as any)}
-                          className="w-full bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl px-3 py-1.5 text-xs font-bold text-[#3D3028] focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm transition-all"
-                        >
-                          <option value="confirmado">Confirmado / Agendado</option>
-                          <option value="em_andamento">Em Andamento</option>
-                          <option value="concluido">Concluído</option>
-                          <option value="cancelado">Cancelado</option>
-                        </select>
+                      {/* Resumo */}
+                      <div className="bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl p-2.5 space-y-1 mt-1">
+                        <div className="flex items-center justify-between text-[11px] font-semibold text-[#8C7A6B]">
+                          <span>Serviços selecionados:</span>
+                          <span className="font-bold text-[#3D3028]">{selectedServiceIds.length}</span>
+                        </div>
+                        <div className="pt-1 border-t border-[#E8DFD3] flex items-center justify-between">
+                          <span className="text-xs font-bold text-[#4A3B31]">Total Previsto:</span>
+                          <span className="text-sm font-black text-[#966b1a]">
+                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                              availableServices
+                                .filter(s => selectedServiceIds.includes(s.id))
+                                .reduce((acc, s) => acc + (s.price || 0), 0)
+                            )}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* Descrição / Observações */}
-                      <div>
-                        <label className="block text-[11px] font-bold text-[#4A3B31] mb-1">
-                          Descrição / Observações
-                        </label>
-                        <textarea
-                          rows={2}
-                          value={editNotes}
-                          onChange={e => setEditNotes(e.target.value)}
-                          placeholder="Ex: 1ª Sessão, Retorno, Cuidados prévios..."
-                          className="w-full bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl px-3 py-1.5 text-xs font-medium text-[#3D3028] placeholder-[#A6978A] focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm resize-none"
-                        />
-                      </div>
                     </div>
-
-                    {/* Resumo */}
-                    <div className="bg-[#FAF6F0] border border-[#E2D8CA] rounded-xl p-2.5 space-y-1 mt-1">
-                      <div className="flex items-center justify-between text-[11px] font-semibold text-[#8C7A6B]">
-                        <span>Serviços selecionados:</span>
-                        <span className="font-bold text-[#3D3028]">{selectedServiceIds.length}</span>
-                      </div>
-                      <div className="pt-1 border-t border-[#E8DFD3] flex items-center justify-between">
-                        <span className="text-xs font-bold text-[#4A3B31]">Total Previsto:</span>
-                        <span className="text-sm font-black text-[#966b1a]">
-                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                            availableServices
-                              .filter(s => selectedServiceIds.includes(s.id))
-                              .reduce((acc, s) => acc + (s.price || 0), 0)
-                          )}
-                        </span>
-                      </div>
-                    </div>
-
-                  </div>
+                  )}
 
                   {/* Right Column: Services List */}
-                  <div className="md:col-span-7 flex flex-col space-y-2 bg-white/85 backdrop-blur-sm border border-[#E8DFD3] rounded-2xl p-3.5 shadow-sm min-h-0">
+                  <div className={`${isEditDetailsCollapsed ? 'col-span-12' : 'md:col-span-7'} flex flex-col space-y-2 bg-white/85 backdrop-blur-sm border border-[#E8DFD3] rounded-2xl p-3.5 shadow-sm min-h-0 transition-all duration-300`}>
                     
-                    {/* Header with Search */}
+                    {/* Header with Search and Expand Button */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#EBE4D8] pb-2 shrink-0">
-                      <div>
-                        <h4 className="text-xs font-black text-[#3D3028] uppercase tracking-wider flex items-center space-x-1.5">
-                          <Sparkle size={14} className="text-[#c5922a]" weight="fill" />
-                          <span>Lista de Serviços</span>
-                        </h4>
-                        <p className="text-[10px] text-[#8C7A6B] font-medium">
-                          Selecione um ou mais procedimentos
-                        </p>
+                      <div className="flex items-center space-x-3">
+                        {isEditDetailsCollapsed && (
+                          <button
+                            type="button"
+                            onClick={() => setIsEditDetailsCollapsed(false)}
+                            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-100 to-amber-50 hover:from-amber-200 hover:to-amber-100 text-[#966b1a] border border-amber-300/90 transition-all flex items-center space-x-1.5 text-xs font-black cursor-pointer shadow-2xs shrink-0 active:scale-95 animate-fade-in"
+                            title="Expandir painel de Dados do Agendamento"
+                          >
+                            <SidebarSimple size={15} weight="bold" className="text-[#966b1a]" />
+                            <span>Expandir Dados ({editDate ? editDate.split('-').reverse().join('/') : 'Data'} às {editStartTime || '--:--'})</span>
+                          </button>
+                        )}
+                        <div>
+                          <h4 className="text-xs font-black text-[#3D3028] uppercase tracking-wider flex items-center space-x-1.5">
+                            <Sparkle size={14} className="text-[#c5922a]" weight="fill" />
+                            <span>Lista de Serviços</span>
+                          </h4>
+                          <p className="text-[10px] text-[#8C7A6B] font-medium">
+                            Selecione um ou mais procedimentos
+                          </p>
+                        </div>
                       </div>
 
                       <div className="flex items-center space-x-2">
+                        {isEditDetailsCollapsed && (
+                          <div className="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-xl bg-amber-50/90 border border-amber-200/90 text-xs shadow-2xs">
+                            <span className="text-[#8C7A6B] font-bold">Total ({selectedServiceIds.length}):</span>
+                            <span className="font-black text-[#966b1a]">
+                              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                                availableServices
+                                  .filter(s => selectedServiceIds.includes(s.id))
+                                  .reduce((acc, s) => acc + (s.price || 0), 0)
+                              )}
+                            </span>
+                          </div>
+                        )}
+
                         <div className="relative">
                           <input
                             type="text"

@@ -66,14 +66,30 @@ let schedulerConfig = {
   history: []
 };
 
-// Helper to get local date in Brazil (YYYY-MM-DD)
+// Helper to get local date in Brazil (YYYY-MM-DD) in America/Sao_Paulo timezone
 function getLocalDateString(daysInAdvance = 0) {
   const d = new Date();
-  d.setDate(d.getDate() + daysInAdvance);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+  if (daysInAdvance !== 0) {
+    d.setDate(d.getDate() + daysInAdvance);
+  }
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  return formatter.format(d); // returns "YYYY-MM-DD"
+}
+
+// Helper to get local time in Brazil (HH:mm) in America/Sao_Paulo timezone
+function getLocalTimeString() {
+  const formatter = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+  return formatter.format(new Date()); // returns "HH:mm"
 }
 
 // Helper to interpolate message templates
@@ -734,25 +750,22 @@ async function executeServerScheduledRoutine(isManualTrigger = false) {
   }
 }
 
-// Server-side autonomous cron loop (runs 24/7 every 20 seconds)
+// Server-side autonomous cron loop (runs 24/7 every 15 seconds)
 let lastExecutedSlot = '';
 setInterval(async () => {
   if (!schedulerConfig.enabled) return;
   if (connectionStatus !== 'CONNECTED') return;
 
-  const now = new Date();
-  const currentH = String(now.getHours()).padStart(2, '0');
-  const currentM = String(now.getMinutes()).padStart(2, '0');
-  const currentTime = `${currentH}:${currentM}`;
+  const currentTime = getLocalTimeString();
   const today = getLocalDateString(0);
   const slotKey = `${today}_${currentTime}`;
 
   if (schedulerConfig.scheduledTimes.includes(currentTime) && lastExecutedSlot !== slotKey) {
     lastExecutedSlot = slotKey;
-    console.log(`\n[Auto Scheduler Server] ⏰ Horário programado atingido: ${currentTime}. Executando disparo automático...`);
+    console.log(`\n[Auto Scheduler Server] ⏰ Horário programado atingido: ${currentTime} (Horário de Brasília). Executando disparo automático...`);
     await executeServerScheduledRoutine(false);
   }
-}, 20000);
+}, 15000);
 
 // Health Check & Root
 app.get('/', (req, res) => {
