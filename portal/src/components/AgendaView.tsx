@@ -17,7 +17,8 @@ import {
   Square,
   Trash,
   SealCheck,
-  SidebarSimple
+  ArrowLineLeft,
+  ArrowLineRight
 } from '@phosphor-icons/react';
 
 import { appointmentService, type Appointment } from '../services/appointmentService';
@@ -1534,11 +1535,13 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                           <button
                             type="button"
                             onClick={() => setIsEditDetailsCollapsed(true)}
-                            className="px-2.5 py-1 rounded-xl bg-[#FAF6F0] hover:bg-[#EAE2D5] text-[#8C7A6B] hover:text-[#3D3028] border border-[#E2D8CA] transition-all flex items-center space-x-1 text-[11px] font-bold cursor-pointer shadow-2xs group shrink-0"
+                            className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-amber-400/15 to-amber-500/10 hover:from-amber-500/20 hover:to-amber-500/15 text-[#6d4d13] border border-[#c5922a]/40 hover:border-[#c5922a] transition-all flex items-center space-x-2 text-xs font-black cursor-pointer shadow-xs hover:shadow-sm group shrink-0 active:scale-95"
                             title="Retrair Dados do Agendamento para expandir a Lista de Serviços"
                           >
-                            <SidebarSimple size={14} weight="bold" className="text-[#c5922a] group-hover:scale-110 transition-transform" />
-                            <span className="hidden sm:inline">Retrair</span>
+                            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-gradient-to-br from-[#d4a34b] via-[#c5922a] to-[#966b1a] text-white flex items-center justify-center shadow-xs ring-2 ring-amber-400/25 group-hover:scale-105 group-hover:-translate-x-0.5 transition-all duration-200">
+                              <ArrowLineLeft size={13} weight="bold" />
+                            </div>
+                            <span className="tracking-wide">Retrair</span>
                           </button>
                         </div>
 
@@ -1649,10 +1652,12 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                           <button
                             type="button"
                             onClick={() => setIsEditDetailsCollapsed(false)}
-                            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-100 to-amber-50 hover:from-amber-200 hover:to-amber-100 text-[#966b1a] border border-amber-300/90 transition-all flex items-center space-x-1.5 text-xs font-black cursor-pointer shadow-2xs shrink-0 active:scale-95 animate-fade-in"
+                            className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-amber-400/15 to-amber-500/10 hover:from-amber-500/20 hover:to-amber-500/15 text-[#6d4d13] border border-[#c5922a]/40 hover:border-[#c5922a] transition-all flex items-center space-x-2 text-xs font-black cursor-pointer shadow-xs hover:shadow-sm group shrink-0 active:scale-95 animate-fade-in"
                             title="Expandir painel de Dados do Agendamento"
                           >
-                            <SidebarSimple size={15} weight="bold" className="text-[#966b1a]" />
+                            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-gradient-to-br from-[#d4a34b] via-[#c5922a] to-[#966b1a] text-white flex items-center justify-center shadow-xs ring-2 ring-amber-400/25 group-hover:scale-105 group-hover:translate-x-0.5 transition-all duration-200">
+                              <ArrowLineRight size={13} weight="bold" />
+                            </div>
                             <span>Expandir Dados ({editDate ? editDate.split('-').reverse().join('/') : 'Data'} às {editStartTime || '--:--'})</span>
                           </button>
                         )}
