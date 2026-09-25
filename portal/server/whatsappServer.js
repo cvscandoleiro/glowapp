@@ -793,7 +793,15 @@ async function executeServerScheduledRoutine(isManualTrigger = false) {
 
 // Server-side autonomous cron loop (runs 24/7 every 15 seconds)
 let lastExecutedSlot = '';
+let lastConfigSync = 0;
+
 setInterval(async () => {
+  // Always keep scheduled times updated according to the current configuration of the day
+  if (Date.now() - lastConfigSync > 15000) {
+    lastConfigSync = Date.now();
+    await loadSchedulerConfigFromSupabase();
+  }
+
   if (!schedulerConfig.enabled) return;
   if (connectionStatus !== 'CONNECTED') return;
 
@@ -807,6 +815,21 @@ setInterval(async () => {
     await executeServerScheduledRoutine(false);
   }
 }, 15000);
+
+// Subscribe to realtime changes in Supabase for instant config updates
+if (supabase) {
+  try {
+    supabase
+      .channel('whatsapp_server_config_sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_config' }, async () => {
+        console.log('[Auto Scheduler Server] 🔄 Alteração detectada em whatsapp_config. Atualizando horários programados do dia...');
+        await loadSchedulerConfigFromSupabase();
+      })
+      .subscribe();
+  } catch (err) {
+    console.warn('[Auto Scheduler Server] Aviso ao assinar realtime de config:', err.message);
+  }
+}
 
 // Health Check & Root
 app.get('/', (req, res) => {

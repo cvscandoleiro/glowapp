@@ -471,8 +471,8 @@ export const RemindersView: React.FC = () => {
     }
   };
 
-  // Add scheduled hour
-  const handleAddScheduledTime = (timeToAdd: string) => {
+  // Add scheduled hour (auto-saves and syncs with server)
+  const handleAddScheduledTime = async (timeToAdd: string) => {
     const cleaned = timeToAdd.trim();
     if (!/^\d{2}:\d{2}$/.test(cleaned)) {
       showToast('Formato de horário inválido (use HH:mm).', 'error');
@@ -483,17 +483,31 @@ export const RemindersView: React.FC = () => {
       return;
     }
     const updatedTimes = [...schedulerConfig.scheduledTimes, cleaned].sort();
-    setSchedulerConfig(prev => ({ ...prev, scheduledTimes: updatedTimes }));
+    const updated = { ...schedulerConfig, scheduledTimes: updatedTimes };
+    setSchedulerConfig(updated);
+    try {
+      await whatsappService.saveSchedulerConfig(updated);
+      showToast(`Horário ${cleaned} adicionado e sincronizado com o agendador!`, 'success');
+    } catch (e) {
+      showToast('Erro ao sincronizar novo horário.', 'error');
+    }
   };
 
-  // Remove scheduled hour
-  const handleRemoveScheduledTime = (timeToRemove: string) => {
+  // Remove scheduled hour (auto-saves and syncs with server)
+  const handleRemoveScheduledTime = async (timeToRemove: string) => {
     if (schedulerConfig.scheduledTimes.length <= 1) {
       showToast('Mantenha ao menos um horário programado na lista.', 'info');
       return;
     }
     const updatedTimes = schedulerConfig.scheduledTimes.filter(t => t !== timeToRemove);
-    setSchedulerConfig(prev => ({ ...prev, scheduledTimes: updatedTimes }));
+    const updated = { ...schedulerConfig, scheduledTimes: updatedTimes };
+    setSchedulerConfig(updated);
+    try {
+      await whatsappService.saveSchedulerConfig(updated);
+      showToast(`Horário ${timeToRemove} removido e sincronizado!`, 'info');
+    } catch (e) {
+      showToast('Erro ao atualizar horários.', 'error');
+    }
   };
 
   // Save scheduler settings
