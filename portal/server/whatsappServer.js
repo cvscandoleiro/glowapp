@@ -445,34 +445,27 @@ async function resolveWhatsAppJid(phoneNumber) {
     try {
       const getNumberIdSafe = (num) => Promise.race([
         client.getNumberId(num),
-        new Promise((resolve) => setTimeout(() => resolve(null), 3000))
+        new Promise((resolve) => setTimeout(() => resolve(null), 2500))
       ]);
 
-      // 1. Testa o número como veio
-      let numberDetails = await getNumberIdSafe(cleaned);
-      if (numberDetails && numberDetails._serialized) {
-        console.log(`[WhatsApp Server] JID resolvido com sucesso: ${numberDetails._serialized}`);
-        return numberDetails._serialized;
+      const without9 = (cleaned.startsWith('55') && cleaned.length === 13)
+        ? cleaned.substring(0, 4) + cleaned.substring(5)
+        : null;
+
+      // Executa verificação em paralelo com e sem o 9º dígito
+      const [detailsOriginal, detailsWithout9] = await Promise.all([
+        getNumberIdSafe(cleaned),
+        without9 ? getNumberIdSafe(without9) : Promise.resolve(null)
+      ]);
+
+      if (detailsWithout9 && detailsWithout9._serialized) {
+        console.log(`[WhatsApp Server] 🎯 JID resolvido com precisão (sem 9º dígito): ${detailsWithout9._serialized}`);
+        return detailsWithout9._serialized;
       }
 
-      // 2. Se for número brasileiro com 13 dígitos (55 + DDD + 9XXXX-XXXX), testa sem o 9 (55 + DDD + XXXX-XXXX)
-      if (cleaned.startsWith('55') && cleaned.length === 13) {
-        const without9 = cleaned.substring(0, 4) + cleaned.substring(5);
-        numberDetails = await getNumberIdSafe(without9);
-        if (numberDetails && numberDetails._serialized) {
-          console.log(`[WhatsApp Server] JID resolvido sem o 9º dígito: ${numberDetails._serialized}`);
-          return numberDetails._serialized;
-        }
-      }
-
-      // 3. Se for número brasileiro com 12 dígitos (55 + DDD + XXXX-XXXX), testa com o 9
-      if (cleaned.startsWith('55') && cleaned.length === 12) {
-        const with9 = cleaned.substring(0, 4) + '9' + cleaned.substring(4);
-        numberDetails = await getNumberIdSafe(with9);
-        if (numberDetails && numberDetails._serialized) {
-          console.log(`[WhatsApp Server] JID resolvido com o 9º dígito: ${numberDetails._serialized}`);
-          return numberDetails._serialized;
-        }
+      if (detailsOriginal && detailsOriginal._serialized) {
+        console.log(`[WhatsApp Server] 🎯 JID resolvido com precisão: ${detailsOriginal._serialized}`);
+        return detailsOriginal._serialized;
       }
     } catch (e) {
       console.warn('[WhatsApp Server] Erro ao resolver JID:', e.message);
@@ -661,7 +654,11 @@ async function executeServerScheduledRoutine(isManualTrigger = false) {
       const apt = unnotified[i];
       const matchedClient = clientsMap[apt.client_id] || { name: apt.client_name, phone: apt.phone };
       const rawPhone = matchedClient?.phone || apt.phone || '11999999999';
-      const cleanPhone = (rawPhone || '').replace(/\D/g, '');
+      let cleanPhone = (rawPhone || '').replace(/\D/g, '');
+      if (!cleanPhone.startsWith('55') && (cleanPhone.length === 10 || cleanPhone.length === 11)) {
+        cleanPhone = '55' + cleanPhone;
+      }
+      cleanPhone = cleanPhone.replace(/^0+/, '');
       const messageBody = interpolateTemplate(templateText, apt, matchedClient);
 
       const dedupeKey = `${cleanPhone}_${messageBody.trim()}`;
@@ -678,15 +675,17 @@ async function executeServerScheduledRoutine(isManualTrigger = false) {
         console.log(`[Auto Scheduler Server] 📲 Enviando WhatsApp para ${apt.client_name} no JID ${jid}...`);
         let sent = null;
         try {
-          sent = await sendMessageWithTimeout(jid, messageBody, 10000);
+          sent = await sendMessageWithTimeout(jid, messageBody, 8000);
         } catch (firstErr) {
           console.warn(`[Auto Scheduler Server] Falha no primeiro JID (${jid}): ${firstErr.message}. Tentando formato alternativo...`);
           if (cleanPhone.startsWith('55') && cleanPhone.length === 13) {
             const altJid = cleanPhone.substring(0, 4) + cleanPhone.substring(5) + '@c.us';
-            sent = await sendMessageWithTimeout(altJid, messageBody, 10000);
+            console.log(`[Auto Scheduler Server] 🔄 Tentando envio alternativo sem o 9º dígito (${altJid})...`);
+            sent = await sendMessageWithTimeout(altJid, messageBody, 8000);
           } else if (cleanPhone.startsWith('55') && cleanPhone.length === 12) {
             const altJid = cleanPhone.substring(0, 4) + '9' + cleanPhone.substring(4) + '@c.us';
-            sent = await sendMessageWithTimeout(altJid, messageBody, 10000);
+            console.log(`[Auto Scheduler Server] 🔄 Tentando envio alternativo com o 9º dígito (${altJid})...`);
+            sent = await sendMessageWithTimeout(altJid, messageBody, 8000);
           } else {
             throw firstErr;
           }
@@ -761,19 +760,25 @@ async function executeServerScheduledRoutine(isManualTrigger = false) {
           updated_at: new Date().toISOString()
         };
 
-        await supabase.from('whatsapp_audit_logs').insert(auditRecord).catch(() => {});
+        if (supabase) {
+          try {
+            await supabase.from('whatsapp_audit_logs').insert(auditRecord);
+          } catch (e) {}
 
-        await supabase.from('whatsapp_logs').insert({
-          id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-          appointment_id: apt.id,
-          client_name: apt.client_name,
-          phone: cleanPhone,
-          message_type: 'automatica_agendada',
-          message_content: messageBody,
-          status: 'falha',
-          error_message: sendErr.message,
-          created_at: new Date().toISOString()
-        }).catch(() => {});
+          try {
+            await supabase.from('whatsapp_logs').insert({
+              id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+              appointment_id: apt.id,
+              client_name: apt.client_name,
+              phone: cleanPhone,
+              message_type: 'automatica_agendada',
+              message_content: messageBody,
+              status: 'falha',
+              error_message: sendErr.message,
+              created_at: new Date().toISOString()
+            });
+          } catch (e) {}
+        }
 
         executionLogs.push({ id: apt.id, clientName: apt.client_name, success: false, error: sendErr.message });
       }
@@ -1062,7 +1067,11 @@ app.post('/api/whatsapp/send', async (req, res) => {
     });
   }
 
-  const cleanPhone = (phone || '').replace(/\D/g, '');
+  let cleanPhone = (phone || '').replace(/\D/g, '');
+  if (!cleanPhone.startsWith('55') && (cleanPhone.length === 10 || cleanPhone.length === 11)) {
+    cleanPhone = '55' + cleanPhone;
+  }
+  cleanPhone = cleanPhone.replace(/^0+/, '');
   const dedupeKey = `${cleanPhone}_${message.trim()}`;
 
   // Check deduplication (prevents double sending within 15 seconds)
@@ -1165,7 +1174,11 @@ app.post('/api/whatsapp/send-bulk', async (req, res) => {
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
-    const cleanPhone = (item.phone || '').replace(/\D/g, '');
+    let cleanPhone = (item.phone || '').replace(/\D/g, '');
+    if (!cleanPhone.startsWith('55') && (cleanPhone.length === 10 || cleanPhone.length === 11)) {
+      cleanPhone = '55' + cleanPhone;
+    }
+    cleanPhone = cleanPhone.replace(/^0+/, '');
     const dedupeKey = `${cleanPhone}_${(item.message || '').trim()}`;
 
     const existing = recentDispatches.get(dedupeKey);
