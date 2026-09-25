@@ -251,10 +251,12 @@ function initializeWhatsAppClient() {
         dataPath: './.wwebjs_auth'
       }),
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+      takeoverOnConflict: true,
+      takeoverTimeoutMs: 10000,
       puppeteer: puppeteerOptions,
       webVersionCache: {
-        type: 'remote',
-        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1018902507-alpha.html'
+        type: 'remotePath',
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/{version}.html'
       }
     });
 
