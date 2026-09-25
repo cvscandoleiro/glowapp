@@ -255,7 +255,7 @@ function initializeWhatsAppClient() {
       takeoverTimeoutMs: 10000,
       puppeteer: puppeteerOptions,
       webVersionCache: {
-        type: 'remotePath',
+        type: 'remote',
         remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/{version}.html'
       }
     });
