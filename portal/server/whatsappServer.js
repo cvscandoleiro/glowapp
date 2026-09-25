@@ -442,14 +442,19 @@ async function resolveWhatsAppJid(phoneNumber) {
 
   if (client && connectionStatus === 'CONNECTED') {
     try {
-      let numberDetails = await client.getNumberId(cleaned);
+      const getNumberIdSafe = (num) => Promise.race([
+        client.getNumberId(num),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout getNumberId')), 2500))
+      ]);
+
+      let numberDetails = await getNumberIdSafe(cleaned);
       if (numberDetails && numberDetails._serialized) {
         return numberDetails._serialized;
       }
 
       if (cleaned.startsWith('55') && cleaned.length === 13) {
         const without9 = cleaned.substring(0, 4) + cleaned.substring(5);
-        numberDetails = await client.getNumberId(without9);
+        numberDetails = await getNumberIdSafe(without9);
         if (numberDetails && numberDetails._serialized) {
           return numberDetails._serialized;
         }
@@ -457,13 +462,13 @@ async function resolveWhatsAppJid(phoneNumber) {
 
       if (cleaned.startsWith('55') && cleaned.length === 12) {
         const with9 = cleaned.substring(0, 4) + '9' + cleaned.substring(4);
-        numberDetails = await client.getNumberId(with9);
+        numberDetails = await getNumberIdSafe(with9);
         if (numberDetails && numberDetails._serialized) {
           return numberDetails._serialized;
         }
       }
     } catch (e) {
-      console.warn('[WhatsApp Server] Aviso ao verificar getNumberId para ' + cleaned + ':', e.message);
+      console.log(`[WhatsApp Server] Aviso JID para ${cleaned}: usando fallback padrão.`);
     }
   }
 
@@ -644,14 +649,16 @@ async function executeServerScheduledRoutine(isManualTrigger = false) {
         continue;
       }
 
+      console.log(`[Auto Scheduler Server] 🚀 [${i + 1}/${unnotified.length}] Processando lembrete para ${apt.client_name} (Telefone: ${cleanPhone})...`);
       try {
         const jid = await resolveWhatsAppJid(cleanPhone);
         if (!jid) throw new Error('Número de telefone inválido.');
 
-        console.log(`[Auto Scheduler Server] Disparando lembrete para ${apt.client_name} (${jid})...`);
+        console.log(`[Auto Scheduler Server] 📲 Enviando WhatsApp para ${apt.client_name} no JID ${jid}...`);
         const sent = await client.sendMessage(jid, messageBody);
         const msgId = sent?.id?._serialized || sent?.id?.id || `sched-${Date.now()}`;
         const ack = sent?.ack ?? 1;
+        console.log(`[Auto Scheduler Server] ✅ Mensagem enviada com sucesso para ${apt.client_name} (msgId: ${msgId}, ack: ${ack})`);
 
         recentDispatches.set(dedupeKey, { msgId, jid, timestamp: Date.now() });
         setTimeout(() => recentDispatches.delete(dedupeKey), 20000);
