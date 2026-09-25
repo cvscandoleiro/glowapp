@@ -499,41 +499,47 @@ async function executeServerScheduledRoutine(isManualTrigger = false) {
     // 2. Fetch existing audit logs and message logs to ensure strictly unnotified appointments are sent
     const { data: existingAudits } = await supabase
       .from('whatsapp_audit_logs')
-      .select('appointment_id, client_name, phone, status')
+      .select('appointment_id, client_name, phone, status, created_at, sent_at')
       .in('status', ['enviado', 'entregue', 'lido', 'simulado', 'pendente']);
 
     const { data: existingLogs } = await supabase
       .from('whatsapp_logs')
-      .select('appointment_id, client_name, phone, status')
+      .select('appointment_id, client_name, phone, status, created_at')
       .in('status', ['enviado', 'entregue', 'lido', 'simulado', 'pendente']);
 
     const alreadyNotifiedIds = new Set();
-    const alreadyNotifiedPhones = new Set();
-    const alreadyNotifiedNames = new Set();
+    const alreadyNotifiedPhonesForDate = new Set();
+    const alreadyNotifiedNamesForDate = new Set();
 
     (existingAudits || []).forEach(a => {
       if (a.appointment_id) alreadyNotifiedIds.add(a.appointment_id);
-      if (a.phone) alreadyNotifiedPhones.add((a.phone || '').replace(/\D/g, ''));
-      if (a.client_name) alreadyNotifiedNames.add((a.client_name || '').trim().toLowerCase());
+      const isForTargetDate = a.created_at?.startsWith(targetDate) || a.sent_at?.startsWith(targetDate);
+      if (isForTargetDate) {
+        if (a.phone) alreadyNotifiedPhonesForDate.add((a.phone || '').replace(/\D/g, ''));
+        if (a.client_name) alreadyNotifiedNamesForDate.add((a.client_name || '').trim().toLowerCase());
+      }
     });
 
     (existingLogs || []).forEach(l => {
       if (l.appointment_id) alreadyNotifiedIds.add(l.appointment_id);
-      if (l.phone) alreadyNotifiedPhones.add((l.phone || '').replace(/\D/g, ''));
-      if (l.client_name) alreadyNotifiedNames.add((l.client_name || '').trim().toLowerCase());
+      const isForTargetDate = l.created_at?.startsWith(targetDate);
+      if (isForTargetDate) {
+        if (l.phone) alreadyNotifiedPhonesForDate.add((l.phone || '').replace(/\D/g, ''));
+        if (l.client_name) alreadyNotifiedNamesForDate.add((l.client_name || '').trim().toLowerCase());
+      }
     });
 
     const unnotified = appointments.filter(apt => {
       // 1. Direct ID match
       if (alreadyNotifiedIds.has(apt.id)) return false;
 
-      // 2. Client Name match
+      // 2. Client Name match for the same date
       const cName = (apt.client_name || apt.clientName || '').trim().toLowerCase();
-      if (cName && alreadyNotifiedNames.has(cName)) return false;
+      if (cName && alreadyNotifiedNamesForDate.has(cName)) return false;
 
-      // 3. Phone match
+      // 3. Phone match for the same date
       const cPhone = (apt.phone || '').replace(/\D/g, '');
-      if (cPhone && alreadyNotifiedPhones.has(cPhone)) return false;
+      if (cPhone && alreadyNotifiedPhonesForDate.has(cPhone)) return false;
 
       return true;
     });
