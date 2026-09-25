@@ -431,22 +431,59 @@ function initializeWhatsAppClient() {
   }
 }
 
-// Format and validate phone numbers for WhatsApp JID (Safe, fast, synchronous, no Puppeteer hangs)
-function resolveWhatsAppJid(phoneNumber) {
+// Format and validate phone numbers for WhatsApp JID with smart Brazilian 9th digit detection
+async function resolveWhatsAppJid(phoneNumber) {
   let cleaned = String(phoneNumber || '').replace(/\D/g, '');
   if (!cleaned) return null;
 
   if (!cleaned.startsWith('55') && (cleaned.length === 10 || cleaned.length === 11)) {
     cleaned = '55' + cleaned;
   }
-
   cleaned = cleaned.replace(/^0+/, '');
+
+  if (client && connectionStatus === 'CONNECTED') {
+    try {
+      const getNumberIdSafe = (num) => Promise.race([
+        client.getNumberId(num),
+        new Promise((resolve) => setTimeout(() => resolve(null), 3000))
+      ]);
+
+      // 1. Testa o número como veio
+      let numberDetails = await getNumberIdSafe(cleaned);
+      if (numberDetails && numberDetails._serialized) {
+        console.log(`[WhatsApp Server] JID resolvido com sucesso: ${numberDetails._serialized}`);
+        return numberDetails._serialized;
+      }
+
+      // 2. Se for número brasileiro com 13 dígitos (55 + DDD + 9XXXX-XXXX), testa sem o 9 (55 + DDD + XXXX-XXXX)
+      if (cleaned.startsWith('55') && cleaned.length === 13) {
+        const without9 = cleaned.substring(0, 4) + cleaned.substring(5);
+        numberDetails = await getNumberIdSafe(without9);
+        if (numberDetails && numberDetails._serialized) {
+          console.log(`[WhatsApp Server] JID resolvido sem o 9º dígito: ${numberDetails._serialized}`);
+          return numberDetails._serialized;
+        }
+      }
+
+      // 3. Se for número brasileiro com 12 dígitos (55 + DDD + XXXX-XXXX), testa com o 9
+      if (cleaned.startsWith('55') && cleaned.length === 12) {
+        const with9 = cleaned.substring(0, 4) + '9' + cleaned.substring(4);
+        numberDetails = await getNumberIdSafe(with9);
+        if (numberDetails && numberDetails._serialized) {
+          console.log(`[WhatsApp Server] JID resolvido com o 9º dígito: ${numberDetails._serialized}`);
+          return numberDetails._serialized;
+        }
+      }
+    } catch (e) {
+      console.warn('[WhatsApp Server] Erro ao resolver JID:', e.message);
+    }
+  }
 
   return `${cleaned}@c.us`;
 }
 
 // Helper to safely send WhatsApp message with timeout protection against hanging
-async function sendMessageWithTimeout(jid, messageText, timeoutMs = 20000) {
+async function sendMessageWithTimeout(jid, messageText, timeoutMs = 10000) {
   if (!client || connectionStatus !== 'CONNECTED') {
     throw new Error('Cliente WhatsApp não está conectado.');
   }
@@ -641,15 +678,15 @@ async function executeServerScheduledRoutine(isManualTrigger = false) {
         console.log(`[Auto Scheduler Server] 📲 Enviando WhatsApp para ${apt.client_name} no JID ${jid}...`);
         let sent = null;
         try {
-          sent = await sendMessageWithTimeout(jid, messageBody);
+          sent = await sendMessageWithTimeout(jid, messageBody, 10000);
         } catch (firstErr) {
           console.warn(`[Auto Scheduler Server] Falha no primeiro JID (${jid}): ${firstErr.message}. Tentando formato alternativo...`);
           if (cleanPhone.startsWith('55') && cleanPhone.length === 13) {
             const altJid = cleanPhone.substring(0, 4) + cleanPhone.substring(5) + '@c.us';
-            sent = await sendMessageWithTimeout(altJid, messageBody);
+            sent = await sendMessageWithTimeout(altJid, messageBody, 10000);
           } else if (cleanPhone.startsWith('55') && cleanPhone.length === 12) {
             const altJid = cleanPhone.substring(0, 4) + '9' + cleanPhone.substring(4) + '@c.us';
-            sent = await sendMessageWithTimeout(altJid, messageBody);
+            sent = await sendMessageWithTimeout(altJid, messageBody, 10000);
           } else {
             throw firstErr;
           }
@@ -1160,7 +1197,21 @@ app.post('/api/whatsapp/send-bulk', async (req, res) => {
         continue;
       }
 
-      const sent = await sendMessageWithTimeout(jid, item.message);
+      let sent = null;
+      try {
+        sent = await sendMessageWithTimeout(jid, item.message, 10000);
+      } catch (bulkErr) {
+        console.warn(`[WhatsApp Server] Falha bulk no primeiro JID (${jid}): ${bulkErr.message}. Tentando JID alternativo...`);
+        if (cleanPhone.startsWith('55') && cleanPhone.length === 13) {
+          const altJid = cleanPhone.substring(0, 4) + cleanPhone.substring(5) + '@c.us';
+          sent = await sendMessageWithTimeout(altJid, item.message, 10000);
+        } else if (cleanPhone.startsWith('55') && cleanPhone.length === 12) {
+          const altJid = cleanPhone.substring(0, 4) + '9' + cleanPhone.substring(4) + '@c.us';
+          sent = await sendMessageWithTimeout(altJid, item.message, 10000);
+        } else {
+          throw bulkErr;
+        }
+      }
       const msgId = sent?.id?._serialized || sent?.id?.id || 'msg-' + Date.now();
       const ack = sent?.ack ?? 1;
       const ackMap = { 0: 'pendente', 1: 'enviado', 2: 'entregue', 3: 'lido', 4: 'lido' };
